@@ -9,7 +9,7 @@ items:
   - slug: create
     module-id: module-create
     label: Создать
-    implementation: stub
+    implementation: active
     sidebar: false
     sort: 15
   - slug: journal

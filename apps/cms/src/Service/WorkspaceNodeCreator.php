@@ -95,11 +95,11 @@ class WorkspaceNodeCreator
 
         $now = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format(\DateTimeInterface::ATOM);
         $properties = [
-            'awn-type' => $nodeTypeId,
-            'awn-name' => $name,
-            'awn-description' => $description,
-            'awn-create' => $now,
-            'awn-update' => $now,
+            'acms-type' => $this->typeSchemaRegistry->publicTypeId($nodeTypeId),
+            'acms-name' => $name,
+            'acms-description' => $description,
+            'acms-create' => $now,
+            'acms-update' => $now,
         ];
 
         $manifestPath = $nodeDir . '/manifest.node.md';

@@ -1,0 +1,7 @@
+name: WS-MAP
+status: active
+hub: root
+extends: nodes/root/_file
+manifest-pattern: WS-MAP.md
+create-preset: ''
+sort: 100

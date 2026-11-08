@@ -1,0 +1,7 @@
+name: README
+status: active
+hub: root
+extends: nodes/root/_file
+manifest-pattern: README.md
+create-preset: presets/readme
+sort: 70

@@ -14,16 +14,20 @@ class WorkspaceNodeScanner
 
     private TypeSchemaRegistry $typeSchemaRegistry;
 
+    private AcmsManifestPropertyBridge $acmsManifestPropertyBridge;
+
     public function __construct(
         WorkspaceService $workspaceService,
         WorkspaceManifestReader $manifestReader,
         NodeDiskManifestRegistry $nodeDiskManifestRegistry,
-        TypeSchemaRegistry $typeSchemaRegistry
+        TypeSchemaRegistry $typeSchemaRegistry,
+        AcmsManifestPropertyBridge $acmsManifestPropertyBridge
     ) {
         $this->workspaceService = $workspaceService;
         $this->manifestReader = $manifestReader;
         $this->nodeDiskManifestRegistry = $nodeDiskManifestRegistry;
         $this->typeSchemaRegistry = $typeSchemaRegistry;
+        $this->acmsManifestPropertyBridge = $acmsManifestPropertyBridge;
     }
 
     /**
@@ -93,10 +97,8 @@ class WorkspaceNodeScanner
             $name = $this->resolveInstanceName($parsed, $diskPath, $filename);
 
             $typeId = '';
-            if (is_array($parsed) && isset($parsed['properties']['awn-type']) && is_string($parsed['properties']['awn-type'])) {
-                $typeId = $parsed['properties']['awn-type'];
-            } elseif (is_array($parsed) && isset($parsed['properties']['acms-type']) && is_string($parsed['properties']['acms-type'])) {
-                $typeId = $parsed['properties']['acms-type'];
+            if (is_array($parsed) && isset($parsed['properties']) && is_array($parsed['properties'])) {
+                $typeId = $this->acmsManifestPropertyBridge->stringProperty($parsed['properties'], 'acms-type');
             }
 
             $treeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $workspaceSlug);
@@ -186,8 +188,9 @@ class WorkspaceNodeScanner
     {
         if (is_array($parsed)) {
             $properties = $parsed['properties'];
-            if (isset($properties['awn-name']) && is_string($properties['awn-name']) && $properties['awn-name'] !== '') {
-                return $properties['awn-name'];
+            $acmsName = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-name');
+            if ($acmsName !== '') {
+                return $acmsName;
             }
             if (isset($properties['name']) && is_string($properties['name']) && $properties['name'] !== '') {
                 return $properties['name'];

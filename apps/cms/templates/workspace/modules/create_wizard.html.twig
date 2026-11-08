@@ -1,0 +1,70 @@
+<header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <h1 class="text-xl font-semibold tracking-tight text-zinc-900">Создать</h1>
+    <p class="mt-1 text-sm text-zinc-600">Новый узел на диске или служебный файл в корне хранилища.</p>
+</header>
+
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+  <ol class="flex flex-wrap gap-2 text-xs font-medium text-zinc-500" aria-label="Шаги">
+        <li class="rounded-full px-2.5 py-1 {% if create_wizard_family|default('') == '' %}bg-zinc-900 text-white{% else %}bg-zinc-100 text-zinc-700{% endif %}">1. Зона</li>
+        <li class="rounded-full px-2.5 py-1 {% if create_wizard_family|default('') != '' %}bg-zinc-900 text-white{% else %}bg-zinc-100 text-zinc-400{% endif %}">2. Объект</li>
+    </ol>
+
+    {% if create_wizard_family|default('') == '' %}
+        <h2 class="mt-4 text-sm font-medium text-zinc-900">Выберите зону hub</h2>
+        {% if create_wizard_zones|default([])|length > 0 %}
+            <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+                {% for zone in create_wizard_zones %}
+                    <li>
+                        <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}?family={{ zone.family }}"
+                           class="flex gap-3 rounded-lg border border-zinc-200 px-3 py-3 hover:border-zinc-300 hover:bg-zinc-50">
+                            <span class="shrink-0 pt-0.5">
+                                {% include 'workspace/_hub_tree_icon.html.twig' with {
+                                    icon: zone.tree_icon|default('folder'),
+                                    icon_class: zone.tree_icon_class|default('text-amber-500'),
+                                } %}
+                            </span>
+                            <span class="min-w-0 flex flex-col">
+                                <span class="text-sm font-medium text-zinc-900">{{ zone.label }}</span>
+                                {% if zone.folder|default('') != '' %}
+                                    <span class="mt-0.5 font-mono text-xs text-zinc-500">{{ zone.folder }}</span>
+                                {% endif %}
+                                <span class="mt-1 text-xs text-zinc-500">{{ zone.hint }}</span>
+                            </span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mt-3 text-sm text-zinc-500">Нет доступных типов для создания.</p>
+        {% endif %}
+    {% else %}
+        <div class="mt-4">
+            <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}" class="text-xs text-zinc-500 hover:text-zinc-800 hover:underline">← Все зоны</a>
+            <h2 class="mt-2 flex items-center gap-2 text-sm font-medium text-zinc-900">
+                {% include 'workspace/_hub_tree_icon.html.twig' with {
+                    icon: create_wizard_group.tree_icon|default('folder'),
+                    icon_class: create_wizard_group.tree_icon_class|default('text-amber-500'),
+                } %}
+                {{ create_wizard_group.label|default(create_wizard_family) }}
+            </h2>
+            {% if create_wizard_family == 'root' %}
+                <p class="mt-1 text-xs text-zinc-500">Служебные markdown-файлы в корне workspace</p>
+                {% if root_creatable_files|default([])|length > 0 %}
+                    {% include 'workspace/modules/_create_root_files.html.twig' %}
+                {% else %}
+                    <p class="mt-2 text-sm text-zinc-500">Список корневых файлов не настроен.</p>
+                {% endif %}
+            {% elseif create_wizard_group.type_items|default([])|length > 0 %}
+                {% include 'workspace/modules/_create_node_form.html.twig' with {
+                    hub_group: create_wizard_group,
+                    hub_family: create_wizard_family,
+                    hub_url_zone: create_wizard_url_zone|default(create_wizard_family),
+                    workspace: workspace,
+                    default_node_type_id: default_node_type_id|default(''),
+                } %}
+            {% else %}
+                <p class="mt-2 text-sm text-zinc-500">В этой зоне нельзя создать узел.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>

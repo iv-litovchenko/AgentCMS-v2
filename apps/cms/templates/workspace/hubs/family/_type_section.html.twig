@@ -1,0 +1,34 @@
+{# type_item, typed_items, workspace, hub_family, hub_url_zone #}
+{% set section_type_id = type_item.hub_path|default('') != '' ? 'nodes/' ~ type_item.hub_path : '' %}
+<section class="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+    <ul class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        {% for item in typed_items %}
+            <li>
+                <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: item.disk_path != '' ? item.disk_path : '_'}) }}"
+                   class="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-2 text-sm hover:border-zinc-300 hover:bg-white"
+                   title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
+                    {% include 'workspace/_hub_tree_icon.html.twig' with {
+                        icon: item.tree_icon|default('folder'),
+                        icon_class: item.tree_icon_class|default('text-zinc-400'),
+                    } %}
+                    <span class="min-w-0 truncate font-medium text-zinc-900">{{ item.name }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% if hub_family|default('') != '' and hub_family != 'root' %}
+    {% set create_query = 'family=' ~ hub_family|url_encode %}
+    {% if section_type_id != '' %}
+        {% set create_query = create_query ~ '&type=' ~ section_type_id|url_encode %}
+    {% endif %}
+    <section class="flex justify-center rounded-lg border border-dashed border-zinc-200 bg-zinc-50/40 px-3 py-2.5 shadow-sm">
+        <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}?{{ create_query }}"
+           class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-white hover:text-zinc-900">
+            <svg class="h-3.5 w-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+            </svg>
+            Добавить
+        </a>
+    </section>
+{% endif %}

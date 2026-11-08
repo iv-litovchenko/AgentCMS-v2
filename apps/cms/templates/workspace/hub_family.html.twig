@@ -10,6 +10,8 @@
                 hub_family: hub_family,
                 hub_family_base: hub_family_base,
                 workspace: workspace,
+                root_creatable_files: root_creatable_files|default([]),
+                existing_root_files: existing_root_files|default({}),
             } %}
         {% endblock %}
     {% endembed %}

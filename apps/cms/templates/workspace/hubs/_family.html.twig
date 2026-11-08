@@ -12,15 +12,6 @@
     </a>
 {% endmacro %}
 
-{% for message in app.flashes('success') %}
-    <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ message }}</div>
-{% endfor %}
-{% for message in app.flashes('error') %}
-    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ message }}</div>
-{% endfor %}
-
-{% include 'workspace/_breadcrumbs.html.twig' %}
-
 <header class="rounded-lg border border-zinc-200 bg-white px-3 py-3 shadow-sm">
     <h1 class="text-base font-semibold tracking-tight text-zinc-900">{{ hub_group.label }}</h1>
     {% if hub_group.folder|default('') != '' %}
@@ -66,6 +57,7 @@
                 typed_items: typed_items,
                 workspace: workspace,
                 hub_family: hub_family,
+                hub_url_zone: hub_url_zone|default(hub_family),
             } %}
         {% endif %}
     {% endfor %}
@@ -76,6 +68,7 @@
             typed_items: other_items,
             workspace: workspace,
             hub_family: hub_family,
+            hub_url_zone: hub_url_zone|default(hub_family),
         } %}
     {% endif %}
 

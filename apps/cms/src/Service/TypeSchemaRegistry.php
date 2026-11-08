@@ -21,6 +21,9 @@ class TypeSchemaRegistry
     /** @var array<string, string> */
     private array $idAliases = [];
 
+    /** @var array<string, list<string>> */
+    private array $pathToAliases = [];
+
     private bool $aliasesBootstrapped = false;
 
     /** @var array<string, array<string, mixed>>|null */
@@ -55,11 +58,49 @@ class TypeSchemaRegistry
             return $this->idAliases[$rawId];
         }
 
+        if (str_starts_with($rawId, 'acms.')) {
+            $fromAcms = $this->canonicalPathFromAcmsPublicId($rawId);
+            if ($fromAcms !== '') {
+                return $fromAcms;
+            }
+        }
+
         if (str_contains($rawId, '/')) {
             return $rawId;
         }
 
         return $rawId;
+    }
+
+    /**
+     * Публичный dot-id (acms.*) для manifest и UI; внутренний путь — slash.
+     */
+    public function publicTypeId(string $rawId): string
+    {
+        $rawId = trim($rawId);
+        if ($rawId === '') {
+            return '';
+        }
+
+        if (str_starts_with($rawId, 'acms.')) {
+            return $rawId;
+        }
+
+        $this->ensureAliasesLoaded();
+        $canonical = $this->normalizeTypeId($rawId);
+        if ($canonical === '') {
+            return $rawId;
+        }
+
+        if (isset($this->pathToAliases[$canonical]) && is_array($this->pathToAliases[$canonical])) {
+            foreach ($this->pathToAliases[$canonical] as $alias) {
+                if (str_starts_with($alias, 'acms.')) {
+                    return $alias;
+                }
+            }
+        }
+
+        return $this->deriveAcmsPublicId($canonical);
     }
 
     /**
@@ -403,16 +444,76 @@ class TypeSchemaRegistry
             $groupLabel = $family;
         }
 
+        $urlSegment = $family;
+        if ($folder !== '' && $folder !== '.') {
+            $urlSegment = $folder;
+        }
+
         return [
             'family' => $family,
             'label' => $groupLabel,
             'folder' => $folder,
+            'url_segment' => $urlSegment,
             'tree_sort' => $treeUi['sort'],
             'tree_icon' => $treeUi['icon'],
             'tree_icon_class' => $treeUi['icon_class'],
             'items' => [],
             'type_items' => [],
         ];
+    }
+
+    public function hubUrlSegmentForFamily(string $family, string $workspaceSlug = ''): string
+    {
+        $family = trim($family);
+        if ($family === '') {
+            return '';
+        }
+
+        $group = $this->findHubTreeGroupByFamily($family, $workspaceSlug);
+        if ($group !== null && isset($group['url_segment']) && is_string($group['url_segment']) && $group['url_segment'] !== '') {
+            return $group['url_segment'];
+        }
+
+        $hubZone = $this->resolveType('hubs/' . $family, $workspaceSlug);
+        if (!is_array($hubZone)) {
+            return $family;
+        }
+
+        $folder = '';
+        if (isset($hubZone['folder']) && is_string($hubZone['folder'])) {
+            $folder = trim($hubZone['folder']);
+        }
+        if ($folder !== '' && $folder !== '.') {
+            return $folder;
+        }
+
+        return $family;
+    }
+
+    public function hubFamilyForUrlSegment(string $segment, string $workspaceSlug = ''): ?string
+    {
+        $segment = trim($segment);
+        if ($segment === '') {
+            return null;
+        }
+
+        foreach ($this->listHubTreeGroups($workspaceSlug) as $group) {
+            if (!isset($group['family']) || !is_string($group['family'])) {
+                continue;
+            }
+            $urlSegment = $group['family'];
+            if (isset($group['url_segment']) && is_string($group['url_segment']) && $group['url_segment'] !== '') {
+                $urlSegment = $group['url_segment'];
+            }
+            if ($urlSegment === $segment) {
+                return $group['family'];
+            }
+            if ($group['family'] === $segment) {
+                return $group['family'];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -632,7 +733,89 @@ class TypeSchemaRegistry
                 continue;
             }
             $this->idAliases[$legacy] = $path;
+            if (!isset($this->pathToAliases[$path])) {
+                $this->pathToAliases[$path] = [];
+            }
+            $this->pathToAliases[$path][] = $legacy;
         }
+    }
+
+    private function deriveAcmsPublicId(string $canonicalId): string
+    {
+        $canonicalId = trim($canonicalId);
+        if ($canonicalId === '') {
+            return '';
+        }
+
+        if (str_starts_with($canonicalId, 'nodes/root/')) {
+            $leaf = substr($canonicalId, strlen('nodes/root/'));
+
+            return 'acms.root.' . $leaf;
+        }
+
+        if (str_starts_with($canonicalId, 'nodes/')) {
+            $rest = substr($canonicalId, strlen('nodes/'));
+            $parts = explode('/', $rest);
+            if (count($parts) >= 2 && $parts[count($parts) - 1] === $parts[count($parts) - 2]) {
+                array_pop($parts);
+            }
+
+            return 'acms.node.' . implode('.', $parts);
+        }
+
+        if (str_starts_with($canonicalId, 'hubs/')) {
+            $rest = substr($canonicalId, strlen('hubs/'));
+
+            return 'acms.hub.' . str_replace('/', '.', $rest);
+        }
+
+        return 'acms.' . str_replace('/', '.', $canonicalId);
+    }
+
+    private function canonicalPathFromAcmsPublicId(string $publicId): string
+    {
+        $publicId = trim($publicId);
+        if ($publicId === '' || !str_starts_with($publicId, 'acms.')) {
+            return '';
+        }
+
+        if (str_starts_with($publicId, 'acms.root.')) {
+            $leaf = substr($publicId, strlen('acms.root.'));
+            if ($leaf === '') {
+                return '';
+            }
+
+            return 'nodes/root/' . $leaf;
+        }
+
+        if (str_starts_with($publicId, 'acms.hub.')) {
+            $rest = substr($publicId, strlen('acms.hub.'));
+            if ($rest === '') {
+                return '';
+            }
+
+            return 'hubs/' . str_replace('.', '/', $rest);
+        }
+
+        if (str_starts_with($publicId, 'acms.node.')) {
+            $rest = substr($publicId, strlen('acms.node.'));
+            if ($rest === '') {
+                return '';
+            }
+            $parts = explode('.', $rest);
+            if (count($parts) === 1) {
+                return 'nodes/' . $parts[0] . '/' . $parts[0];
+            }
+
+            return 'nodes/' . implode('/', $parts);
+        }
+
+        $stripped = substr($publicId, strlen('acms.'));
+        if ($stripped === '') {
+            return '';
+        }
+
+        return str_replace('.', '/', $stripped);
     }
 
     /**

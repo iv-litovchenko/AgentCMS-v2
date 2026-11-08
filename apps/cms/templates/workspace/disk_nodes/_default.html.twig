@@ -1,0 +1,20 @@
+<header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <h1 class="text-xl font-semibold tracking-tight text-zinc-900">{{ disk_node_label }}</h1>
+    <p class="mt-2 font-mono text-xs text-zinc-500">
+        {% if disk_node_path != '' %}{{ disk_node_path }}/{% endif %}{{ disk_node.manifest_file }}
+    </p>
+    {% if disk_node_type_id|default('') != '' %}
+        <p class="mt-1 font-mono text-xs text-zinc-400">{{ disk_node_type_id }}</p>
+    {% endif %}
+</header>
+
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <h2 class="text-sm font-medium text-zinc-900">Frontmatter</h2>
+    <dl class="mt-2 space-y-1 text-sm">
+        {% include 'workspace/_frontmatter_dl.html.twig' with { frontmatter_properties: disk_node.properties } %}
+    </dl>
+    {% if disk_node.body|default('')|trim != '' %}
+        <h2 class="mt-4 text-sm font-medium text-zinc-900">Тело</h2>
+        <pre class="mt-2 max-h-64 overflow-auto rounded border border-zinc-100 bg-zinc-50 p-3 text-xs text-zinc-700 whitespace-pre-wrap">{{ disk_node.body|trim }}</pre>
+    {% endif %}
+</section>

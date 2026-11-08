@@ -1,0 +1,15 @@
+{% for key, value in frontmatter_properties %}
+    {% if key starts with 'awn-' and frontmatter_properties[key|acms_frontmatter_key] is defined %}
+    {% else %}
+        {% set label = key|acms_frontmatter_key %}
+        {% set is_type = label == 'acms-type' %}
+        <div class="flex gap-2">
+            <dt class="shrink-0 font-mono text-xs text-zinc-500">{{ label }}</dt>
+            {% if is_type %}
+                <dd class="font-mono text-zinc-800">{{ value|acms_public_type_id }}</dd>
+            {% else %}
+                <dd class="text-zinc-800">{{ value is iterable ? value|json_encode : value }}</dd>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

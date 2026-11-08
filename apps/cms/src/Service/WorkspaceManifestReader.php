@@ -8,6 +8,13 @@ class WorkspaceManifestReader
 {
     private const FRONTMATTER_DELIM = '---';
 
+    private AcmsManifestPropertyBridge $acmsManifestPropertyBridge;
+
+    public function __construct(AcmsManifestPropertyBridge $acmsManifestPropertyBridge)
+    {
+        $this->acmsManifestPropertyBridge = $acmsManifestPropertyBridge;
+    }
+
     /**
      * @return array{properties: array, body: string}|null
      */
@@ -54,12 +61,12 @@ class WorkspaceManifestReader
         $properties = $parsed['properties'];
         $body = $parsed['body'];
 
-        $name = $this->stringProperty($properties, 'awn-name');
+        $name = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-name');
         if ($name === '') {
             $name = $this->stringProperty($properties, 'name');
         }
 
-        $description = $this->stringProperty($properties, 'awn-description');
+        $description = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-description');
         if ($description === '') {
             $description = $this->stringProperty($properties, 'description');
         }
@@ -74,20 +81,17 @@ class WorkspaceManifestReader
 
         $avatar = $this->stringProperty($properties, 'cms-avatar');
 
-        $sortOrder = 0;
-        if (isset($properties['awn-sort'])) {
-            $sortOrder = $this->normalizeInt($properties['awn-sort']);
-        }
+        $sortOrder = $this->acmsManifestPropertyBridge->intProperty($properties, 'acms-sort');
 
-        $createdAt = $this->stringProperty($properties, 'awn-create');
-        $updatedAt = $this->stringProperty($properties, 'awn-update');
+        $createdAt = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-create');
+        $updatedAt = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-update');
         if ($updatedAt === '') {
             $updatedAt = $createdAt;
         }
 
-        $typeId = $this->stringProperty($properties, 'awn-type');
+        $typeId = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-type');
         if ($typeId === '') {
-            $typeId = 'nodes/root/ws';
+            $typeId = 'acms.root.ws';
         }
 
         return [
@@ -107,6 +111,7 @@ class WorkspaceManifestReader
      */
     public function buildFileContent(array $properties, string $body = "\n"): string
     {
+        $properties = $this->acmsManifestPropertyBridge->stripLegacyAwnDuplicates($properties);
         $yaml = Yaml::dump($properties, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
         if ($body === '') {
             $body = "\n";
@@ -187,19 +192,6 @@ class WorkspaceManifestReader
         }
 
         return trim($properties[$key]);
-    }
-
-    private function normalizeInt(mixed $value): int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (is_string($value) && preg_match('/^-?\d+$/', $value) === 1) {
-            return (int) $value;
-        }
-
-        return 0;
     }
 
     private function firstParagraph(string $body): string

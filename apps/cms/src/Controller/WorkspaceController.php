@@ -198,7 +198,8 @@ class WorkspaceController extends AbstractController
         return $this->redirectToRoute('workspace_index');
     }
 
-    #[Route('/{slug}/hubs/{family}/create-root-file', name: 'workspace_hub_create_root_file', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'family' => 'root'], methods: ['POST'], priority: 9)]
+    #[Route('/{slug}/root/create-root-file', name: 'workspace_hub_create_root_file', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 9)]
+    #[Route('/{slug}/hubs/root/create-root-file', name: 'workspace_hub_create_root_file_legacy', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 10)]
     public function hubCreateRootFile(string $slug, Request $request): Response
     {
         $workspace = $this->workspaceService->findBySlug($slug);
@@ -234,15 +235,31 @@ class WorkspaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/hubs/{family}/create-node', name: 'workspace_hub_create_node', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'family' => '[a-z][a-z0-9]*'], methods: ['POST'], priority: 8)]
-    public function hubCreateNode(string $slug, string $family, Request $request): Response
+    #[Route('/{slug}/hubs/{family}/create-node', name: 'workspace_hub_create_node_legacy', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'family' => '[a-z][a-z0-9]*'], methods: ['POST'], priority: 10)]
+    public function hubCreateNodeLegacy(string $slug, string $family, Request $request): Response
+    {
+        return $this->hubCreateNode($slug, $request);
+    }
+
+    #[Route('/{slug}/{zone}/create-node', name: 'workspace_hub_create_node', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'zone' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 8)]
+    public function hubCreateNode(string $slug, Request $request): Response
     {
         $workspace = $this->workspaceService->findBySlug($slug);
         if ($workspace === null) {
             throw $this->createNotFoundException('Хранилище не найдено.');
         }
 
-        $family = trim($family);
+        $zone = $this->resolveHubUrlSegmentFromRequest($request);
+        if ($zone === '') {
+            throw $this->createNotFoundException('Зона hub не указана.');
+        }
+
+        $family = $this->typeSchemaRegistry->hubFamilyForUrlSegment($zone, $workspace['slug']);
+        if ($family === null) {
+            $family = trim($zone);
+        } else {
+            $family = trim($family);
+        }
         $token = $request->request->getString('_token');
         if (!$this->isCsrfTokenValid('hub_create_node_' . $family, $token)) {
             throw $this->createAccessDeniedException('Неверный CSRF-токен.');
@@ -283,12 +300,43 @@ class WorkspaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/hubs/{family}', name: 'workspace_hub_family_show', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'family' => '[a-z][a-z0-9]*'], methods: ['GET'], priority: 7)]
-    public function hubFamilyShow(string $slug, string $family): Response
+    #[Route('/{slug}/hubs/{family}', name: 'workspace_hub_family_legacy', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'family' => '[a-z][a-z0-9]*'], methods: ['GET'], priority: 12)]
+    public function hubFamilyLegacyRedirect(string $slug, string $family): Response
+    {
+        $family = trim($family);
+        $zone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($family, $slug);
+
+        return $this->redirectToRoute('workspace_hub_family_show', [
+            'slug' => $slug,
+            'zone' => $zone,
+        ], Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    #[Route('/{slug}/{zone}', name: 'workspace_hub_family_show', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'zone' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'], priority: 4)]
+    public function hubFamilyShow(string $slug, Request $request): Response
     {
         $workspace = $this->workspaceService->findBySlug($slug);
         if ($workspace === null) {
             throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $zone = $this->resolveHubUrlSegmentFromRequest($request);
+        if ($zone === '') {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        $zone = trim($zone);
+        $family = $this->typeSchemaRegistry->hubFamilyForUrlSegment($zone, $workspace['slug']);
+        if ($family === null) {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        $canonicalZone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($family, $workspace['slug']);
+        if ($canonicalZone !== $zone) {
+            return $this->redirectToRoute('workspace_hub_family_show', [
+                'slug' => $slug,
+                'zone' => $canonicalZone,
+            ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
         $family = trim($family);
@@ -336,6 +384,7 @@ class WorkspaceController extends AbstractController
             [
                 'hub_group' => $hubGroup,
                 'hub_family' => $family,
+                'hub_url_zone' => $canonicalZone,
                 'hub_family_base' => $familyBase,
                 'default_node_type_id' => $defaultNodeTypeId,
                 'root_creatable_files' => $rootCreatableFiles,
@@ -483,6 +532,12 @@ class WorkspaceController extends AbstractController
             'active_module_slug' => $moduleMeta['slug'],
             'active_hub_path' => '',
             'search_query' => $searchQuery,
+            'workspace_breadcrumbs' => $this->workspaceBreadcrumbBuilder->buildForModule(
+                $workspace,
+                $moduleMeta['label'],
+                $moduleMeta['slug']
+            ),
+            'workspace_toolbar' => ['reveal_enabled' => false, 'reveal_relative_path' => ''],
         ];
 
         if ($moduleMeta['slug'] === 'create') {
@@ -510,8 +565,25 @@ class WorkspaceController extends AbstractController
             [
                 'active_module_slug' => '',
                 'active_hub_path' => '',
+                'workspace_breadcrumbs' => $this->workspaceBreadcrumbBuilder->buildForWorkspaceOverview($workspace),
+                'workspace_toolbar' => ['reveal_enabled' => false, 'reveal_relative_path' => ''],
             ]
         ));
+    }
+
+    private function resolveHubUrlSegmentFromRequest(Request $request): string
+    {
+        $zone = $request->attributes->get('zone');
+        if (is_string($zone) && trim($zone) !== '') {
+            return trim($zone);
+        }
+
+        $family = $request->attributes->get('family');
+        if (is_string($family) && trim($family) !== '') {
+            return trim($family);
+        }
+
+        return '';
     }
 
     /**
@@ -574,8 +646,16 @@ class WorkspaceController extends AbstractController
                 $treeIconClass = $group['tree_icon_class'];
             }
 
+            $urlSegment = $family;
+            if (isset($group['url_segment']) && is_string($group['url_segment']) && $group['url_segment'] !== '') {
+                $urlSegment = $group['url_segment'];
+            } elseif ($folder !== '' && $folder !== '.') {
+                $urlSegment = $folder;
+            }
+
             $zones[] = [
                 'family' => $family,
+                'url_segment' => $urlSegment,
                 'label' => $label,
                 'folder' => $folder,
                 'hint' => $hint,
@@ -605,13 +685,34 @@ class WorkspaceController extends AbstractController
                     }
                 } else {
                     $defaultNodeTypeId = $this->typeSchemaRegistry->resolveDefaultNodeTypeIdForHub($selectedFamily, $workspaceSlug);
+                    $requestedType = trim($request->query->getString('type'));
+                    if ($requestedType !== '' && $wizardGroup !== null && isset($wizardGroup['type_items']) && is_array($wizardGroup['type_items'])) {
+                        foreach ($wizardGroup['type_items'] as $typeItem) {
+                            $candidate = '';
+                            if (isset($typeItem['id']) && is_string($typeItem['id']) && $typeItem['id'] !== '') {
+                                $candidate = $typeItem['id'];
+                            } elseif (isset($typeItem['hub_path']) && is_string($typeItem['hub_path']) && $typeItem['hub_path'] !== '') {
+                                $candidate = 'nodes/' . $typeItem['hub_path'];
+                            }
+                            if ($candidate === $requestedType) {
+                                $defaultNodeTypeId = $candidate;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        $wizardUrlZone = '';
+        if ($selectedFamily !== '') {
+            $wizardUrlZone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($selectedFamily, $workspaceSlug);
         }
 
         return [
             'create_wizard_zones' => $zones,
             'create_wizard_family' => $selectedFamily,
+            'create_wizard_url_zone' => $wizardUrlZone,
             'create_wizard_group' => $wizardGroup,
             'default_node_type_id' => $defaultNodeTypeId,
             'root_creatable_files' => $rootCreatableFiles,

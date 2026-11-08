@@ -2,7 +2,7 @@ name: Группа
 status: active
 hub: media
 tree-ui:
-  icon: group
+  icon: folder
   icon-class: text-sky-400
 extends: nodes/_base
 description: 'manifest.node.md + подпапки медиатек, без собственных files/assets'

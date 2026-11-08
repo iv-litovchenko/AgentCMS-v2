@@ -1,0 +1,9 @@
+name: 'Корневой markdown-файл'
+status: draft
+hub: root
+extends: nodes/_base
+manifest-pattern: ''
+description: 'База служебных .md в корне workspace (не папка с manifest.node.md)'
+tree-ui:
+  icon: file
+  icon-class: text-zinc-500

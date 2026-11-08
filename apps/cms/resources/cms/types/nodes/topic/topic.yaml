@@ -4,7 +4,7 @@ default: true
 hub: topic
 extends: nodes/_base
 tree-ui:
-  icon: topic
+  icon: file
   icon-class: text-emerald-600
 view:
   screen:

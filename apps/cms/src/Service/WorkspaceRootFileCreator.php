@@ -95,10 +95,10 @@ class WorkspaceRootFileCreator
     {
         $lines = [
             '---',
-            'awn-type: ' . $typeId,
+            'acms-type: ' . $this->typeSchemaRegistry->publicTypeId($typeId),
         ];
         if ($typeName !== '') {
-            $lines[] = 'awn-name: ' . $typeName;
+            $lines[] = 'acms-name: ' . $typeName;
         }
         $lines[] = '---';
         $lines[] = '';

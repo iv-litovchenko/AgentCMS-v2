@@ -1,0 +1,29 @@
+{# hub_group, hub_family, workspace, default_node_type_id #}
+<p class="mt-1 text-xs text-zinc-500">Папка в <span class="font-mono">{{ hub_group.folder|default('.') }}</span> с <span class="font-mono">manifest.node.md</span></p>
+<form method="post" action="{{ path('workspace_hub_create_node', {slug: workspace.slug, zone: hub_url_zone|default(hub_family)}) }}" class="mt-3 space-y-3 text-sm">
+    <input type="hidden" name="_token" value="{{ csrf_token('hub_create_node_' ~ hub_family) }}">
+    <div>
+        <label class="block text-xs font-medium text-zinc-700" for="wizard-node-type">Тип node</label>
+        <select id="wizard-node-type" name="node_type" required class="mt-1 w-full max-w-md rounded-md border border-zinc-200 px-2 py-1.5 text-sm">
+            {% for item in hub_group.type_items %}
+                {% set typeId = 'nodes/' ~ item.hub_path %}
+                <option value="{{ typeId }}"{% if default_node_type_id|default('') == typeId %} selected{% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="flex flex-wrap gap-3">
+        <div class="min-w-[10rem] flex-1">
+            <label class="block text-xs font-medium text-zinc-700" for="wizard-node-slug">Папка (slug)</label>
+            <input id="wizard-node-slug" name="node_slug" type="text" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="telegram" class="mt-1 w-full rounded-md border border-zinc-200 px-2 py-1.5 font-mono text-sm" autocomplete="off">
+        </div>
+        <div class="min-w-[10rem] flex-[2]">
+            <label class="block text-xs font-medium text-zinc-700" for="wizard-node-name">Имя</label>
+            <input id="wizard-node-name" name="node_name" type="text" required class="mt-1 w-full rounded-md border border-zinc-200 px-2 py-1.5 text-sm">
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-zinc-700" for="wizard-node-description">Описание</label>
+        <textarea id="wizard-node-description" name="node_description" rows="2" class="mt-1 w-full max-w-lg rounded-md border border-zinc-200 px-2 py-1.5 text-sm"></textarea>
+    </div>
+    <button type="submit" class="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">Создать</button>
+</form>

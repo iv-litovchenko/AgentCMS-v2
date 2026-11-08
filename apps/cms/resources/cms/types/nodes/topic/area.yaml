@@ -3,8 +3,8 @@ status: active
 hub: topic
 extends: nodes/_base
 tree-ui:
-  icon: area
-  icon-class: text-emerald-500
+  icon: folder
+  icon-class: text-teal-600
 view:
   screen:
     template: workspace/hubs/_default.html.twig

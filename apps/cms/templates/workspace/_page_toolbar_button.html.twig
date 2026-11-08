@@ -1,0 +1,43 @@
+{# action: print | share | finder | finder_disabled | refresh #}
+{% if action == 'print' %}
+    <button type="button"
+            class="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+            title="Печать"
+            aria-label="Печать"
+            onclick="window.print()">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3.75h10.5v2.25H6.75V3.75ZM4.5 9.75h15c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-15a1.125 1.125 0 0 1-1.125-1.125v-5.25c0-.621.504-1.125 1.125-1.125ZM6.75 15.75h10.5v4.5H6.75v-4.5Z"/></svg>
+    </button>
+{% elseif action == 'share' %}
+    <button type="button"
+            class="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+            title="Поделиться"
+            aria-label="Поделиться"
+            data-share-url="{{ app.request.uri }}"
+            data-share-title="{{ workspace.name|default('') }}"
+            onclick="(function(btn){var u=btn.getAttribute('data-share-url');var t=btn.getAttribute('data-share-title')||document.title;if(navigator.share){navigator.share({title:t,url:u}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(u).catch(function(){});}})(this)">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-7.5a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg>
+    </button>
+{% elseif action == 'finder' %}
+    <form method="post" action="{{ path('workspace_reveal_path', {slug: workspace.slug}) }}" class="inline">
+        <input type="hidden" name="_token" value="{{ csrf_token('workspace_reveal_path') }}">
+        <input type="hidden" name="relative_path" value="{{ toolbar.reveal_relative_path|default('') }}">
+        <input type="hidden" name="_redirect" value="{{ app.request.requestUri }}">
+        <button type="submit"
+                class="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+                title="Открыть в Finder"
+                aria-label="Открыть в Finder">
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a2.25 2.25 0 0 0 2.25 2.25c0 .621.504 1.125 1.125 1.125h2.25a1.125 1.125 0 0 1 1.125 1.125v7.875Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 8.25V4.875c0-.621-.504-1.125-1.125-1.125H7.125C6.504 3.75 6 4.254 6 4.875V8.25"/></svg>
+        </button>
+    </form>
+{% elseif action == 'finder_disabled' %}
+    <span class="inline-flex rounded-md p-1.5 text-zinc-300" title="Finder — локальное хранилище на macOS">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a2.25 2.25 0 0 0 2.25 2.25c0 .621.504 1.125 1.125 1.125h2.25a1.125 1.125 0 0 1 1.125 1.125v7.875Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 8.25V4.875c0-.621-.504-1.125-1.125-1.125H7.125C6.504 3.75 6 4.254 6 4.875V8.25"/></svg>
+    </span>
+{% elseif action == 'refresh' %}
+    <a href="{{ app.request.requestUri }}"
+       class="inline-flex rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+       title="Обновить страницу"
+       aria-label="Обновить страницу">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+    </a>
+{% endif %}

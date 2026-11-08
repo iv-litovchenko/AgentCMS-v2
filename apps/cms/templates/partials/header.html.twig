@@ -53,7 +53,7 @@
             <div class="hidden h-5 w-px shrink-0 bg-zinc-200 sm:block" aria-hidden="true"></div>
 
             <details class="group/apps relative">
-                <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-transparent px-2 py-1.5 text-sm hover:bg-zinc-50 [&::-webkit-details-marker]:hidden {% if ui_menu_apps_active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-600{% endif %}">
+                <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-transparent px-2 py-1.5 text-sm hover:bg-zinc-50 [&::-webkit-details-marker]:hidden {% if ui_menu_apps_active or ui_menu_services_active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-600{% endif %}">
                     <svg class="h-4 w-4 shrink-0 text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
                     </svg>
@@ -62,39 +62,40 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
                     </svg>
                 </summary>
-                <div class="absolute right-0 z-50 mt-1 min-w-[11rem] rounded-lg border border-zinc-200 bg-white py-1 text-sm shadow-lg" role="menu" aria-label="Приложения">
+                <div class="absolute right-0 z-50 mt-1 min-w-[14rem] rounded-lg border border-zinc-200 bg-white py-1 text-sm shadow-lg" role="menu" aria-label="Приложения">
+                    <details class="group/header-services border-b border-zinc-100">
+                        <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-zinc-700 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden {% if ui_menu_services_active %}bg-zinc-50 font-medium text-zinc-900{% endif %}">
+                            <span class="flex items-center gap-2">
+                                <svg class="h-4 w-4 shrink-0 text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h6.036a3 3 0 0 1 2.121.879l1.06 1.06A3 3 0 0 0 17.964 6H19.5a3 3 0 0 1 3 3v5.25a3 3 0 0 1-3 3H5.25Z"/>
+                                </svg>
+                                Сервисы
+                            </span>
+                            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400 transition group-open/header-services:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+                            </svg>
+                        </summary>
+                        <div class="border-t border-zinc-50 pb-1" role="group" aria-label="Сервисы">
+                            {% for service in ui_menu_services %}
+                                <a href="{{ service.url }}"
+                                   role="menuitem"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="block px-3 py-2 pl-9 {% if service.active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-700 hover:bg-zinc-50{% endif %}">
+                                    <span class="block">{{ service.label }}</span>
+                                    <span class="block truncate text-xs font-normal text-zinc-500">{{ service.host }}</span>
+                                </a>
+                            {% else %}
+                                <span class="block px-3 py-2 pl-9 text-zinc-400">Нет сервисов</span>
+                            {% endfor %}
+                        </div>
+                    </details>
                     {% for app in ui_menu_apps %}
                         <a href="{{ app.url }}"
                            role="menuitem"
                            class="block px-3 py-2 {% if app.active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-700 hover:bg-zinc-50{% endif %}">
                             {{ app.label }}
                         </a>
-                    {% endfor %}
-                </div>
-            </details>
-
-            <details class="group/services relative">
-                <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-md border border-transparent px-2 py-1.5 text-sm hover:bg-zinc-50 [&::-webkit-details-marker]:hidden {% if ui_menu_services_active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-600{% endif %}">
-                    <svg class="h-4 w-4 shrink-0 text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h6.036a3 3 0 0 1 2.121.879l1.06 1.06A3 3 0 0 0 17.964 6H19.5a3 3 0 0 1 3 3v5.25a3 3 0 0 1-3 3H5.25Z"/>
-                    </svg>
-                    <span class="hidden sm:inline">Сервисы</span>
-                    <svg class="h-4 w-4 shrink-0 text-zinc-400 transition group-open/services:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
-                    </svg>
-                </summary>
-                <div class="absolute right-0 z-50 mt-1 min-w-[14rem] rounded-lg border border-zinc-200 bg-white py-1 text-sm shadow-lg" role="menu" aria-label="Сервисы">
-                    {% for service in ui_menu_services %}
-                        <a href="{{ service.url }}"
-                           role="menuitem"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="block px-3 py-2 {% if service.active %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-700 hover:bg-zinc-50{% endif %}">
-                            <span class="block">{{ service.label }}</span>
-                            <span class="block truncate text-xs font-normal text-zinc-500">{{ service.host }}</span>
-                        </a>
-                    {% else %}
-                        <span class="block px-3 py-2 text-zinc-400">Нет сервисов</span>
                     {% endfor %}
                 </div>
             </details>

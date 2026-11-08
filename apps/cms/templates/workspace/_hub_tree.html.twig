@@ -1,26 +1,32 @@
-{% set onCreate = active_module_slug is defined and active_module_slug == 'create' %}
-{% if onCreate %}
-    <span class="mb-2 flex items-center gap-2 rounded-md bg-zinc-100 px-2.5 py-1.5 text-sm font-medium text-zinc-900">
-        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" aria-hidden="true"></span>
-        Создать
-    </span>
-{% else %}
+<div class="mb-2 flex items-center gap-1">
+    <label class="sr-only" for="hub-tree-filter">Фильтр дерева</label>
+    <input
+        type="search"
+        id="hub-tree-filter"
+        placeholder="Фильтр…"
+        autocomplete="off"
+        class="min-w-0 flex-1 h-8 rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+    >
     <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}"
-       class="mb-2 flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-zinc-400 hover:bg-zinc-50 hover:text-zinc-600">
-        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" aria-hidden="true"></span>
-        Создать
+       class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900{% if active_module_slug|default('') == 'create' %} border-zinc-300 bg-zinc-100 text-zinc-900{% endif %}"
+       title="Создать"
+       aria-label="Создать">
+        <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
     </a>
-{% endif %}
+</div>
 
-<nav class="text-xs leading-snug" aria-label="Хабы">
+<nav class="text-xs leading-snug" id="hub-tree-nav" aria-label="Хабы">
     <ul class="space-y-0.5" role="tree">
         {% for group in hub_tree %}
             {% set onFamily = active_hub_family_page|default(false) and active_hub_family|default('') == group.family %}
-            <li role="treeitem">
-                <details class="group/hub" open>
+            {% set zoneFilter = (group.label ~ ' ' ~ group.family ~ ' ' ~ group.folder|default('') ~ ' ' ~ group.url_segment|default(''))|lower %}
+            <li role="treeitem" class="hub-tree-zone" data-hub-tree-zone data-filter-text="{{ zoneFilter|e('html_attr') }}">
+                <details class="group/tree" open>
                     <summary class="flex cursor-pointer list-none items-center gap-0.5 rounded px-0.5 py-0.5 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden">
                         <span class="inline-flex shrink-0 rounded p-0.5 text-zinc-400" aria-hidden="true">
-                            <svg class="h-3.5 w-3.5 shrink-0 transition group-open/hub:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+                            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform duration-150 group-open/tree:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
                         </span>
                         {% if onFamily %}
                             <span class="flex min-w-0 flex-1 items-center gap-1 rounded bg-zinc-100 px-1 py-0.5 font-medium text-zinc-900"
@@ -32,7 +38,7 @@
                                 <span class="truncate">{{ group.label }}</span>
                             </span>
                         {% else %}
-                            <a href="{{ path('workspace_hub_family_show', {slug: workspace.slug, family: group.family}) }}"
+                            <a href="{{ path('workspace_hub_family_show', {slug: workspace.slug, zone: group.url_segment|default(group.family), family: group.family}) }}"
                                class="flex min-w-0 flex-1 items-center gap-1 rounded px-1 py-0.5 font-medium text-zinc-800 hover:bg-zinc-50"
                                {% if group.folder|default('') != '' %}title="{{ group.folder }}"{% endif %}
                                onclick="event.stopPropagation()">
@@ -48,7 +54,8 @@
                         {% for item in group.items %}
                             {% set diskPath = item.disk_path|default(item.hub_path|default('')) %}
                             {% set onDiskNode = active_disk_node_path|default('') == diskPath %}
-                            <li role="treeitem">
+                            {% set itemFilter = (item.name ~ ' ' ~ diskPath)|lower %}
+                            <li role="treeitem" class="hub-tree-node" data-hub-tree-node data-filter-text="{{ itemFilter|e('html_attr') }}">
                                 {% if onDiskNode %}
                                     <span class="flex items-center gap-1 rounded bg-zinc-100 px-1 py-0.5 font-medium text-zinc-900">
                                         {% include 'workspace/_hub_tree_icon.html.twig' with {
@@ -76,3 +83,59 @@
         {% endfor %}
     </ul>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('hub-tree-filter');
+    var nav = document.getElementById('hub-tree-nav');
+    if (input === null || nav === null) {
+        return;
+    }
+    function normalize(value) {
+        if (typeof value !== 'string') {
+            return '';
+        }
+        return value.trim().toLowerCase();
+    }
+    function applyHubTreeFilter() {
+        var query = normalize(input.value);
+        var zones = nav.querySelectorAll('[data-hub-tree-zone]');
+        var i = 0;
+        for (i = 0; i < zones.length; i = i + 1) {
+            var zone = zones[i];
+            var zoneText = normalize(zone.getAttribute('data-filter-text'));
+            var zoneMatch = query === '' || zoneText.indexOf(query) !== -1;
+            var nodes = zone.querySelectorAll('[data-hub-tree-node]');
+            var visibleNodes = 0;
+            var j = 0;
+            for (j = 0; j < nodes.length; j = j + 1) {
+                var node = nodes[j];
+                var nodeText = normalize(node.getAttribute('data-filter-text'));
+                var nodeMatch = false;
+                if (query === '') {
+                    nodeMatch = true;
+                } else {
+                    nodeMatch = zoneMatch || nodeText.indexOf(query) !== -1;
+                }
+                if (nodeMatch) {
+                    node.classList.remove('hidden');
+                    visibleNodes = visibleNodes + 1;
+                } else {
+                    node.classList.add('hidden');
+                }
+            }
+            var showZone = query === '' || zoneMatch || visibleNodes > 0;
+            if (showZone) {
+                zone.classList.remove('hidden');
+                var details = zone.querySelector('details');
+                if (details !== null && query !== '') {
+                    details.open = true;
+                }
+            } else {
+                zone.classList.add('hidden');
+            }
+        }
+    }
+    input.addEventListener('input', applyHubTreeFilter);
+});
+</script>

@@ -1,0 +1,16 @@
+<ul class="mt-3 space-y-1 text-sm">
+    {% for entry in root_creatable_files %}
+        <li class="flex flex-wrap items-center gap-2">
+            <span class="font-mono text-zinc-800">{{ entry.file }}</span>
+            {% if existing_root_files[entry.file]|default(false) %}
+                <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: entry.file}) }}" class="text-zinc-600 hover:underline">открыть</a>
+            {% else %}
+                <form method="post" action="{{ path('workspace_hub_create_root_file', {slug: workspace.slug, family: 'root'}) }}" class="inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('hub_create_root_file') }}">
+                    <input type="hidden" name="root_file" value="{{ entry.file }}">
+                    <button type="submit" class="rounded bg-zinc-900 px-2 py-0.5 text-xs font-medium text-white hover:bg-zinc-800">Создать</button>
+                </form>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

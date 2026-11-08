@@ -3,7 +3,7 @@ status: active
 sort: 10
 hub: database
 tree-ui:
-  icon: group
+  icon: folder
   icon-class: text-violet-400
 extends: nodes/database/_base
 description: 'manifest + подпапки-накопители, без собственных записей'

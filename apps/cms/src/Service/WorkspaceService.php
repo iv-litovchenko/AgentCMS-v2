@@ -10,10 +10,20 @@ class WorkspaceService
 
     private WorkspaceManifestReader $manifestReader;
 
-    public function __construct(string $workspacesDir, WorkspaceManifestReader $manifestReader)
-    {
+    private TypeSchemaRegistry $typeSchemaRegistry;
+
+    private AcmsManifestPropertyBridge $acmsManifestPropertyBridge;
+
+    public function __construct(
+        string $workspacesDir,
+        WorkspaceManifestReader $manifestReader,
+        TypeSchemaRegistry $typeSchemaRegistry,
+        AcmsManifestPropertyBridge $acmsManifestPropertyBridge
+    ) {
         $this->workspacesDir = rtrim($workspacesDir, '/');
         $this->manifestReader = $manifestReader;
+        $this->typeSchemaRegistry = $typeSchemaRegistry;
+        $this->acmsManifestPropertyBridge = $acmsManifestPropertyBridge;
     }
 
     /**
@@ -135,13 +145,13 @@ class WorkspaceService
         }
 
         $properties = [
-            'awn-type' => 'nodes/root/ws',
-            'awn-name' => $name,
-            'awn-description' => '',
+            'acms-type' => 'acms.root.ws',
+            'acms-name' => $name,
+            'acms-description' => '',
             'cms-location' => $location,
-            'awn-sort' => $sortOrder,
-            'awn-create' => $now,
-            'awn-update' => $now,
+            'acms-sort' => $sortOrder,
+            'acms-create' => $now,
+            'acms-update' => $now,
         ];
         if ($avatar !== '') {
             $properties['cms-avatar'] = $avatar;
@@ -194,12 +204,34 @@ class WorkspaceService
         }
 
         $properties = $parts['properties'];
-        $properties['awn-name'] = $name;
+        $properties['acms-name'] = $name;
         $properties['cms-location'] = $location;
-        $properties['awn-sort'] = $sortOrder;
-        $properties['awn-update'] = $this->nowIso();
-        if (!isset($properties['awn-type']) || !is_string($properties['awn-type'])) {
-            $properties['awn-type'] = 'nodes/root/ws';
+        $properties['acms-sort'] = $sortOrder;
+        $properties['acms-update'] = $this->nowIso();
+
+        $typeRaw = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-type');
+        if ($typeRaw === '') {
+            $properties['acms-type'] = 'acms.root.ws';
+        } elseif (str_contains($typeRaw, '/')) {
+            $properties['acms-type'] = $this->typeSchemaRegistry->publicTypeId($typeRaw);
+        } else {
+            $properties['acms-type'] = $typeRaw;
+        }
+
+        $created = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-create');
+        if ($created !== '') {
+            $properties['acms-create'] = $created;
+        }
+
+        $description = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-description');
+        if ($description !== '' && (!isset($properties['acms-description']) || !is_string($properties['acms-description']) || trim($properties['acms-description']) === '')) {
+            $properties['acms-description'] = $description;
+        }
+
+        foreach (array_keys($properties) as $propKey) {
+            if (is_string($propKey) && $this->acmsManifestPropertyBridge->isLegacyAwnKey($propKey)) {
+                unset($properties[$propKey]);
+            }
         }
 
         if ($avatarFile !== null) {
