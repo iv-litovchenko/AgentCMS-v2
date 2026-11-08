@@ -123,6 +123,12 @@ class AppController extends AbstractController
             ]);
         }
 
+        if ($name === 'symfony_ai') {
+            return $this->render('app/symfony_ai/index.html.twig', [
+                'app' => $app,
+            ]);
+        }
+
         if ($name === 'connector') {
             $flashBag = $request->getSession()->getFlashBag();
 

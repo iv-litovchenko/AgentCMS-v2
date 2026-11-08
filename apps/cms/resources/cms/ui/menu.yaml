@@ -42,6 +42,9 @@ apps:
     - label: Типография
       name: typography
       hide_apps_nav: true
+    - label: Symfony AI
+      name: symfony_ai
+      hide_apps_nav: true
 
 # Сервисы на поддоменах: {subdomain}.{PUBLIC_BASE_DOMAIN}
 services:

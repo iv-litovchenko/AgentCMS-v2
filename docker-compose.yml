@@ -9,7 +9,7 @@
 # MCP stub: http://localhost:8080/mcp/
 # API stub: http://localhost:8080/api/
 
-# Имя проекта Compose (не путать с legacy ~/agent-cms — там тоже agent-cms).
+# Имя проекта Compose (legacy: ~/agent-cms, v2: ~/agent-cms-v2, VPS: /var/www/agent-cms-v2).
 name: agent-cms-web
 
 services:

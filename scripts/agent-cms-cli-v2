@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+# Agent CMS — обёртка над docker compose (после scripts/install.sh).
+set -euo pipefail
+
+CONFIG="${HOME}/.config/agent-cms-v2/env"
+
+load_config() {
+    if [ ! -f "${CONFIG}" ]; then
+        echo "Конфиг не найден: ${CONFIG}" >&2
+        echo "Сначала: bash scripts/install.sh  или  curl …/install.sh | bash" >&2
+        exit 1
+    fi
+    # shellcheck disable=SC1090
+    . "${CONFIG}"
+    if [ -z "${AGENT_CMS_ROOT:-}" ] || [ ! -d "${AGENT_CMS_ROOT}" ]; then
+        echo "AGENT_CMS_ROOT не задан или каталог отсутствует." >&2
+        exit 1
+    fi
+}
+
+compose_args() {
+    local files="-f docker-compose.yml"
+    local platform="${AGENT_CMS_PLATFORM:-linux}"
+    if [ "${AGENT_CMS_VPS:-0}" = "1" ]; then
+        files="${files} -f compose/docker-compose.linux.yml"
+    else
+        if [ "${platform}" = "mac" ]; then
+            files="${files} -f compose/docker-compose.mac.yml"
+        elif [ "${platform}" = "windows" ]; then
+            files="${files} -f compose/docker-compose.windows.yml"
+        else
+            files="${files} -f compose/docker-compose.linux.yml"
+        fi
+    fi
+    if [ -f "${AGENT_CMS_ROOT}/docker-compose.override.yml" ]; then
+        files="${files} -f docker-compose.override.yml"
+    fi
+    echo "${files}"
+}
+
+cmd_start() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    # shellcheck disable=SC2046
+    docker compose $(compose_args) up -d --build "$@"
+}
+
+cmd_stop() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    # shellcheck disable=SC2046
+    docker compose $(compose_args) down "$@"
+}
+
+cmd_status() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    echo "ROOT=${AGENT_CMS_ROOT}"
+    echo "PLATFORM=${AGENT_CMS_PLATFORM:-?}"
+    # shellcheck disable=SC2046
+    docker compose $(compose_args) ps
+}
+
+cmd_logs() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    # shellcheck disable=SC2046
+    docker compose $(compose_args) logs -f --tail=100 "$@"
+}
+
+cmd_update() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    if [ -d .git ]; then
+        git pull --ff-only
+    fi
+    echo "Обновление образов…"
+    # shellcheck disable=SC2046
+    docker compose $(compose_args) build
+}
+
+cmd_compose() {
+    load_config
+    cd "${AGENT_CMS_ROOT}"
+    echo "cd ${AGENT_CMS_ROOT} && docker compose $(compose_args) $*"
+}
+
+usage() {
+    cat <<'EOF'
+agent-cms-cli-v2 — Agent CMS
+
+  start [--]          поднять stack (docker compose up -d --build)
+  stop [--]           остановить
+  status              ps + путь установки
+  logs [service]      логи (follow)
+  update              git pull + compose build
+  compose [args…]     показать команду compose
+  help                эта справка
+EOF
+}
+
+main() {
+    local cmd="${1:-help}"
+    if [ "${cmd}" = "help" ] || [ "${cmd}" = "-h" ] || [ "${cmd}" = "--help" ]; then
+        usage
+        exit 0
+    fi
+    shift || true
+    if [ "${cmd}" = "start" ]; then
+        cmd_start "$@"
+    elif [ "${cmd}" = "stop" ]; then
+        cmd_stop "$@"
+    elif [ "${cmd}" = "status" ]; then
+        cmd_status "$@"
+    elif [ "${cmd}" = "logs" ]; then
+        cmd_logs "$@"
+    elif [ "${cmd}" = "update" ]; then
+        cmd_update
+    elif [ "${cmd}" = "compose" ]; then
+        cmd_compose "$@"
+    else
+        echo "Неизвестная команда: ${cmd}" >&2
+        usage >&2
+        exit 1
+    fi
+}
+
+main "$@"

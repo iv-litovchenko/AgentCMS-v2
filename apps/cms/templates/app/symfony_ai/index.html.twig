@@ -1,0 +1,231 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block title %}{{ app.label }} — {{ cms_site_title }}{% endblock %}
+
+{% block app_content %}
+    {% include 'app/_page_plashka.html.twig' with {
+        plashka_label: app.label,
+        plashka_aria_label: app.label,
+    } %}
+
+    <div class="space-y-4">
+        <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-semibold tracking-tight text-zinc-900">Symfony AI 1.0 beta</h2>
+                    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-600">
+                        Официальный стек для LLM в Symfony: провайдеры (Platform), агенты с инструментами (Agent),
+                        векторное хранилище и RAG (Store), CLI для coding-агентов (Mate), MCP на PHP SDK.
+                        Один API для <span class="font-medium text-zinc-800">Text</span>, <span class="font-medium text-zinc-800">Image</span> и <span class="font-medium text-zinc-800">Audio</span> — мультимодальность из коробки.
+                        Для Agent CMS — локальные модели через Ollama рядом с MCP и workspace на диске.
+                    </p>
+                </div>
+                <span class="inline-flex shrink-0 items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-800">
+                    Витрина · пакеты не подключены
+                </span>
+            </div>
+            <dl class="mt-4 grid gap-3 sm:grid-cols-3">
+                <div class="rounded-md border border-zinc-100 bg-zinc-50 px-3 py-2.5">
+                    <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500">Статус в проекте</dt>
+                    <dd class="mt-1 text-sm font-medium text-zinc-900">Заготовка UI и roadmap</dd>
+                </div>
+                <div class="rounded-md border border-zinc-100 bg-zinc-50 px-3 py-2.5">
+                    <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500">Целевой runtime</dt>
+                    <dd class="mt-1 text-sm font-medium text-zinc-900">Ollama в Docker</dd>
+                </div>
+                <div class="rounded-md border border-zinc-100 bg-zinc-50 px-3 py-2.5">
+                    <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500">Связь с CMS</dt>
+                    <dd class="mt-1 text-sm font-medium text-zinc-900">MCP + YAML workspace</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+                <h2 class="text-xs font-medium uppercase tracking-wide text-zinc-500">Быстрый старт</h2>
+                {% include 'home/_section_todo_badge.html.twig' %}
+            </div>
+            <ol class="list-decimal space-y-3 pl-5 text-sm text-zinc-700">
+                <li>
+                    <span class="font-medium text-zinc-900">Ollama</span> на хосте или в compose:
+                    <code class="ml-1 rounded bg-zinc-100 px-1 text-xs">ollama pull qwen2.5</code>
+                </li>
+                <li>
+                    <span class="font-medium text-zinc-900">Composer</span> в <span class="font-mono text-xs">apps/cms</span>:
+                </li>
+            </ol>
+            <pre class="mt-3 overflow-x-auto rounded-md border border-zinc-100 bg-zinc-900 p-3 text-xs leading-relaxed text-zinc-100">composer require symfony/ai-bundle
+composer require symfony/ai-ollama-platform
+# опционально для разработки:
+composer require --dev symfony/ai-mate</pre>
+            <p class="mt-3 text-xs text-zinc-500">config/packages/ai.yaml</p>
+            <pre class="mt-1 overflow-x-auto rounded-md border border-zinc-100 bg-zinc-900 p-3 text-xs leading-relaxed text-zinc-100">ai:
+    platform:
+        ollama:
+            host_url: 'http://ollama:11434'</pre>
+        </section>
+
+        <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+            <h2 class="text-xs font-medium uppercase tracking-wide text-zinc-500">Мультимодальность</h2>
+            <p class="mt-2 max-w-3xl text-sm text-zinc-600">
+                Меняешь модель и тип контента в сообщении — отдельные пакеты для vision через Ollama не нужны (<span class="font-mono text-xs">ai-ollama-platform</span> уже умеет).
+            </p>
+            <div class="mt-4 grid gap-4 lg:grid-cols-2">
+                <div class="rounded-md border border-zinc-100 p-4">
+                    <h3 class="text-sm font-semibold text-zinc-900">Картинки (vision)</h3>
+                    <p class="mt-2 text-sm text-zinc-600">
+                        Изображение в сообщение — например файл из <span class="font-mono text-xs">awn-storage</span> или вложение пользователя.
+                    </p>
+                    <pre class="mt-3 overflow-x-auto rounded-md border border-zinc-100 bg-zinc-900 p-3 text-xs leading-relaxed text-zinc-100">use Symfony\AI\Platform\Message\Content\Image;
+
+// в теле сообщения агента:
+Image::fromFile('/path/to/photo.jpg')</pre>
+                    <p class="mt-3 text-xs text-zinc-500">Ollama · vision-модели</p>
+                    <ul class="mt-1 space-y-1 text-sm text-zinc-700">
+                        <li class="font-mono text-xs">llama3.2-vision</li>
+                        <li class="font-mono text-xs">llava</li>
+                        <li class="font-mono text-xs">gemma3</li>
+                        <li class="font-mono text-xs">moondream</li>
+                    </ul>
+                    <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                        CMS: описание скриншота, подпись к медиа, «что на фото» по ссылке из workspace.
+                    </p>
+                </div>
+                <div class="rounded-md border border-zinc-100 p-4">
+                    <h3 class="text-sm font-semibold text-zinc-900">Голос · TTS / STT</h3>
+                    <p class="mt-2 text-sm text-zinc-600">
+                        <span class="font-medium text-zinc-800">TTS</span> — текст в речь;
+                        <span class="font-medium text-zinc-800">STT</span> — речь в текст. Тот же Platform API, тип <span class="font-mono text-xs">Audio</span>.
+                    </p>
+                    <p class="mt-3 text-xs font-medium uppercase tracking-wide text-zinc-500">Локально · Ollama</p>
+                    <p class="mt-1 text-sm text-zinc-700">
+                        Модель <span class="font-mono text-xs">phonon</span> (Ollama ≥ 0.40.9):
+                    </p>
+                    <pre class="mt-2 overflow-x-auto rounded-md border border-zinc-100 bg-zinc-900 p-3 text-xs text-zinc-100">ollama pull phonon</pre>
+                    <p class="mt-4 text-xs font-medium uppercase tracking-wide text-zinc-500">Облако · качество голоса</p>
+                    <ul class="mt-1 space-y-1 text-sm text-zinc-700">
+                        <li><span class="font-mono text-xs">symfony/ai-eleven-labs-platform</span></li>
+                        <li><span class="font-mono text-xs">symfony/ai-deepgram-platform</span></li>
+                    </ul>
+                    <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                        CMS: озвучка заметки, расшифровка голосового в markdown, доступность без ухода с self-hosted.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid gap-4 lg:grid-cols-2">
+            <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+                <h3 class="text-sm font-semibold text-zinc-900">Platform · Ollama</h3>
+                <p class="mt-2 text-sm text-zinc-600">
+                    Единая абстракция над провайдером: сегодня локальный Ollama, завтра облако — без смены кода агента.
+                </p>
+                <ul class="mt-3 space-y-2 text-sm text-zinc-700">
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Llama 3, Gemma, Qwen и др. через pull</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Данные workspace не уходят наружу</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Отдельный compose-сервис <span class="font-mono text-xs">ollama</span> + volume моделей</li>
+                </ul>
+                <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                    Экран: ping <span class="font-mono">/api/tags</span>, список моделей, выбор default для CMS.
+                </p>
+            </section>
+
+            <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+                <h3 class="text-sm font-semibold text-zinc-900">Agent · инструменты</h3>
+                <p class="mt-2 text-sm text-zinc-600">
+                    Агент с tool calling: те же операции, что MCP, но из PHP-сервисов Symfony.
+                </p>
+                <ul class="mt-3 space-y-2 text-sm text-zinc-700">
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Чтение / поиск / запись в workspace (flock, temp+rename)</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Саммари заметки, черновик по типу из YAML</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Классификация входящего текста в слот / тему</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> CLI-команда параллельно веб-UI</li>
+                </ul>
+                <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                    Экран: чат-пробник с выбором тула и JSON trace вызовов.
+                </p>
+            </section>
+
+            <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+                <h3 class="text-sm font-semibold text-zinc-900">Store · RAG</h3>
+                <p class="mt-2 text-sm text-zinc-600">
+                    Индексация markdown/YAML workspace для семантического поиска и контекста в ответах.
+                </p>
+                <ul class="mt-3 space-y-2 text-sm text-zinc-700">
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Source of truth остаётся на диске; Store — вторичный слой</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Пересборка индекса по крону / после записи</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Связка с гибридным поиском из skills Agent CMS</li>
+                </ul>
+                <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                    Экран: статус индекса, «задать вопрос по workspace», цитаты из файлов.
+                </p>
+            </section>
+
+            <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+                <h3 class="text-sm font-semibold text-zinc-900">MCP Bundle · Mate</h3>
+                <p class="mt-2 text-sm text-zinc-600">
+                    MCP — канал для Cursor и внешних агентов; Mate — dev-only доступ к профайлеру, логам, контейнеру DI.
+                </p>
+                <ul class="mt-3 space-y-2 text-sm text-zinc-700">
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Текущий MCP-контейнер + токены в «Коннектор»</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> PHP MCP SDK — те же tools без дублирования логики</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Mate: CLI без отдельного MCP-процесса для Symfony</li>
+                </ul>
+                <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
+                    Экран: ссылки на доку MCP, чеклист «tool ↔ PHP service».
+                </p>
+            </section>
+        </div>
+
+        <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+            <h2 class="text-xs font-medium uppercase tracking-wide text-zinc-500">Roadmap для Agent CMS</h2>
+            <div class="mt-3 overflow-x-auto">
+                <table class="w-full min-w-[32rem] text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-zinc-100 text-xs uppercase tracking-wide text-zinc-500">
+                            <th class="py-2 pr-4 font-medium">Шаг</th>
+                            <th class="py-2 pr-4 font-medium">Что даёт</th>
+                            <th class="py-2 font-medium">Приоритет</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 text-zinc-700">
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">1</td>
+                            <td class="py-2.5 pr-4">Ollama в docker-compose + ai.yaml</td>
+                            <td class="py-2.5"><span class="rounded bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800">высокий</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">2</td>
+                            <td class="py-2.5 pr-4">Один Agent + tools read/search workspace</td>
+                            <td class="py-2.5"><span class="rounded bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800">высокий</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">3</td>
+                            <td class="py-2.5 pr-4">Store + переиндексация по workspace UUID</td>
+                            <td class="py-2.5"><span class="rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-900">средний</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">4</td>
+                            <td class="py-2.5 pr-4">AJAX <span class="font-mono text-xs">/ajax/ai/…</span> для UI «Чат»</td>
+                            <td class="py-2.5"><span class="rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-900">средний</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">5</td>
+                            <td class="py-2.5 pr-4">Vision (<span class="font-mono text-xs">Image</span>) + STT/TTS (<span class="font-mono text-xs">phonon</span> или ElevenLabs/Deepgram)</td>
+                            <td class="py-2.5"><span class="rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-900">средний</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">6</td>
+                            <td class="py-2.5 pr-4">symfony/ai-mate в dev-образе</td>
+                            <td class="py-2.5"><span class="rounded bg-zinc-100 px-1.5 py-0.5 text-xs font-medium text-zinc-600">низкий</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-xs text-zinc-500">
+                Маршрут: <span class="font-mono">/app/symfony_ai</span> · конфиг меню:
+                <span class="font-mono">resources/cms/ui/menu.yaml</span>
+            </p>
+        </section>
+    </div>
+{% endblock %}
