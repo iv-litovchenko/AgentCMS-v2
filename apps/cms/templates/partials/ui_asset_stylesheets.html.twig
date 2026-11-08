@@ -1,0 +1,5 @@
+{% for package in ui_asset_active_packages(extra|default([])) %}
+    {% for sheet in package.stylesheets %}
+        <link href="{{ sheet.href }}" rel="stylesheet" data-ui-package="{{ package.id }}" />
+    {% endfor %}
+{% endfor %}

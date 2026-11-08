@@ -5,6 +5,8 @@ parameters:
     app.workspaces_dir: '%env(default:app_workspaces_dir_default:WORKSPACES_DIR)%'
     app_workspaces_dir_default: '%kernel.project_dir%/../../workspaces'
     app.ui_menu_config: '%kernel.project_dir%/resources/cms/ui/menu.yaml'
+    app.ui_asset_packages_registry: '%kernel.project_dir%/resources/cms/ui/asset-packages.yaml'
+    app.ui_asset_toggles_file: '%kernel.project_dir%/var/ui/asset-toggles.yaml'
     app.footer_quotes_registry: '%kernel.project_dir%/resources/cms/ui/footer-quotes.yaml'
     app.header_quotes_registry: '%kernel.project_dir%/resources/cms/ui/header-quotes.yaml'
     app.starter_packages_registry: '%kernel.project_dir%/resources/cms/starter/packages.yaml'
@@ -50,6 +52,11 @@ services:
     App\Service\WorkspaceService:
         arguments:
             $workspacesDir: '%app.workspaces_dir%'
+
+    App\Service\UiAssetPackageService:
+        arguments:
+            $registryPath: '%app.ui_asset_packages_registry%'
+            $togglesFilePath: '%app.ui_asset_toggles_file%'
 
     App\Service\UiMenuService:
         arguments:

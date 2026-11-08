@@ -26,7 +26,7 @@ COPY --from=vendor /app/vendor ./vendor
 COPY apps/cms/ .
 COPY --from=assets /work/apps/cms/public/build ./public/build
 COPY shared/php /var/www/shared/php
-RUN mkdir -p var/cache var/log var/starter var/connector && chown -R www-data:www-data var \
+RUN mkdir -p var/cache var/log var/starter var/connector var/ui && chown -R www-data:www-data var \
     && echo "error_log=/var/www/cms/var/log/php.log" > /usr/local/etc/php/conf.d/cms-error-log.ini
 
 USER www-data

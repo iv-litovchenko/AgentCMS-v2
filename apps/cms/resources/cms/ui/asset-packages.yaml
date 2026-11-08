@@ -1,0 +1,28 @@
+# UI-библиотеки: ядро (Tailwind) + опциональные CDN/npm. Состояние — var/ui/asset-toggles.yaml
+# На странице: {% set ui_asset_extra = ['flowbite'] %} до extends
+
+items:
+  - id: tailwind
+    label: Tailwind CSS
+    core: true
+    default_enabled: true
+    description: Сборка public/build/app.css (npm run build)
+  - id: flowbite
+    label: Flowbite
+    core: false
+    default_enabled: false
+    description: Компоненты поверх Tailwind (модалки, табы)
+    stylesheets:
+      - href: https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css
+    scripts:
+      - src: https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js
+    form_theme: form/themes/flowbite_layout.html.twig
+  - id: fancybox
+    label: Fancybox
+    core: false
+    default_enabled: false
+    description: Галерея и лайтбокс для изображений
+    stylesheets:
+      - href: https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css
+    scripts:
+      - src: https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js

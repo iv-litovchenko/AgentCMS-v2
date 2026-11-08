@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {% include 'partials/ui_asset_stylesheets.html.twig' with {extra: ui_asset_extra|default([])} %}
+{% endblock %}
+
+{% block javascripts %}
+    {% include 'partials/ui_asset_scripts.html.twig' with {extra: ui_asset_extra|default([])} %}
+{% endblock %}
+
 {% block body %}
     {% include 'partials/header.html.twig' %}
     {% block main %}{% endblock %}

@@ -1,14 +1,10 @@
+{% set ui_asset_extra = ['flowbite'] %}
 {% extends 'app/documentation/layout.html.twig' %}
 
 {% set is_compact = compact|default(false) %}
 {% set page_title = section.label|default('Типография') %}
 
 {% block title %}{{ page_title }} — {{ cms_site_title }}{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {% include 'typography/_assets.html.twig' %}
-{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}

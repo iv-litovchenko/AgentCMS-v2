@@ -1,0 +1,5 @@
+{% for package in ui_asset_active_packages(extra|default([])) %}
+    {% for script in package.scripts %}
+        <script src="{{ script.src }}" data-ui-package="{{ package.id }}"></script>
+    {% endfor %}
+{% endfor %}
