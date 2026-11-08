@@ -521,10 +521,25 @@ class TypeSchemaRegistry
      */
     public function resolveTreeUiForTypeId(string $typeId, string $workspaceSlug = ''): array
     {
-        $def = null;
+        $canonicalId = '';
         if ($typeId !== '') {
+            $canonicalId = $this->normalizeTypeId($typeId);
+        }
+
+        $def = null;
+        if ($canonicalId !== '') {
+            $def = $this->resolveType($canonicalId, $workspaceSlug);
+        }
+        if ($def === null && $typeId !== '' && $typeId !== $canonicalId) {
             $def = $this->resolveType($typeId, $workspaceSlug);
         }
+        if ($def === null) {
+            return [
+                'icon' => 'folder',
+                'icon_class' => 'text-zinc-400',
+            ];
+        }
+
         $ui = $this->resolveHubTreeUi($def);
         $icon = 'folder';
         $iconClass = 'text-zinc-400';
@@ -535,10 +550,32 @@ class TypeSchemaRegistry
             $iconClass = $ui['icon_class'];
         }
 
+        if ($this->typeKindUiFor($def) === 'group') {
+            if ($icon === 'folder' || $icon === '') {
+                $icon = 'group';
+            }
+        }
+
         return [
             'icon' => $icon,
             'icon_class' => $iconClass,
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $typeDef
+     */
+    private function typeKindUiFor(array $typeDef): string
+    {
+        $kindUi = $typeDef['kind-ui'] ?? null;
+        if (!is_array($kindUi)) {
+            return '';
+        }
+        if (!isset($kindUi['for']) || !is_string($kindUi['for'])) {
+            return '';
+        }
+
+        return trim($kindUi['for']);
     }
 
     /**

@@ -2,8 +2,8 @@ name: Группа
 status: active
 hub: repository
 tree-ui:
-  icon: folder
-  icon-class: text-orange-400
+  icon: group
+  icon-class: text-amber-500
 extends: nodes/_base
 description: 'manifest.node.md + подпапки репозиториев, без собственного клона'
 storage-slots: {  }

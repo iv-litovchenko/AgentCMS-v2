@@ -3,8 +3,8 @@ status: active
 sort: 10
 hub: database
 tree-ui:
-  icon: folder
-  icon-class: text-violet-400
+  icon: group
+  icon-class: text-amber-500
 extends: nodes/database/_base
 description: 'manifest + подпапки-накопители, без собственных записей'
 kind-ui:

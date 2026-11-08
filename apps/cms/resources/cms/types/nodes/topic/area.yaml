@@ -4,7 +4,7 @@ hub: topic
 extends: nodes/_base
 tree-ui:
   icon: folder
-  icon-class: text-teal-600
+  icon-class: text-amber-500
 view:
   screen:
     template: workspace/hubs/_default.html.twig

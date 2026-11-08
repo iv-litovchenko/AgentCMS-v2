@@ -2,8 +2,8 @@ name: Группа
 status: active
 hub: media
 tree-ui:
-  icon: folder
-  icon-class: text-sky-400
+  icon: group
+  icon-class: text-amber-500
 extends: nodes/_base
 description: 'manifest.node.md + подпапки медиатек, без собственных files/assets'
 storage-slots: {  }

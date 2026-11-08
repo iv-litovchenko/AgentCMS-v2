@@ -5,6 +5,6 @@ tree-ui:
   label: Каналы
   sort: 10
   icon: channel
-  icon-class: text-indigo-600
+  icon-class: text-emerald-600
 extends: hubs/_base
 description: 'Ingress-каналы в acms-channels/'

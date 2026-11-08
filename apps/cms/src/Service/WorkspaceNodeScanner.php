@@ -98,7 +98,18 @@ class WorkspaceNodeScanner
 
             $typeId = '';
             if (is_array($parsed) && isset($parsed['properties']) && is_array($parsed['properties'])) {
-                $typeId = $this->acmsManifestPropertyBridge->stringProperty($parsed['properties'], 'acms-type');
+                $rawTypeId = $this->acmsManifestPropertyBridge->stringProperty($parsed['properties'], 'acms-type');
+                if ($rawTypeId !== '') {
+                    $canonicalTypeId = $this->typeSchemaRegistry->normalizeTypeId($rawTypeId);
+                    if ($canonicalTypeId !== '') {
+                        $typeId = $canonicalTypeId;
+                    } else {
+                        $typeId = $rawTypeId;
+                    }
+                }
+            }
+            if ($typeId === '' && $isWorkspaceRoot) {
+                $typeId = $this->resolveRootMarkdownFileTypeId($filename, $workspaceSlug);
             }
 
             $treeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $workspaceSlug);
@@ -184,6 +195,28 @@ class WorkspaceNodeScanner
     /**
      * @param array{properties: array<string, mixed>, body: string}|null $parsed
      */
+    private function resolveRootMarkdownFileTypeId(string $filename, string $workspaceSlug): string
+    {
+        $filename = trim($filename);
+        if ($filename === '') {
+            return '';
+        }
+
+        foreach ($this->nodeDiskManifestRegistry->listRootCreatableFiles($workspaceSlug) as $entry) {
+            if (!isset($entry['file']) || !is_string($entry['file'])) {
+                continue;
+            }
+            if ($entry['file'] !== $filename) {
+                continue;
+            }
+            if (isset($entry['type_id']) && is_string($entry['type_id']) && $entry['type_id'] !== '') {
+                return $entry['type_id'];
+            }
+        }
+
+        return 'nodes/root/_file';
+    }
+
     private function resolveInstanceName(?array $parsed, string $diskPath, string $filename): string
     {
         if (is_array($parsed)) {

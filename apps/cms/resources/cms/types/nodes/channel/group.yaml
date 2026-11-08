@@ -2,8 +2,8 @@ name: Группа
 status: active
 hub: channel
 tree-ui:
-  icon: folder
-  icon-class: text-indigo-400
+  icon: group
+  icon-class: text-amber-500
 extends: nodes/_base
 description: 'manifest.node.md + подпапки каналов, без собственного ingress'
 storage-slots: {  }

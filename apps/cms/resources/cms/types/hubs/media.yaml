@@ -5,6 +5,6 @@ tree-ui:
   label: Медиатека
   sort: 40
   icon: image
-  icon-class: text-sky-500
+  icon-class: text-emerald-600
 extends: hubs/_base
 description: 'Медиатеки в acms-media/'

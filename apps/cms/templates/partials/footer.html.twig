@@ -1,4 +1,26 @@
 <footer class="mt-auto border-t border-zinc-200 bg-white">
+    <div class="mx-auto max-w-6xl px-4 pt-2 sm:px-6">
+        <details class="group/buf border-b border-zinc-100">
+            <summary class="flex cursor-pointer list-none items-center gap-2 py-2 text-xs font-medium text-zinc-800 hover:text-zinc-900 [&::-webkit-details-marker]:hidden">
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform duration-150 group-open/buf:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+                <span class="min-w-0 flex-1">Буфер контекста</span>
+                {% include 'home/_section_todo_badge.html.twig' %}
+            </summary>
+            <div class="pb-3 pl-5 text-xs leading-snug text-zinc-600">
+                <p class="text-zinc-500">Черновик — сюда попадёт быстрый контекст для агента.</p>
+            </div>
+        </details>
+        <details class="group/file border-b border-zinc-100">
+            <summary class="flex cursor-pointer list-none items-center gap-2 py-2 text-xs font-medium text-zinc-800 hover:text-zinc-900 [&::-webkit-details-marker]:hidden">
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform duration-150 group-open/file:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+                <span class="min-w-0 flex-1">Файлообменник</span>
+                {% include 'home/_section_todo_badge.html.twig' %}
+            </summary>
+            <div class="pb-3 pl-5 text-xs leading-snug text-zinc-600">
+                <p class="text-zinc-500">Черновик — обмен файлами с сессией.</p>
+            </div>
+        </details>
+    </div>
     <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>{{ cms_site_title }} · v{{ app_version }}</p>
         {% if footer_quote %}

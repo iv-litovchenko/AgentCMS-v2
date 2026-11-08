@@ -3,6 +3,9 @@ status: active
 sort: 20
 hub: database
 extends: nodes/database/_base
+tree-ui:
+  icon: database
+  icon-class: text-violet-600
 description: 'manifest + schema в корне; записи в awn-storage/data/, вложения в awn-storage/assets/'
 kind-ui:
   for: collection

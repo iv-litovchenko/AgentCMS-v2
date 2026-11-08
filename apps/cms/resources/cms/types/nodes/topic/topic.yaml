@@ -5,7 +5,7 @@ hub: topic
 extends: nodes/_base
 tree-ui:
   icon: file
-  icon-class: text-emerald-600
+  icon-class: text-zinc-500
 view:
   screen:
     template: workspace/hubs/topic_topic.html.twig
