@@ -16,12 +16,12 @@
             </div>
 
             <div>
-                {{ form_label(form.folder, null, {label_attr: {class: 'mb-1 block text-sm font-medium text-zinc-700'}}) }}
-                {{ form_widget(form.folder, {attr: {class: 'block w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:ring-blue-500'}}) }}
-                {% if form.folder.vars.help is not empty %}
-                    <p class="mt-1 text-xs text-zinc-500">{{ form.folder.vars.help }}</p>
+                {{ form_label(form.slug, null, {label_attr: {class: 'mb-1 block text-sm font-medium text-zinc-700'}}) }}
+                {{ form_widget(form.slug, {attr: {class: 'block w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 font-mono text-sm text-zinc-900 focus:border-blue-500 focus:ring-blue-500'}}) }}
+                {% if form.slug.vars.help is not empty %}
+                    <p class="mt-1 text-xs text-zinc-500">{{ form.slug.vars.help }}</p>
                 {% endif %}
-                {{ form_errors(form.folder) }}
+                {{ form_errors(form.slug) }}
             </div>
 
             <div>
@@ -35,12 +35,6 @@
                 {{ form_widget(form.sortOrder, {attr: {class: 'block w-full max-w-[8rem] rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:ring-blue-500'}}) }}
                 <p class="mt-1 text-xs text-zinc-500">Меньшее число — выше в списке.</p>
                 {{ form_errors(form.sortOrder) }}
-            </div>
-
-            <div>
-                {{ form_label(form.description, null, {label_attr: {class: 'mb-1 block text-sm font-medium text-zinc-700'}}) }}
-                {{ form_widget(form.description, {attr: {class: 'block w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:ring-blue-500'}}) }}
-                {{ form_errors(form.description) }}
             </div>
 
             <div>
