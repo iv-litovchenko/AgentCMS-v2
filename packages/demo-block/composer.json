@@ -2,7 +2,7 @@
     "name": "agent-cms/page-demo-block",
     "description": "Demo page block (home cube) for Agent CMS",
     "type": "symfony-bundle",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "version": "0.0.1",
     "require": {
         "php": ">=8.2",

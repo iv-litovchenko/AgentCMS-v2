@@ -86,3 +86,33 @@ agent-cms-cli-v2 env show                         # ключи .env (секре�
 agent-cms-cli-v2 env show --reveal KEY            # один ключ без маски
 agent-cms-cli-v2 env set KEY=VALUE                # запись в .env (whitelist .env.example)
 ```
+
+## Переменные окружения
+
+Корневой `.env` (из `.env.example`), в контейнер — через compose. Подробнее: `resources/cms/starter/env.registry.yaml`, правка — `agent-cms-cli-v2 env set`.
+
+| Группа | Переменная | По умолчанию | Назначение |
+|--------|------------|--------------|------------|
+| UI / URL | `CMS_SITE_TITLE` | `Agent CMS` | Заголовок сайта |
+| UI / URL | `PUBLIC_BASE_DOMAIN` | `localhost` | Домен ссылок |
+| UI / URL | `PUBLIC_HTTP_PORT` | `8080` (`80` prod) | HTTP proxy |
+| UI / URL | `PUBLIC_HTTPS_PORT` | `8443` (`443` prod) | HTTPS proxy |
+| UI / URL | `PUBLIC_PREFERRED_SCHEME` | `https` | Протокол в UI |
+| UI / URL | `REDIRECT_HTTP_TO_HTTPS` | `1` | Редирект на HTTPS |
+| Symfony | `APP_ENV` | `dev` / `prod` | Режим (dev-профиль compose) |
+| Symfony | `APP_DEBUG` | `1` / `0` | Отладка |
+| Symfony | `APP_SECRET` | — | Сессии, CSRF |
+| Symfony | `DEFAULT_URI` | `https://localhost:8443` | Базовый URL |
+| Symfony | `APP_HOST_PLATFORM` | `mac`/`linux`/`windows` | Стартер |
+| Symfony | `PROJECT_README_PATH` | корневой README | Документация в CMS |
+| Данные | `DATABASE_URL` | `postgresql://…@db:5432/agentcms` | PostgreSQL |
+| Данные | `REDIS_URL` | `redis://redis:6379` | Кеш |
+| Данные | `WORKSPACES_DIR` | `/var/www/workspaces` | Volume `workspaces/` |
+| Prod | `TLS_CERTS_DIR` | `./deploy/certs` | TLS prod-compose |
+| Служебная | `MAINTENANCE_MODE_FILE` | `var/cli/maintenance-mode` | Режим 503 |
+
+## Лицензия
+
+Copyright © 2026 Agent CMS
+
+Исходный код распространяется под [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-or-later).
