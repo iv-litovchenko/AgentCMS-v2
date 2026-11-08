@@ -8,8 +8,8 @@ description: |
 path: files/
 slot-order: 8
 allowed-containers:
-  - hubs/media/media
-  - hubs/channel/channel
+  - nodes/media/media
+  - nodes/channel/channel
 allowed-content:
   - content/record
   - content/category

@@ -1,26 +1,88 @@
-<header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
-    <h1 class="text-xl font-semibold tracking-tight text-zinc-900">{{ hub_group.label }}</h1>
+{% import _self as family %}
+
+{% macro hub_tile_link(workspace, item) %}
+    <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: item.disk_path != '' ? item.disk_path : '_'}) }}"
+       class="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-2 text-sm hover:border-zinc-300 hover:bg-white"
+       title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
+        {% include 'workspace/_hub_tree_icon.html.twig' with {
+            icon: item.tree_icon|default('folder'),
+            icon_class: item.tree_icon_class|default('text-zinc-400'),
+        } %}
+        <span class="min-w-0 truncate font-medium text-zinc-900">{{ item.name }}</span>
+    </a>
+{% endmacro %}
+
+{% for message in app.flashes('success') %}
+    <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ message }}</div>
+{% endfor %}
+
+{% include 'workspace/_breadcrumbs.html.twig' %}
+
+<header class="rounded-lg border border-zinc-200 bg-white px-3 py-3 shadow-sm">
+    <h1 class="text-base font-semibold tracking-tight text-zinc-900">{{ hub_group.label }}</h1>
     {% if hub_group.folder|default('') != '' %}
-        <p class="mt-1 font-mono text-xs text-zinc-500">{{ hub_group.folder }}</p>
+        <p class="mt-0.5 font-mono text-xs text-zinc-500">{{ hub_group.folder }}</p>
     {% endif %}
 </header>
 
-<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
-    <h2 class="text-sm font-medium text-zinc-900">Типы hub</h2>
-    {% if hub_group.items|length > 0 %}
-        <ul class="mt-3 space-y-1 text-sm">
-            {% for item in hub_group.items %}
+{% if hub_family == 'root' and root_creatable_files|default([])|length > 0 %}
+    <section class="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+        <ul class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+            {% for entry in root_creatable_files %}
                 <li>
-                    <a href="{{ path('workspace_hub_show', {slug: workspace.slug, hub: item.hub_path}) }}"
-                       class="text-zinc-700 hover:text-zinc-900 hover:underline">{{ item.name }}</a>
-                    <span class="font-mono text-xs text-zinc-400">hubs/{{ item.hub_path }}</span>
+                    {% if existing_root_files[entry.file]|default(false) %}
+                        <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: entry.file}) }}"
+                           class="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-2 text-sm hover:border-zinc-300 hover:bg-white">
+                            {% include 'workspace/_hub_tree_icon.html.twig' with { icon: 'file', icon_class: 'text-zinc-500' } %}
+                            <span class="truncate font-medium text-zinc-900">{{ entry.label }}</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}?family=root"
+                           class="flex items-center gap-2 rounded-md border border-dashed border-zinc-200 px-2.5 py-2 text-sm text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50">
+                            {% include 'workspace/_hub_tree_icon.html.twig' with { icon: 'file', icon_class: 'text-zinc-400' } %}
+                            <span class="truncate">{{ entry.label }}</span>
+                        </a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p class="mt-2 text-sm text-zinc-500">Нет зарегистрированных типов в этой семье.</p>
+    </section>
+{% else %}
+    {% set known_type_ids = [] %}
+    {% for type_item in hub_group.type_items|default([]) %}
+        {% set known_type_ids = known_type_ids|merge(['nodes/' ~ type_item.hub_path]) %}
+    {% endfor %}
+    {% set other_items = hub_group.items|filter(item => item.type_id|default('') == '' or item.type_id|default('') not in known_type_ids) %}
+
+    {% for type_item in hub_group.type_items|default([]) %}
+        {% set type_id = 'nodes/' ~ type_item.hub_path %}
+        {% set typed_items = hub_group.items|filter(item => item.type_id|default('') == type_id) %}
+        {% if typed_items|length > 0 %}
+            {% include type_item.family_view_template|default('workspace/hubs/family/_type_section.html.twig') with {
+                type_item: type_item,
+                typed_items: typed_items,
+                workspace: workspace,
+                hub_family: hub_family,
+            } %}
+        {% endif %}
+    {% endfor %}
+
+    {% if other_items|length > 0 %}
+        {% include 'workspace/hubs/family/_type_section.html.twig' with {
+            type_item: { name: hub_group.label },
+            typed_items: other_items,
+            workspace: workspace,
+            hub_family: hub_family,
+        } %}
     {% endif %}
-    {% if hub_family_base.description is defined %}
-        <p class="mt-4 text-sm text-zinc-600">{{ hub_family_base.description }}</p>
+
+    {% if hub_group.items|length == 0 %}
+        <section class="rounded-lg border border-dashed border-zinc-200 bg-zinc-50 px-3 py-6 text-center text-sm text-zinc-500 shadow-sm">
+            В зоне пока нет узлов.
+            <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}?family={{ hub_family }}" class="mt-1 block font-medium text-zinc-800 hover:underline">Создать</a>
+        </section>
     {% endif %}
-</section>
+{% endif %}

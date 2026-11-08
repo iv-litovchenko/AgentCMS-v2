@@ -1,4 +1,4 @@
-name: 'База семьи repository'
+name: 'Зона repository'
 status: active
 folder: acms-repositories
 tree-ui:
@@ -7,4 +7,4 @@ tree-ui:
   icon: code
   icon-class: text-orange-600
 extends: hubs/_base
-description: 'Карточка репозитория в awn-repositories/'
+description: 'Репозитории в acms-repositories/'

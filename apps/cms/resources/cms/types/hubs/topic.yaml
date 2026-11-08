@@ -1,4 +1,4 @@
-name: 'База семьи topic'
+name: 'Зона topic'
 status: active
 folder: acms-topics
 tree-ui:
@@ -7,4 +7,4 @@ tree-ui:
   icon: topic
   icon-class: text-emerald-600
 extends: hubs/_base
-description: 'Дерево тем workspace — ws, area, section, topic'
+description: 'Дерево тем workspace'

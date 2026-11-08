@@ -1,52 +1,5 @@
-name: 'База hub-узла'
+name: 'База зоны hub'
 status: active
-manifest-pattern: manifest.node.md
-tree-ui:
-  icon: folder
-  icon-class: text-amber-500
 extends: base/base
 description: |
-  Общая база hub-карточек workspace. Семьи: root/, topic/ (дерево), channel/, media/, repository/; накопители — hubs/database/ (awn.hub.database.*).
-mixins:
-  - mixins/indexing-container
-form:
-  panel-title: '{A2!} Свойства hub'
-fields:
-  awn-main:
-    type: fields/boolean
-    title: '{A2!} На главной'
-    description: 'Показывать в карусели на главной странице'
-    default: false
-    placement: aside-body
-    group: nav
-    sort: 1
-  awn-focus:
-    type: fields/boolean
-    title: '{A2!} В фокусе'
-    description: 'Показывать в быстром навигаторе workspace'
-    default: false
-    placement: aside-body
-    group: nav
-    sort: 2
-  awn-slots-template:
-    type: fields/choice/one
-    title: '{A2!} Шаблон слотов'
-    description: |
-      standard — типовые слоты awn-storage; flexible — весь awn-storage/ (кроме assets/, history/, comments/); minimal — однофайловые слоты (main.md, todo, таблица…); none — только инструкция и todo
-    default: standard
-    placement: aside-body
-    group: nav
-    sort: 3
-    enum:
-      -
-        key: flexible
-        name: 'Гибкий слот'
-      -
-        key: standard
-        name: 'Стандартные слоты'
-      -
-        key: minimal
-        name: 'Минимум слотов (стандарт)'
-      -
-        key: none
-        name: 'Без слотов (только инструкция)'
+  Зона workspace: папка на диске (folder), подпись и иконка в дереве (tree-ui). Типы узлов — в nodes/, поле hub.

@@ -9,8 +9,8 @@ path: assets/
 slot-order: 9
 allowed-containers:
   - awn.page.topic
-  - hubs/media/media
-  - hubs/channel/channel
+  - nodes/media/media
+  - nodes/channel/channel
 allowed-content:
   - content/record
   - content/category

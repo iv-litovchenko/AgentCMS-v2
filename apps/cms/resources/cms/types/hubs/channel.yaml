@@ -1,4 +1,4 @@
-name: 'База семьи channel'
+name: 'Зона channel'
 status: active
 folder: acms-channels
 tree-ui:
@@ -7,4 +7,4 @@ tree-ui:
   icon: channel
   icon-class: text-indigo-600
 extends: hubs/_base
-description: 'Карточка канала ingress в awn-channels/'
+description: 'Ingress-каналы в acms-channels/'

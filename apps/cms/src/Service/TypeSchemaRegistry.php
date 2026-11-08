@@ -117,7 +117,7 @@ class TypeSchemaRegistry
     }
 
     /**
-     * @return list<array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}>
+     * @return list<array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array<string, mixed>>, type_items: list<array{id: string, hub_path: string, name: string}>}>
      */
     public function listHubTreeGroups(string $workspaceSlug = ''): array
     {
@@ -129,7 +129,27 @@ class TypeSchemaRegistry
             if (!str_starts_with($id, 'hubs/')) {
                 continue;
             }
-            if ($id === 'hubs/_base' || str_ends_with($id, '/_base')) {
+            if ($id === 'hubs/_base') {
+                continue;
+            }
+            $parts = explode('/', $id);
+            if (count($parts) !== 2) {
+                continue;
+            }
+
+            $family = $parts[1];
+            $hubDef = $this->resolveType($id, $workspaceSlug);
+            if (!is_array($hubDef)) {
+                continue;
+            }
+            $groups[$family] = $this->buildHubTreeGroupShell($family, $hubDef);
+        }
+
+        foreach ($ids as $id) {
+            if (!str_starts_with($id, 'nodes/')) {
+                continue;
+            }
+            if ($id === 'nodes/_base' || str_ends_with($id, '/_base')) {
                 continue;
             }
 
@@ -138,11 +158,30 @@ class TypeSchemaRegistry
                 continue;
             }
 
-            $family = $parts[1];
-            $hubPath = implode('/', array_slice($parts, 1));
-
             $def = $this->resolveType($id, $workspaceSlug);
-            $name = $hubPath;
+            if (is_array($def) && isset($def['status']) && is_string($def['status']) && $def['status'] === 'draft') {
+                continue;
+            }
+
+            $hubKey = '';
+            if (is_array($def) && isset($def['hub']) && is_string($def['hub']) && $def['hub'] !== '') {
+                $hubKey = $def['hub'];
+            }
+            if ($hubKey === '') {
+                continue;
+            }
+
+            if (!isset($groups[$hubKey])) {
+                $hubZoneId = 'hubs/' . $hubKey;
+                $hubDef = $this->resolveType($hubZoneId, $workspaceSlug);
+                if (!is_array($hubDef)) {
+                    continue;
+                }
+                $groups[$hubKey] = $this->buildHubTreeGroupShell($hubKey, $hubDef);
+            }
+
+            $nodePath = implode('/', array_slice($parts, 1));
+            $name = $nodePath;
             if (is_array($def)) {
                 if (isset($def['name']) && is_string($def['name']) && $def['name'] !== '') {
                     $name = $def['name'];
@@ -151,19 +190,20 @@ class TypeSchemaRegistry
                 }
             }
 
-            if (!isset($groups[$family])) {
-                $familyBaseId = 'hubs/' . $family . '/_base';
-                $familyBase = $this->resolveType($familyBaseId, $workspaceSlug);
-                if (!is_array($familyBase)) {
-                    continue;
-                }
-                $groups[$family] = $this->buildHubTreeGroupShell($family, $familyBase);
+            if (!isset($groups[$hubKey]['type_items'])) {
+                $groups[$hubKey]['type_items'] = [];
             }
 
-            $groups[$family]['items'][] = [
+            $sort = 100;
+            if (is_array($def) && isset($def['sort'])) {
+                $sort = (int) $def['sort'];
+            }
+
+            $groups[$hubKey]['type_items'][] = [
                 'id' => $id,
-                'hub_path' => $hubPath,
+                'hub_path' => $nodePath,
                 'name' => $name,
+                'sort' => $sort,
             ];
         }
 
@@ -173,6 +213,22 @@ class TypeSchemaRegistry
                 return strcmp($a['hub_path'], $b['hub_path']);
             });
             $result[$index]['items'] = $group['items'];
+            if (isset($group['type_items']) && is_array($group['type_items'])) {
+                $typeItems = $group['type_items'];
+                usort($typeItems, function (array $a, array $b): int {
+                    $sortA = $a['sort'] ?? 100;
+                    $sortB = $b['sort'] ?? 100;
+                    if ($sortA === $sortB) {
+                        return strcmp($a['hub_path'], $b['hub_path']);
+                    }
+                    if ($sortA < $sortB) {
+                        return -1;
+                    }
+
+                    return 1;
+                });
+                $result[$index]['type_items'] = $typeItems;
+            }
         }
 
         usort($result, function (array $a, array $b): int {
@@ -192,8 +248,120 @@ class TypeSchemaRegistry
     }
 
     /**
+     * Служебные .md в корне workspace (AGENTS.md и т.д.) — типы nodes/root/* с manifest-pattern.
+     *
+     * @return list<array{file: string, preset: string, label: string, type_id: string, sort: int}>
+     */
+    public function listRootDiskManifestTypes(string $workspaceSlug = ''): array
+    {
+        $result = [];
+        foreach ($this->listResolvedTypeIds($workspaceSlug) as $id) {
+            if (!str_starts_with($id, 'nodes/root/')) {
+                continue;
+            }
+            if ($id === 'nodes/root/_file' || $id === 'nodes/root/ws' || $id === 'nodes/root/root') {
+                continue;
+            }
+
+            $def = $this->resolveType($id, $workspaceSlug);
+            if (!is_array($def)) {
+                continue;
+            }
+            if (isset($def['status']) && is_string($def['status']) && $def['status'] === 'draft') {
+                continue;
+            }
+
+            $pattern = '';
+            if (isset($def['manifest-pattern']) && is_string($def['manifest-pattern'])) {
+                $pattern = trim($def['manifest-pattern']);
+            }
+            if ($pattern === '' || $pattern === 'manifest.node.md' || str_contains($pattern, '/')) {
+                continue;
+            }
+
+            $preset = '';
+            if (isset($def['create-preset']) && is_string($def['create-preset'])) {
+                $preset = trim($def['create-preset']);
+            }
+
+            $label = $pattern;
+            if (isset($def['name']) && is_string($def['name']) && $def['name'] !== '') {
+                $label = $def['name'];
+            }
+
+            $sort = 100;
+            if (isset($def['sort'])) {
+                $sort = (int) $def['sort'];
+            }
+
+            $result[] = [
+                'file' => $pattern,
+                'preset' => $preset,
+                'label' => $label,
+                'type_id' => $id,
+                'sort' => $sort,
+            ];
+        }
+
+        usort($result, function (array $a, array $b): int {
+            if ($a['sort'] === $b['sort']) {
+                return strcmp($a['file'], $b['file']);
+            }
+            if ($a['sort'] < $b['sort']) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        return $result;
+    }
+
+    /**
      * @return array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}|null
      */
+    public function resolveDefaultNodeTypeIdForHub(string $hubFamily, string $workspaceSlug = ''): string
+    {
+        $hubFamily = trim($hubFamily);
+        $fallback = '';
+        $ids = $this->listResolvedTypeIds($workspaceSlug);
+        foreach ($ids as $id) {
+            if (!str_starts_with($id, 'nodes/')) {
+                continue;
+            }
+            if ($id === 'nodes/_base' || str_ends_with($id, '/_base')) {
+                continue;
+            }
+
+            $def = $this->resolveType($id, $workspaceSlug);
+            if (!is_array($def)) {
+                continue;
+            }
+
+            if (isset($def['status']) && is_string($def['status']) && $def['status'] === 'draft') {
+                continue;
+            }
+
+            $hub = '';
+            if (isset($def['hub']) && is_string($def['hub'])) {
+                $hub = $def['hub'];
+            }
+            if ($hub !== $hubFamily) {
+                continue;
+            }
+
+            if ($fallback === '') {
+                $fallback = $id;
+            }
+
+            if (isset($def['default']) && $def['default'] === true) {
+                return $id;
+            }
+        }
+
+        return $fallback;
+    }
+
     public function findHubTreeGroupByFamily(string $family, string $workspaceSlug = ''): ?array
     {
         $family = trim($family);
@@ -207,13 +375,13 @@ class TypeSchemaRegistry
             }
         }
 
-        $familyBaseId = 'hubs/' . $family . '/_base';
-        $familyBase = $this->resolveType($familyBaseId, $workspaceSlug);
-        if ($familyBase === null) {
+        $hubZoneId = 'hubs/' . $family;
+        $hubZone = $this->resolveType($hubZoneId, $workspaceSlug);
+        if ($hubZone === null) {
             return null;
         }
 
-        return $this->buildHubTreeGroupShell($family, $familyBase);
+        return $this->buildHubTreeGroupShell($family, $hubZone);
     }
 
     /**
@@ -243,6 +411,32 @@ class TypeSchemaRegistry
             'tree_icon' => $treeUi['icon'],
             'tree_icon_class' => $treeUi['icon_class'],
             'items' => [],
+            'type_items' => [],
+        ];
+    }
+
+    /**
+     * @return array{icon: string, icon_class: string}
+     */
+    public function resolveTreeUiForTypeId(string $typeId, string $workspaceSlug = ''): array
+    {
+        $def = null;
+        if ($typeId !== '') {
+            $def = $this->resolveType($typeId, $workspaceSlug);
+        }
+        $ui = $this->resolveHubTreeUi($def);
+        $icon = 'folder';
+        $iconClass = 'text-zinc-400';
+        if (isset($ui['icon']) && is_string($ui['icon'])) {
+            $icon = $ui['icon'];
+        }
+        if (isset($ui['icon_class']) && is_string($ui['icon_class'])) {
+            $iconClass = $ui['icon_class'];
+        }
+
+        return [
+            'icon' => $icon,
+            'icon_class' => $iconClass,
         ];
     }
 
@@ -588,6 +782,9 @@ class TypeSchemaRegistry
         $root = $parts[0];
         if ($root === 'hubs') {
             return 'hub';
+        }
+        if ($root === 'nodes') {
+            return 'node';
         }
         if ($root === 'slots') {
             return 'slot';

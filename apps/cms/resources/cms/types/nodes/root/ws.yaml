@@ -1,0 +1,9 @@
+name: Workspace
+status: active
+default: true
+hub: root
+extends: nodes/_base
+description: 'Корневой манифест workspace — manifest.node.md или manifest.md в корне хранилища'
+tree-ui:
+  icon: root
+  icon-class: text-zinc-600

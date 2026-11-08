@@ -1,6 +1,10 @@
 name: Секция
-status: draft
-extends: hubs/topic/_base
+status: active
+hub: topic
+extends: nodes/_base
+tree-ui:
+  icon: section
+  icon-class: text-emerald-400
 description: |
   Служебная секция workspace — под awn-topics (awn-topics/0-agent-kit, awn-topics/0-shared, awn-container). Черновик: UI секций — в следующих итерациях.
 storage-slots: {  }

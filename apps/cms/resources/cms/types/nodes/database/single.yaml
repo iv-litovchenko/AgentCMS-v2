@@ -1,6 +1,8 @@
 name: Одиночка
 status: active
-extends: hubs/database/_base
+sort: 30
+hub: database
+extends: nodes/database/_base
 description: 'manifest + schema в корне; main.md в awn-storage/data/'
 kind-ui:
   for: single

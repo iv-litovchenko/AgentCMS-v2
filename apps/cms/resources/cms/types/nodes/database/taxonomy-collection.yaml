@@ -1,6 +1,8 @@
 name: 'Справочник таксономии'
 status: active
-extends: hubs/database/collection
+sort: 40
+hub: database
+extends: nodes/database/collection
 description: 'CSV-коллекция в taxonomies; ключ в awn-taxonomy берётся из slug папки'
 kind-ui:
   for: collection

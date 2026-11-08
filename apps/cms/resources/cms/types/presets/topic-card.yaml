@@ -1,5 +1,5 @@
 name: 'Карточка темы'
-for_type: hubs/topic/topic
+for_type: nodes/topic/topic
 form:
   - awn-name
   - awn-description

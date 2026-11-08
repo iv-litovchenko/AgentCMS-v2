@@ -1,6 +1,10 @@
-name: 'Канал ingress (workspace)'
+name: Канал
 status: active
-extends: hubs/channel/_base
+hub: channel
+extends: nodes/_base
+tree-ui:
+  icon: channel
+  icon-class: text-indigo-600
 description: |
   Карточка канала в awn-channels/{slug}/ — manifest.md и awn-storage/: inbox/ (ingress), task-queue/ (очередь задач), outbox/ (исходящие), files/ и assets/ (как у медиатеки). Triage сырого потока до тем и инфоблоков.
 storage-slots:

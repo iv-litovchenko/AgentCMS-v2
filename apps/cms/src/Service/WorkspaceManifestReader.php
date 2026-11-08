@@ -87,7 +87,7 @@ class WorkspaceManifestReader
 
         $typeId = $this->stringProperty($properties, 'awn-type');
         if ($typeId === '') {
-            $typeId = 'hubs/topic/ws';
+            $typeId = 'nodes/root/ws';
         }
 
         return [

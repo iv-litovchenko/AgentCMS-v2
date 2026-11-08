@@ -135,7 +135,7 @@ class WorkspaceService
         }
 
         $properties = [
-            'awn-type' => 'hubs/topic/ws',
+            'awn-type' => 'nodes/root/ws',
             'awn-name' => $name,
             'awn-description' => '',
             'cms-location' => $location,
@@ -199,7 +199,7 @@ class WorkspaceService
         $properties['awn-sort'] = $sortOrder;
         $properties['awn-update'] = $this->nowIso();
         if (!isset($properties['awn-type']) || !is_string($properties['awn-type'])) {
-            $properties['awn-type'] = 'hubs/topic/ws';
+            $properties['awn-type'] = 'nodes/root/ws';
         }
 
         if ($avatarFile !== null) {
@@ -326,7 +326,7 @@ class WorkspaceService
             $updatedAt = $createdAt;
         }
 
-        $typeId = 'hubs/topic/ws';
+        $typeId = 'nodes/root/ws';
         if (isset($meta['type_id']) && is_string($meta['type_id']) && $meta['type_id'] !== '') {
             $typeId = $meta['type_id'];
         }
@@ -366,6 +366,16 @@ class WorkspaceService
     private function workspacePath(string $slug): string
     {
         return $this->workspacesDir . '/' . $slug;
+    }
+
+    public function getWorkspaceDirectory(string $slug): ?string
+    {
+        $path = $this->workspacePath($slug);
+        if (!is_dir($path)) {
+            return null;
+        }
+
+        return $path;
     }
 
     private function manifestPath(string $slug): string
@@ -479,6 +489,11 @@ class WorkspaceService
         return (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format(\DateTimeInterface::ATOM);
     }
 
+    public function writeFileAtomicPublic(string $path, string $content): void
+    {
+        $this->writeFileAtomic($path, $content);
+    }
+
     private function writeFileAtomic(string $path, string $content): void
     {
         $dir = dirname($path);
@@ -551,5 +566,68 @@ class WorkspaceService
         }
 
         return rmdir($realDir);
+    }
+
+    public function resolveRevealAbsolutePath(string $slug, string $relativePath): ?string
+    {
+        $base = $this->getWorkspaceDirectory($slug);
+        if ($base === null) {
+            return null;
+        }
+
+        $relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+        if (str_contains($relativePath, '..')) {
+            return null;
+        }
+
+        if ($relativePath === '') {
+            $realBase = realpath($base);
+            if ($realBase === false) {
+                return null;
+            }
+
+            return $realBase;
+        }
+
+        $target = $base . '/' . $relativePath;
+        $realBase = realpath($base);
+        if ($realBase === false) {
+            return null;
+        }
+
+        $realTarget = realpath($target);
+        if ($realTarget === false) {
+            $parent = dirname($target);
+            $realTarget = realpath($parent);
+            if ($realTarget === false) {
+                return null;
+            }
+        }
+
+        if (!str_starts_with($realTarget, $realBase)) {
+            return null;
+        }
+
+        return $realTarget;
+    }
+
+    public function revealInFileManager(string $slug, string $relativePath): bool
+    {
+        $path = $this->resolveRevealAbsolutePath($slug, $relativePath);
+        if ($path === null) {
+            return false;
+        }
+
+        if (PHP_OS_FAMILY !== 'Darwin') {
+            return false;
+        }
+
+        if (is_file($path)) {
+            exec('open -R ' . escapeshellarg($path));
+        } else {
+            exec('open ' . escapeshellarg($path));
+        }
+
+        return true;
     }
 }

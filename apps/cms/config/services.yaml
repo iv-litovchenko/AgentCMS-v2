@@ -11,6 +11,7 @@ parameters:
     app.ui_menu_config: '%kernel.project_dir%/resources/cms/ui/menu.yaml'
     app.workspace_modules_config: '%kernel.project_dir%/resources/cms/ui/workspace-modules.yaml'
     app.hub_views_config: '%kernel.project_dir%/resources/cms/ui/hub-views.yaml'
+    app.node_disk_manifests_config: '%kernel.project_dir%/resources/cms/ui/node-disk-manifests.yaml'
     app.ui_asset_packages_registry: '%kernel.project_dir%/resources/cms/ui/asset-packages.yaml'
     app.ui_asset_toggles_file: '%kernel.project_dir%/var/ui/asset-toggles.yaml'
     app.footer_quotes_registry: '%kernel.project_dir%/resources/cms/ui/footer-quotes.yaml'
@@ -76,6 +77,14 @@ services:
     App\Service\HubViewRegistry:
         arguments:
             $configPath: '%app.hub_views_config%'
+
+    App\Service\NodeDiskManifestRegistry:
+        arguments:
+            $configPath: '%app.node_disk_manifests_config%'
+
+    App\Service\TypeViewResolver:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
 
     App\Service\UiAssetPackageService:
         arguments:

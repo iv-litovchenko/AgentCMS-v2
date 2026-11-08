@@ -1,15 +1,11 @@
-name: 'База накопителя'
+name: 'База node database'
 status: active
-folder: acms-databases
-manifest-pattern: manifest.node.md
+hub: database
+extends: nodes/_base
 tree-ui:
-  label: Базы
-  sort: 30
   icon: database
   icon-class: text-violet-500
-extends: base/base
-description: |
-  Инфоблок в awn-databases/: manifest.md (бриф, контекст, инструкция) + записи. Аналог страницы в pages, но без узла меню — контейнер данных.
+description: 'Инфоблок в acms-databases/'
 mixins:
   - mixins/indexing-container
 form:

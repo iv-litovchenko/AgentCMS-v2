@@ -1,0 +1,16 @@
+name: Группа
+status: active
+hub: channel
+tree-ui:
+  icon: group
+  icon-class: text-indigo-400
+extends: nodes/_base
+description: 'manifest.node.md + подпапки каналов, без собственного ingress'
+storage-slots: {  }
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#e0e7ff'
+    border: '#a5b4fc'
+    text: '#4338ca'

@@ -1,0 +1,18 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ disk_node_label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            {% include 'workspace/_breadcrumbs.html.twig' %}
+            {% include disk_node_view_template with {
+                disk_node: disk_node,
+                disk_node_path: disk_node_path,
+                disk_node_label: disk_node_label,
+                disk_node_type_id: disk_node_type_id|default(''),
+                workspace: workspace,
+            } %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,6 +1,8 @@
 name: Коллекция
 status: active
-extends: hubs/database/_base
+sort: 20
+hub: database
+extends: nodes/database/_base
 description: 'manifest + schema в корне; записи в awn-storage/data/, вложения в awn-storage/assets/'
 kind-ui:
   for: collection

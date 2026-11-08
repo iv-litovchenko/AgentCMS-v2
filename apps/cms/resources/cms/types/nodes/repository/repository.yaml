@@ -1,6 +1,10 @@
-name: 'Репозиторий (workspace)'
+name: Репозиторий
 status: active
-extends: hubs/repository/_base
+hub: repository
+extends: nodes/_base
+tree-ui:
+  icon: code
+  icon-class: text-orange-600
 description: |
   Карточка исходников в awn-repositories/{slug}/ — в индексе manifest.md и readme.md (регистр не важен); код клона по умолчанию не индексируется.
 form:

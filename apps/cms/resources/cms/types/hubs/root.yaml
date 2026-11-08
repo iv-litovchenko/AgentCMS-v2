@@ -1,0 +1,10 @@
+name: 'Зона root'
+status: active
+folder: .
+tree-ui:
+  label: Корень
+  sort: 5
+  icon: root
+  icon-class: text-zinc-600
+extends: hubs/_base
+description: 'Корень workspace — AGENTS.md, SKILL.md, manifest.node.md и др. (см. node-disk-manifests.yaml)'

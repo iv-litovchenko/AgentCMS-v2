@@ -1,0 +1,16 @@
+name: Группа
+status: active
+hub: repository
+tree-ui:
+  icon: group
+  icon-class: text-orange-400
+extends: nodes/_base
+description: 'manifest.node.md + подпапки репозиториев, без собственного клона'
+storage-slots: {  }
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#ffedd5'
+    border: '#fdba74'
+    text: '#c2410c'

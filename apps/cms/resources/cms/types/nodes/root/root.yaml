@@ -1,4 +1,8 @@
 name: Корень
 status: active
-extends: hubs/root/_base
+hub: root
+extends: nodes/_base
 description: 'Узел корня — читает manifest.node.md (или manifest.md) из корня workspace'
+tree-ui:
+  icon: root
+  icon-class: text-zinc-600

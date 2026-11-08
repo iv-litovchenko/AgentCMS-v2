@@ -1,0 +1,10 @@
+name: 'Зона database'
+status: active
+folder: acms-databases
+tree-ui:
+  label: Базы
+  sort: 30
+  icon: database
+  icon-class: text-violet-500
+extends: hubs/_base
+description: 'Инфоблоки и накопители в acms-databases/'

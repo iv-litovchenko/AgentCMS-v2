@@ -1,6 +1,10 @@
-name: 'Медиатека (workspace)'
+name: Медиатека
 status: active
-extends: hubs/media/_base
+hub: media
+extends: nodes/_base
+tree-ui:
+  icon: image
+  icon-class: text-sky-500
 description: |
   Карточка медиатеки workspace в awn-media/{slug}/ — manifest.md и awn-storage/ (files/, assets/). Зависимые и независимые файлы: байты здесь, ссылки из тем — по path. Внутри слотов — awn.content.record, awn.content.category, awn.annotation.sidecar (как media/assets у темы). Разделы — один уровень под files/ или assets/, без вложенных категорий.
 storage-slots:

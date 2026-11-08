@@ -1,4 +1,4 @@
-name: 'База семьи media'
+name: 'Зона media'
 status: active
 folder: acms-media
 tree-ui:
@@ -7,4 +7,4 @@ tree-ui:
   icon: image
   icon-class: text-sky-500
 extends: hubs/_base
-description: 'Карточка медиатеки в awn-media/'
+description: 'Медиатеки в acms-media/'

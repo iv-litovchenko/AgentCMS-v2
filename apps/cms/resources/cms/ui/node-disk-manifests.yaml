@@ -1,0 +1,4 @@
+# Имена корневых .md — типы nodes/root/* (manifest-pattern).
+# Здесь только суффиксы manifest-файлов папочных узлов.
+suffixes:
+  - .node.md

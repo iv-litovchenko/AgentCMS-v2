@@ -1,0 +1,16 @@
+name: Группа
+status: active
+hub: media
+tree-ui:
+  icon: group
+  icon-class: text-sky-400
+extends: nodes/_base
+description: 'manifest.node.md + подпапки медиатек, без собственных files/assets'
+storage-slots: {  }
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#e0f2fe'
+    border: '#7dd3fc'
+    text: '#0369a1'
