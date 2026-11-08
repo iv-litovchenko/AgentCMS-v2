@@ -6,7 +6,7 @@ extends: nodes/database/_base
 tree-ui:
   icon: database
   icon-class: text-violet-600
-description: 'manifest + schema в корне; записи в awn-storage/data/, вложения в awn-storage/assets/'
+description: 'manifest + schema в корне; записи в 0-storage/data/, вложения в 0-storage/assets/'
 kind-ui:
   for: collection
   label: Коллекция

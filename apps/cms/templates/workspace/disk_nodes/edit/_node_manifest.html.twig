@@ -1,0 +1,25 @@
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <p class="text-xs text-zinc-500">Системный узел — manifest с <span class="font-mono">acms-type</span>.</p>
+    {% if disk_node_type_id|default('') != '' %}
+        <p class="mt-2 font-mono text-xs text-zinc-600">Тип: {{ disk_node_type_id }}</p>
+    {% endif %}
+    <form method="post" action="{{ app.request.requestUri }}" class="mt-4 space-y-3 text-sm">
+        <input type="hidden" name="_token" value="{{ csrf_token(disk_node_edit_csrf_id) }}">
+        <div>
+            <label class="block text-xs font-medium text-zinc-700" for="disk-node-name">acms-name</label>
+            <input id="disk-node-name" name="disk_node_name" type="text" required value="{{ disk_node_form_name|e('html_attr') }}"
+                   class="mt-1 w-full max-w-lg rounded-md border border-zinc-200 px-2 py-1.5 text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-zinc-700" for="disk-node-description">acms-description</label>
+            <textarea id="disk-node-description" name="disk_node_description" rows="2"
+                      class="mt-1 w-full max-w-lg rounded-md border border-zinc-200 px-2 py-1.5 text-sm">{{ disk_node_form_description }}</textarea>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-zinc-700" for="disk-node-body">Тело (markdown)</label>
+            <textarea id="disk-node-body" name="disk_node_body" rows="8"
+                      class="mt-1 w-full font-mono text-xs rounded-md border border-zinc-200 px-2 py-1.5">{{ disk_node_form_body }}</textarea>
+        </div>
+        <button type="submit" class="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">Сохранить</button>
+    </form>
+</section>

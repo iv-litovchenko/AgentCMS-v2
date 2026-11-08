@@ -152,8 +152,8 @@ fields:
     type: fields/string
     title: 'Папка автоконтекста (shared)'
     description: |
-      Относительный путь от корня workspace — каталог с файлами для always-context (по умолчанию awn-topics/0-shared/0-context/awn-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
-    default: awn-topics/0-shared/0-context/awn-storage/
+      Относительный путь от корня workspace — каталог с файлами для always-context (по умолчанию awn-topics/0-shared/0-context/0-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
+    default: awn-topics/0-shared/0-context/0-storage/
     group: auto-context
     sort: 12
   mcp-mode:

@@ -18,6 +18,6 @@ defaultTemplate: |
 
   ## Подложка (опционально)
 
-  ![Подложка](awn-storage/assets/pasted/map-placeholder.png)
+  ![Подложка](0-storage/assets/pasted/map-placeholder.png)
 
   <!-- Живая карта (Leaflet/OSM) — позже; пока md + картинка или координаты в таблице. -->

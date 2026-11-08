@@ -10,14 +10,115 @@ class WorkspaceNodeCreator
 
     private WorkspaceManifestReader $manifestReader;
 
+    private WorkspaceNodeScanner $workspaceNodeScanner;
+
     public function __construct(
         WorkspaceService $workspaceService,
         TypeSchemaRegistry $typeSchemaRegistry,
-        WorkspaceManifestReader $manifestReader
+        WorkspaceManifestReader $manifestReader,
+        WorkspaceNodeScanner $workspaceNodeScanner
     ) {
         $this->workspaceService = $workspaceService;
         $this->typeSchemaRegistry = $typeSchemaRegistry;
         $this->manifestReader = $manifestReader;
+        $this->workspaceNodeScanner = $workspaceNodeScanner;
+    }
+
+    public function bootstrapStorageSlotDirectory(string $workspaceSlug, string $nodeDiskPath, string $slotFolder, string $typeId): void
+    {
+        $slotFolder = trim(str_replace('\\', '/', $slotFolder), '/');
+        if ($slotFolder === '' || str_contains($slotFolder, '..')) {
+            throw new \InvalidArgumentException('Некорректный слот.');
+        }
+
+        $allowed = false;
+        $slots = $this->typeSchemaRegistry->listStorageSlotsForNodeType($typeId, $workspaceSlug);
+        foreach ($slots as $slot) {
+            if (!isset($slot['folder']) || !is_string($slot['folder'])) {
+                continue;
+            }
+            if ($slot['folder'] !== $slotFolder) {
+                continue;
+            }
+            if (isset($slot['single_file']) && $slot['single_file'] === true) {
+                throw new \InvalidArgumentException('Слот не является папкой.');
+            }
+            $allowed = true;
+            break;
+        }
+
+        if (!$allowed) {
+            throw new \InvalidArgumentException('Слот не поддерживается типом узла.');
+        }
+
+        $manifestPath = $this->workspaceNodeScanner->resolveDiskNodeAbsolutePath($workspaceSlug, $nodeDiskPath);
+        if ($manifestPath === null) {
+            throw new \InvalidArgumentException('Узел не найден.');
+        }
+
+        $nodeDir = dirname($manifestPath);
+        $storageRoot = $nodeDir . '/' . WorkspaceNodeStorage::DIR_NAME;
+        if (!is_dir($storageRoot)) {
+            if (!mkdir($storageRoot, 0775, true) && !is_dir($storageRoot)) {
+                throw new \RuntimeException('Не удалось создать 0-storage.');
+            }
+        }
+
+        $slotDir = $storageRoot . '/' . $slotFolder;
+        if (!is_dir($slotDir)) {
+            if (!mkdir($slotDir, 0775, true) && !is_dir($slotDir)) {
+                throw new \RuntimeException('Не удалось создать папку слота.');
+            }
+        }
+    }
+
+    public function bootstrapSingleFileSlot(string $workspaceSlug, string $nodeDiskPath, string $relativeFilePath, string $typeId): void
+    {
+        $relativeFilePath = trim(str_replace('\\', '/', $relativeFilePath), '/');
+        if ($relativeFilePath === '' || str_contains($relativeFilePath, '..') || str_contains($relativeFilePath, '/')) {
+            throw new \InvalidArgumentException('Некорректный путь файла слота.');
+        }
+
+        $allowed = false;
+        $slots = $this->typeSchemaRegistry->listStorageSlotsForNodeType($typeId, $workspaceSlug);
+        foreach ($slots as $slot) {
+            if (!isset($slot['single_file']) || $slot['single_file'] !== true) {
+                continue;
+            }
+            if (!isset($slot['relative_path']) || !is_string($slot['relative_path'])) {
+                continue;
+            }
+            if ($slot['relative_path'] !== $relativeFilePath) {
+                continue;
+            }
+            $allowed = true;
+            break;
+        }
+
+        if (!$allowed) {
+            throw new \InvalidArgumentException('Однофайловый слот не поддерживается типом узла.');
+        }
+
+        $manifestPath = $this->workspaceNodeScanner->resolveDiskNodeAbsolutePath($workspaceSlug, $nodeDiskPath);
+        if ($manifestPath === null) {
+            throw new \InvalidArgumentException('Узел не найден.');
+        }
+
+        $nodeDir = dirname($manifestPath);
+        $filePath = $nodeDir . '/' . $relativeFilePath;
+        if (is_file($filePath)) {
+            throw new \InvalidArgumentException('Файл уже существует.');
+        }
+
+        $parentDir = dirname($filePath);
+        if (!is_dir($parentDir)) {
+            if (!mkdir($parentDir, 0775, true) && !is_dir($parentDir)) {
+                throw new \RuntimeException('Не удалось создать каталог.');
+            }
+        }
+
+        $initial = "\n";
+        $this->workspaceService->writeFileAtomicPublic($filePath, $initial);
     }
 
     /**
@@ -105,44 +206,12 @@ class WorkspaceNodeCreator
         $manifestPath = $nodeDir . '/manifest.node.md';
         $this->workspaceService->writeFileAtomicPublic($manifestPath, $this->manifestReader->buildFileContent($properties, "\n"));
 
-        $this->bootstrapStorageSlots($nodeDir, $nodeType);
-
         $diskPath = $this->relativeDiskPath($base, $nodeDir);
 
         return [
             'disk_path' => $diskPath,
             'manifest_path' => $manifestPath,
         ];
-    }
-
-    /**
-     * @param array<string, mixed> $nodeType
-     */
-    private function bootstrapStorageSlots(string $nodeDir, array $nodeType): void
-    {
-        $slots = $nodeType['storage-slots'] ?? null;
-        if (!is_array($slots)) {
-            return;
-        }
-
-        $storageRoot = $nodeDir . '/awn-storage';
-        if (!is_dir($storageRoot)) {
-            mkdir($storageRoot, 0775, true);
-        }
-
-        foreach ($slots as $slot) {
-            if (!is_string($slot) || $slot === '') {
-                continue;
-            }
-            $slot = trim(str_replace('\\', '/', $slot), '/');
-            if ($slot === '' || str_contains($slot, '..')) {
-                continue;
-            }
-            $slotDir = $storageRoot . '/' . $slot;
-            if (!is_dir($slotDir)) {
-                mkdir($slotDir, 0775, true);
-            }
-        }
     }
 
     private function relativeDiskPath(string $workspaceBase, string $nodeDir): string

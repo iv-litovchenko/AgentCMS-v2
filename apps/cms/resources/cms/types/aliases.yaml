@@ -166,8 +166,10 @@ awn.slot.flexible: slots/multi-file/flexible
 awn.slot.history: slots/multi-file/system/history
 awn.slot.inbox: slots/multi-file/inbox
 awn.slot.main: slots/multi-file/main
-awn.slot.main-single: slots/single-file/main-single
-awn.slot.main-single-csv: slots/single-file/main-single-csv
+awn.slot.main-md: slots/single-file/main-md
+awn.slot.main-single: slots/single-file/main-md
+awn.slot.main-csv: slots/single-file/main-csv
+awn.slot.main-single-csv: slots/single-file/main-csv
 awn.slot.media: slots/multi-file/media
 awn.slot.note: slots/multi-file/note
 awn.slot.notebooklm: slots/multi-file/notebooklm
@@ -177,7 +179,8 @@ awn.slot.repository: slots/multi-file/repository
 awn.slot.script: slots/multi-file/scripts
 awn.slot.task-queue: slots/multi-file/task-queue
 awn.slot.templates: slots/multi-file/templates
-awn.slot.todo-single: slots/single-file/todo-single
+awn.slot.todo: slots/single-file/todo
+awn.slot.todo-single: slots/single-file/todo
 concept: viz/concept
 decision: viz/decision
 flowchart: viz/flowchart

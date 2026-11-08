@@ -10,7 +10,7 @@ fields:
     type: fields/file/many
     widget: attachments
     title: '{A2!} Вложения'
-    description: awn-storage/assets/attachments/
+    description: 0-storage/assets/attachments/
     scope: attachments
     placement: aside-hero
     group: content
@@ -18,7 +18,7 @@ fields:
   awn-materials:
     type: fields/materials
     title: '{A2!} Доп. материалы'
-    description: 'Папка awn-storage/assets/materials/{awn-id}/'
+    description: 'Папка 0-storage/assets/materials/{awn-id}/'
     placement: aside-hero
     group: content
     sort: 2

@@ -3,13 +3,16 @@
     {% else %}
         {% set label = key|acms_frontmatter_key %}
         {% set is_type = label == 'acms-type' %}
-        <div class="flex gap-2">
-            <dt class="shrink-0 font-mono text-xs text-zinc-500">{{ label }}</dt>
+        {% set is_name = label == 'acms-name' %}
+        {% if hide_acms_type|default(false) and is_type %}
+        {% elseif hide_acms_name|default(false) and is_name %}
+        {% else %}
+            <dt class="font-mono text-xs leading-5 text-zinc-500">{{ label }}</dt>
             {% if is_type %}
-                <dd class="font-mono text-zinc-800">{{ value|acms_public_type_id }}</dd>
+                <dd class="font-mono text-sm text-zinc-800">{{ value|acms_public_type_id }}</dd>
             {% else %}
-                <dd class="text-zinc-800">{{ value is iterable ? value|json_encode : value }}</dd>
+                <dd class="text-sm text-zinc-800 break-words">{{ value is iterable ? value|json_encode : value }}</dd>
             {% endif %}
-        </div>
+        {% endif %}
     {% endif %}
 {% endfor %}

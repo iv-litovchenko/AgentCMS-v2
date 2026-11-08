@@ -34,7 +34,7 @@ fields:
   awn-record-storage:
     type: fields/string
     title: '{A2!} Хранилище записей'
-    description: 'Формат хранения данных в awn-storage/data/'
+    description: 'Формат хранения данных в 0-storage/data/'
     placement: aside-body
     group: infoblock
     sort: 2

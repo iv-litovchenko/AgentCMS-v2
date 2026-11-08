@@ -3,7 +3,7 @@ status: active
 extends: base/base
 description: |
   Привязки к объектам хранилища (sidecar 1:1 к файлу, comment N:1 к target). Не авторский контент слота — overlay поверх страниц, записей и бинарников.
-  ИДЕЯ — резолв «куда писать файл аннотации» (поля группы attachment, runtime пока не читает): · awn-annotation-bind — якорь (manifest / запись / файл). · awn-annotation-storage-mode — co-located | storage-folder. · awn-annotation-storage-folder — папка под awn-storage (comments, …). Сейчас в коде: comment → comments/{target}/ + path/file API; sidecar → {stem}.sidecar.md.
+  ИДЕЯ — резолв «куда писать файл аннотации» (поля группы attachment, runtime пока не читает): · awn-annotation-bind — якорь (manifest / запись / файл). · awn-annotation-storage-mode — co-located | storage-folder. · awn-annotation-storage-folder — папка под 0-storage (comments, …). Сейчас в коде: comment → comments/{target}/ + path/file API; sidecar → {stem}.sidecar.md.
 kind-ui:
   for: type
   label: Аннотация
@@ -51,7 +51,7 @@ fields:
     type: fields/choice/one
     title: '{A2!} [Идея] Куда сохранять файл'
     description: |
-      co-located — рядом с файлом-якорем (sidecar). storage-folder — под awn-storage/<folder>/ от узла якоря; нет папки — подъём по дереву страниц.
+      co-located — рядом с файлом-якорем (sidecar). storage-folder — под 0-storage/<folder>/ от узла якоря; нет папки — подъём по дереву страниц.
     placement: aside-body
     group: attachment
     sort: 2
@@ -62,10 +62,10 @@ fields:
         name: 'Рядом с файлом (sidecar)'
       -
         key: storage-folder
-        name: 'Папка в awn-storage (comments/…)'
+        name: 'Папка в 0-storage (comments/…)'
   awn-annotation-storage-folder:
     type: fields/string
-    title: '{A2!} [Идея] Папка под awn-storage'
+    title: '{A2!} [Идея] Папка под 0-storage'
     description: |
       Имя слоя при storage-folder, напр. comments. Пусто при co-located. Для comment сейчас фактически всегда comments/ (слот awn.slot.comments).
     placement: aside-body

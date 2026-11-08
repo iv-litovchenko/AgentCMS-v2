@@ -1,20 +1,116 @@
-<header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
-    <h1 class="text-xl font-semibold tracking-tight text-zinc-900">{{ disk_node_label }}</h1>
-    <p class="mt-2 font-mono text-xs text-zinc-500">
-        {% if disk_node_path != '' %}{{ disk_node_path }}/{% endif %}{{ disk_node.manifest_file }}
-    </p>
-    {% if disk_node_type_id|default('') != '' %}
-        <p class="mt-1 font-mono text-xs text-zinc-400">{{ disk_node_type_id }}</p>
-    {% endif %}
-</header>
-
-<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
-    <h2 class="text-sm font-medium text-zinc-900">Frontmatter</h2>
-    <dl class="mt-2 space-y-1 text-sm">
-        {% include 'workspace/_frontmatter_dl.html.twig' with { frontmatter_properties: disk_node.properties } %}
-    </dl>
-    {% if disk_node.body|default('')|trim != '' %}
-        <h2 class="mt-4 text-sm font-medium text-zinc-900">Тело</h2>
-        <pre class="mt-2 max-h-64 overflow-auto rounded border border-zinc-100 bg-zinc-50 p-3 text-xs text-zinc-700 whitespace-pre-wrap">{{ disk_node.body|trim }}</pre>
+{% set disk_node_edit_path = disk_node_path != '' ? disk_node_path ~ '~edit' : disk_node.manifest_file ~ '~edit' %}
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+    <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-lg font-semibold tracking-tight text-zinc-900">{{ disk_node_label }}</h1>
+                {% if disk_node_type_id|default('') != '' %}
+                    <span class="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 font-mono text-[10px] text-zinc-600">{{ disk_node_type_id }}</span>
+                {% endif %}
+            </div>
+            <p class="mt-1.5 truncate font-mono text-[11px] text-zinc-500" title="{% if disk_node_path != '' %}{{ disk_node_path }}/{% endif %}{{ disk_node.manifest_file }}">
+                {% if disk_node_path != '' %}{{ disk_node_path }}/{% endif %}{{ disk_node.manifest_file }}
+            </p>
+        </div>
+        <a href="{{ path('workspace_disk_node_edit', {slug: workspace.slug, nodePath: disk_node_edit_path}) }}"
+           class="shrink-0 rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+            Редактировать
+        </a>
+    </div>
+    {% if disk_node.properties|default([])|length > 0 %}
+        <dl class="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 border-t border-zinc-100 pt-3 text-sm sm:grid-cols-[minmax(8.5rem,10rem)_minmax(0,1fr)]">
+            {% include 'workspace/_frontmatter_dl.html.twig' with {
+                frontmatter_properties: disk_node.properties,
+                hide_acms_type: disk_node_type_id|default('') != '',
+                hide_acms_name: true,
+            } %}
+        </dl>
     {% endif %}
 </section>
+
+{% if disk_node.body|default('')|trim != '' %}
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+    <pre class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{{ disk_node.body|trim }}</pre>
+</section>
+{% endif %}
+
+{% if disk_node_storage_slots|default([])|length > 0 %}
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+    <h2 class="text-xs font-medium uppercase tracking-wide text-zinc-500">Многофайловые слоты</h2>
+    <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {% for slot in disk_node_storage_slots %}
+            {% set slot_disk_path = slot.slot_disk_path|default(disk_node_path != '' ? disk_node_path ~ '/' ~ slot.display_path|default(slot.folder ~ '/')|trim('/') : slot.display_path|default(slot.folder ~ '/')|trim('/')) %}
+            <li class="flex min-w-0 flex-col gap-1.5 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-2" title="{% if slot.category|default('') != '' %}{{ slot.category }}{% endif %}">
+                <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: slot_disk_path}) }}" class="flex min-w-0 items-start gap-2 hover:opacity-90">
+                    <span class="mt-0.5 shrink-0">
+                        {% include 'workspace/_hub_tree_icon.html.twig' with {
+                            icon: slot.icon|default('folder'),
+                            icon_class: slot.icon_class|default('text-zinc-500'),
+                        } %}
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate font-mono text-[11px] text-zinc-800">{{ slot.display_path|default(slot.folder ~ '/') }}</p>
+                        {% if slot.name != slot.folder %}
+                            <p class="mt-0.5 truncate text-xs text-zinc-600">{{ slot.name }}</p>
+                        {% endif %}
+                    </div>
+                    <span class="shrink-0 tabular-nums text-xs font-medium text-zinc-700" title="Файлов в папке (рекурсивно)">{{ slot.entry_count|default(0) }}</span>
+                </a>
+                {% if slot.accept_files_label|default('') != '' %}
+                    <p class="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] leading-snug text-amber-900" role="alert">Допустимо: {{ slot.accept_files_label }}</p>
+                {% endif %}
+                {% if slot.exists_on_disk|default(true) == false %}
+                    <form method="post" action="{{ path('workspace_disk_slot_create', {slug: workspace.slug, nodePath: slot_disk_path ~ '~create-slot'}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token(slot.create_csrf_id) }}">
+                        <button type="submit" class="w-full rounded-md border border-dashed border-zinc-300 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                            Создать слот
+                        </button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
+{% for slot in disk_node_single_file_slots|default([]) %}
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex min-w-0 flex-1 items-start gap-2">
+            <span class="mt-0.5 shrink-0">
+                {% include 'workspace/_hub_tree_icon.html.twig' with {
+                    icon: slot.icon|default('file'),
+                    icon_class: slot.icon_class|default('text-zinc-500'),
+                } %}
+            </span>
+            <div class="min-w-0 flex-1">
+                <h2 class="text-sm font-medium text-zinc-900">{{ slot.name }}</h2>
+                <p class="mt-0.5 font-mono text-[11px] text-zinc-500">{{ slot.display_path|default(slot.relative_path) }}</p>
+            </div>
+        </div>
+        <div class="flex shrink-0 items-center gap-2">
+            {% if slot.file_exists|default(false) %}
+                <a href="{{ path('workspace_disk_node_edit', {slug: workspace.slug, nodePath: slot.file_disk_path ~ '~edit'}) }}"
+                   class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                    Редактировать
+                </a>
+            {% else %}
+                <form method="post" action="{{ path('workspace_disk_single_file_create', {slug: workspace.slug, nodePath: slot.file_disk_path ~ '~create-single-file'}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token(slot.create_csrf_id) }}">
+                    <button type="submit"
+                            class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                        Создать
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    {% if slot.file_exists|default(false) and slot.content|default('')|trim != '' %}
+        <pre class="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{{ slot.content }}</pre>
+    {% elseif slot.file_exists|default(false) %}
+        <p class="mt-3 text-xs text-zinc-500">Файл пустой.</p>
+    {% else %}
+        <p class="mt-3 text-xs text-zinc-500">Файл пока не создан.</p>
+    {% endif %}
+</section>
+{% endfor %}

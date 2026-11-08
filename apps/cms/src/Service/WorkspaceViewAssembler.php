@@ -47,7 +47,7 @@ class WorkspaceViewAssembler
             'workspace' => $workspace,
             'workspaces' => $this->workspaceService->listForDisplay(),
             'workspace_modules' => $this->workspaceModuleRegistry->listSidebarModules($workspace['slug']),
-            'hub_tree' => $this->workspaceNodeScanner->attachDiskNodesToHubTree(
+            'hub_tree' => $this->workspaceNodeScanner->attachNestedDiskNodesToHubTree(
                 $this->typeSchemaRegistry->listHubTreeGroups($workspace['slug']),
                 $workspace['slug']
             ),

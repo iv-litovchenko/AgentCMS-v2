@@ -6,7 +6,7 @@ tree-ui:
   icon: image
   icon-class: text-sky-500
 description: |
-  Карточка медиатеки workspace в awn-media/{slug}/ — manifest.md и awn-storage/ (files/, assets/). Зависимые и независимые файлы: байты здесь, ссылки из тем — по path. Внутри слотов — awn.content.record, awn.content.category, awn.annotation.sidecar (как media/assets у темы). Разделы — один уровень под files/ или assets/, без вложенных категорий.
+  Карточка медиатеки workspace в awn-media/{slug}/ — manifest.md и 0-storage/ (files/, assets/). Зависимые и независимые файлы: байты здесь, ссылки из тем — по path. Внутри слотов — awn.content.record, awn.content.category, awn.annotation.sidecar (как media/assets у темы). Разделы — один уровень под files/ или assets/, без вложенных категорий.
 storage-slots:
   - files
   - assets
@@ -17,7 +17,7 @@ form:
     edit-title: Медиатека
     adopt-title: 'Подхватить медиатеку'
     hint: |
-      Папка awn-media/{slug}/ с manifest.md; при создании — awn-storage/files/ и awn-storage/assets/.
+      Папка awn-media/{slug}/ с manifest.md; слоты 0-storage/ — по кнопке «Создать слот» в карточке узла.
     bootstrap:
       slug:
         title: 'Папка (slug)'
@@ -72,4 +72,4 @@ fields:
     default: true
     title: 'Не индексировать файлы внутри'
     description: |
-      Не индексировать байты и sidecar в awn-storage/files/ и assets/. manifest.md и manifest разделов (category) остаются в индексе.
+      Не индексировать байты и sidecar в 0-storage/files/ и assets/. manifest.md и manifest разделов (category) остаются в индексе.

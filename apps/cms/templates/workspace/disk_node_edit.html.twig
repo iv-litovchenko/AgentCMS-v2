@@ -1,0 +1,33 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}Редактирование — {{ disk_node_label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            <header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h1 class="text-xl font-semibold tracking-tight text-zinc-900">Редактирование</h1>
+                        <p class="mt-1 text-sm text-zinc-600">{{ disk_node_label }}</p>
+                        <p class="mt-2 font-mono text-xs text-zinc-500">
+                            {% if disk_node_path != '' %}{{ disk_node_path }}/{% endif %}{{ disk_node.manifest_file }}
+                        </p>
+                    </div>
+                    <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: disk_node_path != '' ? disk_node_path : '_'}) }}"
+                       class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50">
+                        Отмена
+                    </a>
+                </div>
+            </header>
+
+            {% if disk_node_edit_mode == 'node_manifest' %}
+                {% include 'workspace/disk_nodes/edit/_node_manifest.html.twig' %}
+            {% elseif disk_node_edit_mode == 'markdown' %}
+                {% include 'workspace/disk_nodes/edit/_markdown.html.twig' %}
+            {% else %}
+                {% include 'workspace/disk_nodes/edit/_text.html.twig' %}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

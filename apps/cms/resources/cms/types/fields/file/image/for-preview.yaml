@@ -3,7 +3,7 @@ extends: fields/file/image/one
 widget: preview
 storage: string
 mdbase: url
-description: 'Изображение превью сущности в awn-storage/assets/preview/'
+description: 'Изображение превью сущности в 0-storage/assets/preview/'
 settings:
   - hint
   - required

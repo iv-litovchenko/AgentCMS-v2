@@ -1,0 +1,40 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ disk_folder_label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            <section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h1 class="font-mono text-sm font-medium text-zinc-900">{{ disk_folder_path }}</h1>
+                    {% if disk_folder_parent_path|default('') != '' %}
+                        <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: disk_folder_parent_path}) }}"
+                           class="text-xs font-medium text-zinc-600 hover:text-zinc-900">
+                            ↑ На уровень выше
+                        </a>
+                    {% endif %}
+                </div>
+                {% if disk_folder_entries|default([])|length == 0 %}
+                    <p class="mt-3 text-sm text-zinc-500">Папка пуста.</p>
+                {% else %}
+                    <ul class="mt-3 divide-y divide-zinc-100 rounded-md border border-zinc-200">
+                        {% for entry in disk_folder_entries %}
+                            <li>
+                                <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: entry.disk_path}) }}"
+                                   class="flex items-center gap-2 px-3 py-2 text-sm hover:bg-zinc-50">
+                                    {% if entry.is_dir %}
+                                        {% include 'workspace/_hub_tree_icon.html.twig' with { icon: 'folder', icon_class: 'text-amber-500' } %}
+                                    {% else %}
+                                        {% include 'workspace/_hub_tree_icon.html.twig' with { icon: 'file', icon_class: 'text-zinc-500' } %}
+                                    {% endif %}
+                                    <span class="min-w-0 truncate font-mono text-xs text-zinc-800">{{ entry.name }}{% if entry.is_dir %}/{% endif %}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

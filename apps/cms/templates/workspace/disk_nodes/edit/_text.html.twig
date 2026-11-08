@@ -1,0 +1,12 @@
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <p class="text-xs text-zinc-500">Текстовый файл.</p>
+    <form method="post" action="{{ app.request.requestUri }}" class="mt-4 space-y-3 text-sm">
+        <input type="hidden" name="_token" value="{{ csrf_token(disk_node_edit_csrf_id) }}">
+        <div>
+            <label class="block text-xs font-medium text-zinc-700" for="disk-node-raw">Содержимое</label>
+            <textarea id="disk-node-raw" name="disk_node_raw" rows="14" required
+                      class="mt-1 w-full font-mono text-xs rounded-md border border-zinc-200 px-2 py-1.5">{{ disk_node_form_raw }}</textarea>
+        </div>
+        <button type="submit" class="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">Сохранить</button>
+    </form>
+</section>

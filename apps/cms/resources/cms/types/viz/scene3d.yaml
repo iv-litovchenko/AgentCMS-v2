@@ -18,4 +18,4 @@ defaultTemplate: |
   }
   ```
 
-  **Поля:** `box` (`size`), `sphere` (`radius`), `cylinder` / `cone`, `plane` (`size`), `gltf` (`url` — путь в `awn-storage/…`).
+  **Поля:** `box` (`size`), `sphere` (`radius`), `cylinder` / `cone`, `plane` (`size`), `gltf` (`url` — путь в `0-storage/…`).

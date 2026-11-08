@@ -32,7 +32,7 @@ fields:
     type: fields/choice/one
     title: '{A2!} Шаблон слотов'
     description: |
-      standard — типовые слоты awn-storage; flexible — весь awn-storage/ (кроме assets/, history/, comments/); minimal — однофайловые слоты (main.md, todo, таблица…); none — только инструкция и todo
+      standard — типовые слоты 0-storage; flexible — весь 0-storage/ (кроме assets/, history/, comments/); minimal — однофайловые слоты (main.md, todo, таблица…); none — только инструкция и todo
     default: standard
     placement: aside-body
     group: nav

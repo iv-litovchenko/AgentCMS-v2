@@ -1,10 +1,10 @@
 {% set fullWidth = full_width|default(false) %}
 {% if fullWidth %}
-    {% set heroClass = 'h-[200px] w-full object-cover' %}
+    {% set heroClass = 'h-24 w-full object-cover' %}
     {% if avatar %}
         <img src="{{ path('workspace_avatar', {filename: avatar}) }}" alt="" class="{{ heroClass }}">
     {% else %}
-        <span class="flex {{ heroClass }} items-center justify-center bg-zinc-100 text-2xl font-medium text-zinc-600">{{ initials }}</span>
+        <span class="flex {{ heroClass }} items-center justify-center bg-zinc-100 text-lg font-medium text-zinc-600">{{ initials }}</span>
     {% endif %}
 {% else %}
     {% set boxClass = size|default('h-10 w-10') %}

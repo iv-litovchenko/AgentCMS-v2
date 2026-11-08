@@ -7,7 +7,7 @@ fields:
   awn-target:
     type: fields/relation/one
     title: '{A2!} К чему привязан'
-    description: 'manifest.md или запись в awn-storage'
+    description: 'manifest.md или запись в 0-storage'
     placement: aside-body
     group: content
     sort: 10

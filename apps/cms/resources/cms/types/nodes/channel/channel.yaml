@@ -6,7 +6,7 @@ tree-ui:
   icon: channel
   icon-class: text-indigo-600
 description: |
-  Карточка канала в awn-channels/{slug}/ — manifest.md и awn-storage/: inbox/ (ingress), task-queue/ (очередь задач), outbox/ (исходящие), files/ и assets/ (как у медиатеки). Triage сырого потока до тем и инфоблоков.
+  Карточка канала в awn-channels/{slug}/ — manifest.md и 0-storage/: inbox/ (ingress), task-queue/ (очередь задач), outbox/ (исходящие), files/ и assets/ (как у медиатеки). Triage сырого потока до тем и инфоблоков.
 storage-slots:
   - inbox
   - task-queue
@@ -19,7 +19,7 @@ form:
     title: 'Новый канал'
     edit-title: Канал
     hint: |
-      Папка awn-channels/{slug}/ с manifest.md; при создании — awn-storage/inbox/, task-queue/, outbox/, files/, assets/.
+      Папка awn-channels/{slug}/ с manifest.md; слоты 0-storage/ — по кнопке «Создать слот» в карточке узла.
     bootstrap:
       slug:
         title: 'Папка (slug)'

@@ -1,12 +1,14 @@
 <div class="mb-2 flex items-center gap-1">
     <label class="sr-only" for="hub-tree-filter">Фильтр дерева</label>
-    <input
-        type="search"
-        id="hub-tree-filter"
-        placeholder="Фильтр…"
-        autocomplete="off"
-        class="min-w-0 flex-1 h-8 rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-    >
+    <div class="min-w-0 flex-1">
+        {% include 'partials/_search_input_with_icon.html.twig' with {
+            input_id: 'hub-tree-filter',
+            placeholder: 'Фильтр…',
+            icon_size: 'sm',
+            wrapper_class: 'h-8',
+            input_class: 'text-xs text-zinc-900 placeholder:text-zinc-400',
+        } %}
+    </div>
     <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: 'create'}) }}"
        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900{% if active_module_slug|default('') == 'create' %} border-zinc-300 bg-zinc-100 text-zinc-900{% endif %}"
        title="Создать"
@@ -51,32 +53,11 @@
                         {% endif %}
                     </summary>
                     <ul class="ml-3 mt-0.5 space-y-0.5 border-l border-zinc-200 pl-2" role="group">
-                        {% for item in group.items %}
-                            {% set diskPath = item.disk_path|default(item.hub_path|default('')) %}
-                            {% set onDiskNode = active_disk_node_path|default('') == diskPath %}
-                            {% set itemFilter = (item.name ~ ' ' ~ diskPath)|lower %}
-                            <li role="treeitem" class="hub-tree-node" data-hub-tree-node data-filter-text="{{ itemFilter|e('html_attr') }}">
-                                {% if onDiskNode %}
-                                    <span class="flex items-center gap-1 rounded bg-zinc-100 px-1 py-0.5 font-medium text-zinc-900">
-                                        {% include 'workspace/_hub_tree_icon.html.twig' with {
-                                            icon: item.tree_icon|default('folder'),
-                                            icon_class: item.tree_icon_class|default('text-zinc-400'),
-                                        } %}
-                                        <span class="truncate">{{ item.name }}</span>
-                                    </span>
-                                {% else %}
-                                    <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: diskPath != '' ? diskPath : '_'}) }}"
-                                       class="flex items-center gap-1 rounded px-1 py-0.5 text-zinc-600 hover:bg-zinc-50"
-                                       title="{{ diskPath != '' ? diskPath ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
-                                        {% include 'workspace/_hub_tree_icon.html.twig' with {
-                                            icon: item.tree_icon|default('folder'),
-                                            icon_class: item.tree_icon_class|default('text-zinc-400'),
-                                        } %}
-                                        <span class="truncate">{{ item.name }}</span>
-                                    </a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
+                        {% include 'workspace/_hub_tree_nodes.html.twig' with {
+                            items: group.items,
+                            workspace: workspace,
+                            active_disk_node_path: active_disk_node_path|default(''),
+                        } %}
                     </ul>
                 </details>
             </li>
@@ -120,6 +101,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (nodeMatch) {
                     node.classList.remove('hidden');
                     visibleNodes = visibleNodes + 1;
+                    var parentDetails = node.parentElement;
+                    while (parentDetails !== null) {
+                        if (parentDetails.tagName === 'DETAILS') {
+                            parentDetails.open = true;
+                        }
+                        parentDetails = parentDetails.parentElement;
+                    }
                 } else {
                     node.classList.add('hidden');
                 }

@@ -85,7 +85,7 @@ fields:
   awn-preview:
     type: fields/file/image/for-preview
     title: '{A2!} Превью'
-    description: awn-storage/assets/preview/
+    description: 0-storage/assets/preview/
     placement: aside-hero
     group: content
     sort: 1

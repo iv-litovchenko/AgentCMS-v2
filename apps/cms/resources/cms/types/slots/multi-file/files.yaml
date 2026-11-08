@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: files
 storage-driver: external
 description: |
-  Библиотека файлов hub — awn-storage/files/ у awn.hub.media и awn.hub.channel. Разделы (awn.content.category), записи .md, бинарники + sidecar — как слот media у темы.
+  Библиотека файлов hub — 0-storage/files/ у awn.hub.media и awn.hub.channel. Разделы (awn.content.category), записи .md, бинарники + sidecar — как слот media у темы.
 path: files/
 slot-order: 8
 allowed-containers:

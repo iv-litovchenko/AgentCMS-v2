@@ -563,6 +563,306 @@ class TypeSchemaRegistry
     }
 
     /**
+     * Каталоги 0-storage/ по storage-slots в YAML типа (создаются вручную в UI).
+     *
+     * @return list<array{folder: string, name: string, category: string, icon: string, icon_class: string, single_file: bool, relative_path: string, display_path: string, accept_files: list<string>, accept_files_label: string}>
+     */
+    public function listStorageSlotsForNodeType(string $typeId, string $workspaceSlug = ''): array
+    {
+        if (trim($typeId) === '') {
+            return [];
+        }
+
+        $nodeType = $this->getTypeForWorkspace($workspaceSlug, $typeId);
+        if ($nodeType === null) {
+            return [];
+        }
+
+        $slots = $nodeType['storage-slots'] ?? null;
+        if (!is_array($slots) || count($slots) === 0) {
+            return [];
+        }
+
+        $items = [];
+        foreach ($slots as $slot) {
+            if (!is_string($slot)) {
+                continue;
+            }
+            $folder = trim(str_replace('\\', '/', $slot), '/');
+            if ($folder === '' || str_contains($folder, '..')) {
+                continue;
+            }
+
+            $slotDef = $this->resolveStorageSlotTypeDefinition($folder, $workspaceSlug);
+            $name = $folder;
+            $category = '';
+            if ($slotDef !== null) {
+                if (isset($slotDef['name']) && is_string($slotDef['name']) && $slotDef['name'] !== '') {
+                    $name = $slotDef['name'];
+                }
+                if (isset($slotDef['slot-category']) && is_string($slotDef['slot-category'])) {
+                    $category = $slotDef['slot-category'];
+                }
+            }
+
+            $treeUi = $this->resolveStorageSlotTreeUi($folder, $slotDef);
+            $diskPath = $this->resolveStorageSlotDiskPath($folder, $slotDef);
+            $acceptFiles = $this->resolveSlotAcceptFiles($slotDef);
+
+            $items[] = [
+                'folder' => $folder,
+                'name' => $name,
+                'category' => $category,
+                'icon' => $treeUi['icon'],
+                'icon_class' => $treeUi['icon_class'],
+                'single_file' => $diskPath['single_file'],
+                'relative_path' => $diskPath['relative_path'],
+                'display_path' => $diskPath['display_path'],
+                'accept_files' => $acceptFiles,
+                'accept_files_label' => $this->formatSlotAcceptFilesLabel($acceptFiles),
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param array<string, mixed>|null $slotDef
+     *
+     * @return list<string>
+     */
+    private function resolveSlotAcceptFiles(?array $slotDef): array
+    {
+        if ($slotDef === null) {
+            return [];
+        }
+
+        $raw = $slotDef['accept-files'] ?? null;
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        $acceptFiles = [];
+        foreach ($raw as $item) {
+            if (is_string($item) && trim($item) !== '') {
+                $acceptFiles[] = trim($item);
+            }
+        }
+
+        return $acceptFiles;
+    }
+
+    /**
+     * @param list<string> $acceptFiles
+     */
+    private function formatSlotAcceptFilesLabel(array $acceptFiles): string
+    {
+        if (count($acceptFiles) === 0) {
+            return '';
+        }
+
+        foreach ($acceptFiles as $item) {
+            if ($item === '*') {
+                return 'Любые расширения';
+            }
+        }
+
+        return implode(', ', $acceptFiles);
+    }
+
+    /**
+     * @param array<string, mixed>|null $slotDef
+     *
+     * @return array{single_file: bool, relative_path: string, display_path: string}
+     */
+    private function resolveStorageSlotDiskPath(string $folder, ?array $slotDef): array
+    {
+        $singleFile = false;
+        $relativePath = '';
+        $displayPath = '';
+
+        if ($slotDef !== null) {
+            $category = '';
+            if (isset($slotDef['slot-category']) && is_string($slotDef['slot-category'])) {
+                $category = $slotDef['slot-category'];
+            }
+            if ($category === 'single-file') {
+                $singleFile = true;
+            }
+
+            $driver = '';
+            if (isset($slotDef['storage-driver']) && is_string($slotDef['storage-driver'])) {
+                $driver = $slotDef['storage-driver'];
+            }
+            if ($driver === 'internal' || $driver === 'tabular') {
+                $singleFile = true;
+            }
+            if ($driver === 'external') {
+                $singleFile = false;
+            }
+
+            if (isset($slotDef['path']) && is_string($slotDef['path'])) {
+                $path = trim(str_replace('\\', '/', $slotDef['path']));
+                if ($singleFile) {
+                    $relativePath = ltrim($path, '/');
+                    $displayPath = $relativePath;
+                } else {
+                    $path = trim($path, '/');
+                    if ($path !== '') {
+                        $displayPath = WorkspaceNodeStorage::canonicalPrefix() . rtrim($path, '/') . '/';
+                        $relativePath = $displayPath;
+                    }
+                }
+            }
+        }
+
+        if (!$singleFile) {
+            if ($displayPath === '') {
+                $displayPath = WorkspaceNodeStorage::canonicalPrefix() . $folder . '/';
+            }
+            if ($relativePath === '') {
+                $relativePath = $displayPath;
+            }
+        } elseif ($relativePath === '') {
+            $relativePath = $folder;
+            $displayPath = $relativePath;
+        }
+
+        return [
+            'single_file' => $singleFile,
+            'relative_path' => $relativePath,
+            'display_path' => $displayPath,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed>|null $slotDef
+     *
+     * @return array{icon: string, icon_class: string}
+     */
+    private function resolveStorageSlotTreeUi(string $folder, ?array $slotDef): array
+    {
+        $icon = 'folder';
+        $iconClass = 'text-zinc-500';
+
+        if ($slotDef !== null) {
+            $treeUi = $slotDef['tree-ui'] ?? null;
+            if (is_array($treeUi)) {
+                if (isset($treeUi['icon']) && is_string($treeUi['icon']) && $treeUi['icon'] !== '') {
+                    $icon = $treeUi['icon'];
+                }
+                if (isset($treeUi['icon-class']) && is_string($treeUi['icon-class']) && $treeUi['icon-class'] !== '') {
+                    $iconClass = $treeUi['icon-class'];
+                }
+                if ($icon !== 'folder' || $iconClass !== 'text-zinc-500') {
+                    return [
+                        'icon' => $icon,
+                        'icon_class' => $iconClass,
+                    ];
+                }
+            }
+        }
+
+        if ($folder === 'main' || $folder === 'main-md' || $folder === 'main-single') {
+            $icon = 'file';
+            $iconClass = 'text-emerald-600';
+        } elseif ($folder === 'main-csv' || $folder === 'main-single-csv') {
+            $icon = 'table';
+            $iconClass = 'text-emerald-600';
+        } elseif ($folder === 'inbox') {
+            $icon = 'inbox';
+            $iconClass = 'text-sky-600';
+        } elseif ($folder === 'outbox') {
+            $icon = 'outbox';
+            $iconClass = 'text-indigo-600';
+        } elseif ($folder === 'task-queue') {
+            $icon = 'queue';
+            $iconClass = 'text-violet-600';
+        } elseif ($folder === 'notes' || $folder === 'note') {
+            $icon = 'file';
+            $iconClass = 'text-zinc-500';
+        } elseif ($folder === 'references') {
+            $icon = 'bookmark';
+            $iconClass = 'text-amber-600';
+        } elseif ($folder === 'artefacts') {
+            $icon = 'archive';
+            $iconClass = 'text-orange-600';
+        } elseif ($folder === 'assets' || $folder === 'media') {
+            $icon = 'image';
+            $iconClass = 'text-sky-500';
+        } elseif ($folder === 'repository') {
+            $icon = 'code';
+            $iconClass = 'text-orange-600';
+        } elseif ($folder === 'scripts') {
+            $icon = 'code';
+            $iconClass = 'text-zinc-600';
+        } elseif ($folder === 'templates') {
+            $icon = 'template';
+            $iconClass = 'text-fuchsia-600';
+        } elseif ($folder === 'base') {
+            $icon = 'database';
+            $iconClass = 'text-teal-600';
+        } elseif ($folder === 'notebooklm') {
+            $icon = 'book';
+            $iconClass = 'text-rose-600';
+        } elseif ($folder === 'todo' || $folder === 'todo-single') {
+            $icon = 'check';
+            $iconClass = 'text-lime-600';
+        } elseif ($folder === 'atlas') {
+            $icon = 'map';
+            $iconClass = 'text-cyan-600';
+        } elseif ($folder === 'files') {
+            $icon = 'folder';
+            $iconClass = 'text-amber-500';
+        } elseif ($folder === 'flexible') {
+            $icon = 'section';
+            $iconClass = 'text-zinc-400';
+        } elseif ($folder === 'comments') {
+            $icon = 'channel';
+            $iconClass = 'text-zinc-500';
+        } elseif ($folder === 'discussion') {
+            $icon = 'channel';
+            $iconClass = 'text-zinc-500';
+        } elseif ($folder === 'history') {
+            $icon = 'queue';
+            $iconClass = 'text-zinc-400';
+        }
+
+        return [
+            'icon' => $icon,
+            'icon_class' => $iconClass,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function resolveStorageSlotTypeDefinition(string $folder, string $workspaceSlug): ?array
+    {
+        $folderKeys = [$folder];
+        if ($folder === 'notes') {
+            $folderKeys[] = 'note';
+        }
+
+        foreach ($folderKeys as $key) {
+            $candidates = [
+                'awn.slot.' . $key,
+                'slots/multi-file/' . $key,
+                'slots/single-file/' . $key,
+                'slots/multi-file/system/' . $key,
+            ];
+            foreach ($candidates as $candidate) {
+                $def = $this->resolveType($candidate, $workspaceSlug);
+                if ($def !== null) {
+                    return $def;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param array<string, mixed> $typeDef
      */
     private function typeKindUiFor(array $typeDef): string

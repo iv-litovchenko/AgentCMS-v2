@@ -189,6 +189,71 @@ class WorkspaceBreadcrumbBuilder
 
     /**
      * @param array<string, mixed> $workspace
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    public function buildForDiskFolder(
+        array $workspace,
+        string $folderDiskPath,
+        string $nodeDiskPath,
+        string $nodeLabel,
+        string $hubFamily
+    ): array {
+        $crumbs = $this->buildForDiskNode($workspace, $nodeDiskPath, $nodeLabel, $hubFamily);
+        if (count($crumbs) === 0) {
+            return [];
+        }
+
+        $lastIndex = count($crumbs) - 1;
+        $crumbs[$lastIndex]['current'] = false;
+
+        $slug = '';
+        if (isset($workspace['slug']) && is_string($workspace['slug'])) {
+            $slug = $workspace['slug'];
+        }
+
+        $split = WorkspaceNodeStorage::splitFolderDiskPath($folderDiskPath);
+        $suffix = $split['folder_suffix'];
+        if ($suffix === '') {
+            $crumbs[] = [
+                'label' => WorkspaceNodeStorage::DIR_NAME,
+                'route' => 'workspace_disk_node_show',
+                'route_params' => [
+                    'slug' => $slug,
+                    'nodePath' => $folderDiskPath,
+                ],
+                'current' => true,
+            ];
+
+            return $crumbs;
+        }
+
+        $parts = explode('/', $suffix);
+        $accum = $nodeDiskPath;
+        $lastPartIndex = count($parts) - 1;
+        foreach ($parts as $index => $part) {
+            if ($accum === '') {
+                $accum = $part;
+            } else {
+                $accum = $accum . '/' . $part;
+            }
+
+            $crumbs[] = [
+                'label' => $part,
+                'route' => 'workspace_disk_node_show',
+                'route_params' => [
+                    'slug' => $slug,
+                    'nodePath' => $accum,
+                ],
+                'current' => $index === $lastPartIndex,
+            ];
+        }
+
+        return $crumbs;
+    }
+
+    /**
+     * @param array<string, mixed> $workspace
      * @param array<string, mixed> $hubGroup
      *
      * @return array{reveal_enabled: bool, reveal_relative_path: string}

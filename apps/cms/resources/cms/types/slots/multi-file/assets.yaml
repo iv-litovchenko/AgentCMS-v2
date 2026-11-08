@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: files
 storage-driver: external
 description: |
-  Активы — awn-storage/assets/ у темы (preview, вложения, materials) и у awn.hub.media / awn.hub.channel.
+  Активы — 0-storage/assets/ у темы (preview, вложения, materials) и у awn.hub.media / awn.hub.channel.
 path: assets/
 slot-order: 9
 allowed-containers:

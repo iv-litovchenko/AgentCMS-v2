@@ -14,19 +14,16 @@ view:
 description: 'Тема — manifest.md (бриф, контекст, инструкция) + слоты памяти'
 storage-slots:
   - main
-  - main-single
-  - main-single-csv
+  - main-md
+  - main-csv
   - inbox
   - notes
   - references
   - artefacts
   - assets
   - media
-  - repository
-  - scripts
   - templates
-  - base
   - notebooklm
   - task-queue
-  - todo-single
+  - todo
   - atlas

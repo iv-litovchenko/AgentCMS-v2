@@ -3,7 +3,7 @@ status: active
 sort: 30
 hub: database
 extends: nodes/database/_base
-description: 'manifest + schema в корне; main.md в awn-storage/data/'
+description: 'manifest + schema в корне; main.md в 0-storage/data/'
 kind-ui:
   for: single
   label: Одиночка
