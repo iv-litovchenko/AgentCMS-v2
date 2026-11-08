@@ -20,13 +20,6 @@
 
 ## Установка
 
-| ОС | Папка |
-|----|--------|
-| macOS | `/Users/<you>/agent-cms-v2` |
-| Linux | `/home/<you>/agent-cms-v2` |
-| Linux VPS | `/var/www/agent-cms-v2` |
-| Windows (WSL2) | `/home/<you>/agent-cms-v2` |
-
 ```bash
 # macOS / Linux
 curl -fsSL https://raw.githubusercontent.com/iv-litovchenko/AgentCMS-v2/main/scripts/install.sh | bash
@@ -42,5 +35,13 @@ curl -fsSL https://raw.githubusercontent.com/iv-litovchenko/AgentCMS-v2/main/scr
 
 export PATH="$HOME/.local/bin:$PATH"
 agent-cms-cli-v2 start
-# http://localhost:8080/  ·  https://localhost:8443/
 ```
+
+| ОС | Пути |
+|----|------|
+| **macOS** | Репозиторий — `/Users/<you>/agent-cms-v2`<br>CLI — `/Users/<you>/.local/bin/agent-cms-cli-v2`<br>Конфиг CLI — `/Users/<you>/.config/agent-cms-v2/env` |
+| **Linux** | Репозиторий — `/home/<you>/agent-cms-v2`<br>CLI — `/home/<you>/.local/bin/agent-cms-cli-v2`<br>Конфиг CLI — `/home/<you>/.config/agent-cms-v2/env` |
+| **Linux VPS** | Репозиторий — `/var/www/agent-cms-v2`<br>CLI и конфиг CLI — у пользователя, под которым запускали `install.sh` (`~/.local/bin/…`, `~/.config/agent-cms-v2/env`) |
+| **Windows (WSL2)** | Репозиторий — `/home/<you>/agent-cms-v2`<br>CLI — `/home/<you>/.local/bin/agent-cms-cli-v2`<br>Конфиг CLI — `/home/<you>/.config/agent-cms-v2/env` |
+
+**Адреса по умолчанию:** http://localhost:8080/ · https://localhost:8443/
