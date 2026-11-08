@@ -1,0 +1,17 @@
+name: Исходящие
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: |
+  Исходящий поток канала (awn.hub.channel) — awn-storage/outbox/. Сообщения и материалы после обработки, готовые к отправке наружу.
+path: outbox/
+slot-order: 5
+allowed-containers:
+  - hubs/channel/channel
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

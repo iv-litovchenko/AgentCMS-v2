@@ -1,0 +1,48 @@
+id: awn.hub.database.base
+name: База накопителя
+kind: base
+domain: database
+status: active
+extends: awn.base
+description: >
+  Инфоблок в awn-databases/: manifest.md (бриф, контекст, инструкция) + записи.
+  Аналог страницы в pages, но без узла меню — контейнер данных.
+mixins:
+  - awn.mixin.indexing-container
+
+form:
+  panel-title: "{A2!} Свойства инфоблока"
+
+field-groups:
+  - id: infoblock
+    name: "{A2!} Накопитель"
+    description: Формат хранения и файлы записей
+    collapsed: false
+
+fields:
+  awn-collection-type:
+    type: awn.field.choice.one
+    title: "{A2!} Тип коллекции"
+    description: md — полные md-записи; md-lite — лёгкие md-записи (списки); csv-files — отдельный .csv на запись; csv — одна таблица main.csv; files — загрузка файлов
+    placement: aside-body
+    group: infoblock
+    sort: 1
+    enum: [md, md-lite, csv-files, csv, files]
+    default: md
+
+  awn-record-storage:
+    type: awn.field.string
+    title: "{A2!} Хранилище записей"
+    description: Формат хранения данных в awn-storage/data/
+    placement: aside-body
+    group: infoblock
+    sort: 2
+    locked: true
+
+  awn-record-file:
+    type: awn.field.string
+    title: "{A2!} Шаблон файла записи"
+    description: "main.md, main.csv или {id}.md"
+    placement: aside-body
+    group: infoblock
+    sort: 3

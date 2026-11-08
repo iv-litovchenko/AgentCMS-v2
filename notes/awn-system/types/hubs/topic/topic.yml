@@ -1,0 +1,28 @@
+id: awn.hub.topic
+name: Тема
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.topic.base
+description: Тема — manifest.md (бриф, контекст, инструкция) + слоты памяти
+manifest-pattern: "{slug}/manifest.md"
+
+# MCP slot main|memory|external → router slotKey memory → disk folder awn-storage/main/
+storage-slots:
+  - main
+  - main-single
+  - main-single-csv
+  - inbox
+  - notes
+  - references
+  - artefacts
+  - assets
+  - media
+  - repository
+  - scripts
+  - templates
+  - base
+  - notebooklm
+  - task-queue
+  - todo-single
+  - atlas

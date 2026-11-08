@@ -1,0 +1,11 @@
+name: Абзац
+group: text
+sort: 1
+icon: 📝
+description: 'Пустой блок для текста'
+template: |+
+
+
+  Текст...
+
+status: draft

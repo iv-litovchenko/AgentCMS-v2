@@ -1,0 +1,16 @@
+name: 'Repeater (new!)'
+extends: fields/_base
+widget: repeater
+storage: array
+mdbase: list
+items: fields/object
+description: 'Список однотипных записей (повторяющихся блоков)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - items
+group: structure
+sort: 2
+status: active

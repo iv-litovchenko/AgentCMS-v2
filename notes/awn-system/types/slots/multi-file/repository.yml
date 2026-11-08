@@ -1,0 +1,17 @@
+id: awn.slot.repository
+name: Репозитории
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Файловый репозиторий топика
+path: repository/
+slot-order: 8
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

@@ -1,0 +1,628 @@
+<?php
+
+namespace App\Service;
+
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
+
+class TypeSchemaRegistry
+{
+    private string $platformTypesDir;
+
+    private string $workspacesDir;
+
+    private string $projectRoot;
+
+    private string $bootstrapTypesDir;
+
+    private string $aliasesFile;
+
+    /** @var array<string, string> */
+    private array $idAliases = [];
+
+    private bool $aliasesBootstrapped = false;
+
+    /** @var array<string, array<string, mixed>>|null */
+    private ?array $mergedPlatformCache = null;
+
+    /** @var array<string, array<string, array<string, mixed>>> */
+    private array $mergedWorkspaceCache = [];
+
+    public function __construct(
+        string $platformTypesDir,
+        string $workspacesDir,
+        string $projectRoot,
+        string $bootstrapTypesDir,
+        string $aliasesFile
+    ) {
+        $this->platformTypesDir = $platformTypesDir;
+        $this->workspacesDir = $workspacesDir;
+        $this->projectRoot = rtrim($projectRoot, '/');
+        $this->bootstrapTypesDir = rtrim($bootstrapTypesDir, '/');
+        $this->aliasesFile = $aliasesFile;
+    }
+
+    public function normalizeTypeId(string $rawId): string
+    {
+        $rawId = trim($rawId);
+        if ($rawId === '') {
+            return '';
+        }
+
+        $this->ensureAliasesLoaded();
+        if (isset($this->idAliases[$rawId])) {
+            return $this->idAliases[$rawId];
+        }
+
+        if (str_contains($rawId, '/')) {
+            return $rawId;
+        }
+
+        return $rawId;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getPlatformType(string $typeId): ?array
+    {
+        return $this->resolveType($typeId, '');
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getTypeForWorkspace(string $workspaceSlug, string $typeId): ?array
+    {
+        return $this->resolveType($typeId, $workspaceSlug);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function resolveType(string $typeId, string $workspaceSlug): ?array
+    {
+        $canonicalId = $this->normalizeTypeId($typeId);
+        if ($canonicalId === '') {
+            return null;
+        }
+
+        $index = $this->loadMergedIndex($workspaceSlug);
+        if (!isset($index[$canonicalId])) {
+            return null;
+        }
+
+        $resolved = $this->resolveExtendsChain($index, $canonicalId, []);
+        if ($resolved === null) {
+            return null;
+        }
+
+        $resolved['id'] = $canonicalId;
+        $resolved = $this->enrichDerivedFromPath($resolved, $canonicalId);
+
+        return $resolved;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function listResolvedTypeIds(string $workspaceSlug = ''): array
+    {
+        $index = $this->loadMergedIndex($workspaceSlug);
+        $ids = array_keys($index);
+        sort($ids);
+
+        return $ids;
+    }
+
+    /**
+     * @return list<array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}>
+     */
+    public function listHubTreeGroups(string $workspaceSlug = ''): array
+    {
+        $ids = $this->listResolvedTypeIds($workspaceSlug);
+        /** @var array<string, array{family: string, label: string, items: list<array{id: string, hub_path: string, name: string}>}> $groups */
+        $groups = [];
+
+        foreach ($ids as $id) {
+            if (!str_starts_with($id, 'hubs/')) {
+                continue;
+            }
+            if ($id === 'hubs/_base' || str_ends_with($id, '/_base')) {
+                continue;
+            }
+
+            $parts = explode('/', $id);
+            if (count($parts) < 3) {
+                continue;
+            }
+
+            $family = $parts[1];
+            $hubPath = implode('/', array_slice($parts, 1));
+
+            $def = $this->resolveType($id, $workspaceSlug);
+            $name = $hubPath;
+            if (is_array($def)) {
+                if (isset($def['name']) && is_string($def['name']) && $def['name'] !== '') {
+                    $name = $def['name'];
+                } elseif (isset($def['label']) && is_string($def['label']) && $def['label'] !== '') {
+                    $name = $def['label'];
+                }
+            }
+
+            if (!isset($groups[$family])) {
+                $familyBaseId = 'hubs/' . $family . '/_base';
+                $familyBase = $this->resolveType($familyBaseId, $workspaceSlug);
+                if (!is_array($familyBase)) {
+                    continue;
+                }
+                $groups[$family] = $this->buildHubTreeGroupShell($family, $familyBase);
+            }
+
+            $groups[$family]['items'][] = [
+                'id' => $id,
+                'hub_path' => $hubPath,
+                'name' => $name,
+            ];
+        }
+
+        $result = array_values($groups);
+        foreach ($result as $index => $group) {
+            usort($group['items'], function (array $a, array $b): int {
+                return strcmp($a['hub_path'], $b['hub_path']);
+            });
+            $result[$index]['items'] = $group['items'];
+        }
+
+        usort($result, function (array $a, array $b): int {
+            $orderA = $a['tree_sort'] ?? 100;
+            $orderB = $b['tree_sort'] ?? 100;
+            if ($orderA === $orderB) {
+                return strcmp($a['family'], $b['family']);
+            }
+            if ($orderA < $orderB) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        return $result;
+    }
+
+    /**
+     * @return array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}|null
+     */
+    public function findHubTreeGroupByFamily(string $family, string $workspaceSlug = ''): ?array
+    {
+        $family = trim($family);
+        if ($family === '') {
+            return null;
+        }
+
+        foreach ($this->listHubTreeGroups($workspaceSlug) as $group) {
+            if ($group['family'] === $family) {
+                return $group;
+            }
+        }
+
+        $familyBaseId = 'hubs/' . $family . '/_base';
+        $familyBase = $this->resolveType($familyBaseId, $workspaceSlug);
+        if ($familyBase === null) {
+            return null;
+        }
+
+        return $this->buildHubTreeGroupShell($family, $familyBase);
+    }
+
+    /**
+     * @param array<string, mixed> $familyBase
+     *
+     * @return array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}
+     */
+    private function buildHubTreeGroupShell(string $family, array $familyBase): array
+    {
+        $folder = '';
+        if (isset($familyBase['folder']) && is_string($familyBase['folder'])) {
+            $folder = $familyBase['folder'];
+        }
+
+        $treeUi = $this->resolveHubTreeUi($familyBase);
+
+        $groupLabel = $treeUi['label'];
+        if ($groupLabel === '') {
+            $groupLabel = $family;
+        }
+
+        return [
+            'family' => $family,
+            'label' => $groupLabel,
+            'folder' => $folder,
+            'tree_sort' => $treeUi['sort'],
+            'tree_icon' => $treeUi['icon'],
+            'tree_icon_class' => $treeUi['icon_class'],
+            'items' => [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed>|null $familyBase
+     *
+     * @return array{label: string, sort: int, icon: string, icon_class: string}
+     */
+    private function resolveHubTreeUi(?array $familyBase): array
+    {
+        $label = '';
+        $sort = 100;
+        $icon = 'folder';
+        $iconClass = 'text-amber-500';
+
+        if ($familyBase === null) {
+            return [
+                'label' => $label,
+                'sort' => $sort,
+                'icon' => $icon,
+                'icon_class' => $iconClass,
+            ];
+        }
+
+        $treeUi = $familyBase['tree-ui'] ?? null;
+        if (is_array($treeUi)) {
+            if (isset($treeUi['label']) && is_string($treeUi['label']) && $treeUi['label'] !== '') {
+                $label = $treeUi['label'];
+            }
+            if (isset($treeUi['sort']) && is_int($treeUi['sort'])) {
+                $sort = $treeUi['sort'];
+            } elseif (isset($treeUi['sort']) && is_string($treeUi['sort']) && $treeUi['sort'] !== '' && ctype_digit($treeUi['sort'])) {
+                $sort = (int) $treeUi['sort'];
+            }
+            if (isset($treeUi['icon']) && is_string($treeUi['icon']) && $treeUi['icon'] !== '') {
+                $icon = $treeUi['icon'];
+            }
+            if (isset($treeUi['icon-class']) && is_string($treeUi['icon-class']) && $treeUi['icon-class'] !== '') {
+                $iconClass = $treeUi['icon-class'];
+            }
+        }
+
+        if ($label === '' && isset($familyBase['name']) && is_string($familyBase['name'])) {
+            $label = $familyBase['name'];
+        }
+
+        return [
+            'label' => $label,
+            'sort' => $sort,
+            'icon' => $icon,
+            'icon_class' => $iconClass,
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function listPlatformTypeIds(): array
+    {
+        return $this->loadMergedIndex('');
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function loadMergedIndex(string $workspaceSlug): array
+    {
+        if ($workspaceSlug !== '') {
+            if (isset($this->mergedWorkspaceCache[$workspaceSlug])) {
+                return $this->mergedWorkspaceCache[$workspaceSlug];
+            }
+        } elseif ($this->mergedPlatformCache !== null) {
+            return $this->mergedPlatformCache;
+        }
+
+        $merged = [];
+        $layerDirs = $this->buildLayerDirectories($workspaceSlug);
+        foreach ($layerDirs as $dir) {
+            if ($dir === '' || !is_dir($dir)) {
+                continue;
+            }
+            $scanned = $this->scanTypesDirectory($dir);
+            foreach ($scanned as $typeId => $definition) {
+                if (isset($merged[$typeId])) {
+                    $merged[$typeId] = $this->mergeTypeDefinitions($merged[$typeId], $definition);
+                } else {
+                    $merged[$typeId] = $definition;
+                }
+            }
+        }
+
+        if ($workspaceSlug !== '') {
+            $this->mergedWorkspaceCache[$workspaceSlug] = $merged;
+        } else {
+            $this->mergedPlatformCache = $merged;
+        }
+
+        return $merged;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function buildLayerDirectories(string $workspaceSlug): array
+    {
+        $dirs = [];
+
+        if ($this->bootstrapTypesDir !== '' && is_dir($this->bootstrapTypesDir)) {
+            $dirs[] = $this->bootstrapTypesDir;
+        }
+
+        $packagePattern = $this->projectRoot . '/packages/*/resources/cms/types';
+        $packageDirs = glob($packagePattern);
+        if (is_array($packageDirs)) {
+            sort($packageDirs);
+            foreach ($packageDirs as $packageDir) {
+                if (is_string($packageDir) && is_dir($packageDir)) {
+                    $dirs[] = $packageDir;
+                }
+            }
+        }
+
+        $dirs[] = $this->platformTypesDir;
+
+        if ($workspaceSlug !== '') {
+            $workspaceTypes = rtrim($this->workspacesDir, '/') . '/' . $workspaceSlug . '/types';
+            $dirs[] = $workspaceTypes;
+        }
+
+        return $dirs;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $index
+     * @param list<string> $stack
+     *
+     * @return array<string, mixed>|null
+     */
+    private function resolveExtendsChain(array $index, string $typeId, array $stack): ?array
+    {
+        if (in_array($typeId, $stack, true)) {
+            return null;
+        }
+
+        if (!isset($index[$typeId])) {
+            return null;
+        }
+
+        $definition = $index[$typeId];
+        $extends = null;
+        if (isset($definition['extends']) && is_string($definition['extends'])) {
+            $extends = $this->normalizeTypeId($definition['extends']);
+        }
+
+        if ($extends === null || $extends === '') {
+            return $definition;
+        }
+
+        $parent = $this->resolveExtendsChain($index, $extends, array_merge($stack, [$typeId]));
+        if ($parent === null) {
+            return $definition;
+        }
+
+        unset($definition['extends']);
+
+        return $this->mergeTypeDefinitions($parent, $definition);
+    }
+
+    private function ensureAliasesLoaded(): void
+    {
+        if ($this->aliasesBootstrapped) {
+            return;
+        }
+
+        $this->aliasesBootstrapped = true;
+
+        if (!is_file($this->aliasesFile)) {
+            return;
+        }
+
+        $parsed = Yaml::parseFile($this->aliasesFile);
+        if (!is_array($parsed)) {
+            return;
+        }
+
+        foreach ($parsed as $legacy => $path) {
+            if (!is_string($legacy) || !is_string($path)) {
+                continue;
+            }
+            $legacy = trim($legacy);
+            $path = trim($path);
+            if ($legacy === '' || $path === '') {
+                continue;
+            }
+            $this->idAliases[$legacy] = $path;
+        }
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function scanTypesDirectory(string $rootDir): array
+    {
+        $types = [];
+        if (!is_dir($rootDir)) {
+            return $types;
+        }
+
+        $finder = new Finder();
+        $finder->files()->in($rootDir)->ignoreDotFiles(true)->name('/\.(ya?ml)$/');
+
+        foreach ($finder as $file) {
+            $basename = $file->getFilename();
+            if ($basename === 'aliases.yaml' || $basename === 'aliases.yml') {
+                continue;
+            }
+
+            $relativePath = $file->getRelativePathname();
+            $typeId = $this->typeIdFromRelativePath($relativePath);
+            try {
+                $parsed = Yaml::parseFile($file->getRealPath());
+            } catch (ParseException $exception) {
+                continue;
+            }
+            if (!is_array($parsed)) {
+                continue;
+            }
+
+            unset($parsed['id']);
+
+            $types[$typeId] = $parsed;
+        }
+
+        ksort($types);
+
+        return $types;
+    }
+
+    private function typeIdFromRelativePath(string $relativePath): string
+    {
+        $normalized = str_replace('\\', '/', $relativePath);
+        if (preg_match('/\.(yaml|yml)$/i', $normalized)) {
+            $normalized = preg_replace('/\.(yaml|yml)$/i', '', $normalized);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, mixed> $base
+     * @param array<string, mixed> $override
+     *
+     * @return array<string, mixed>
+     */
+    private function mergeTypeDefinitions(array $base, array $override): array
+    {
+        $merged = $base;
+        foreach ($override as $key => $value) {
+            if ($key === 'extends') {
+                continue;
+            }
+            if ($key === 'properties' && is_array($value) && isset($merged['properties']) && is_array($merged['properties'])) {
+                $merged['properties'] = $this->mergePropertyLists($merged['properties'], $value);
+                continue;
+            }
+            if ($key === 'fields' && is_array($value) && isset($merged['fields']) && is_array($merged['fields'])) {
+                $merged['fields'] = array_merge($merged['fields'], $value);
+                continue;
+            }
+            if ($key === 'mixins' && is_array($value) && isset($merged['mixins']) && is_array($merged['mixins'])) {
+                $merged['mixins'] = array_values(array_unique(array_merge($merged['mixins'], $value)));
+                continue;
+            }
+            $merged[$key] = $value;
+        }
+
+        return $merged;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $base
+     * @param list<array<string, mixed>> $override
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function mergePropertyLists(array $base, array $override): array
+    {
+        $byKey = [];
+        foreach ($base as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $propKey = $item['key'] ?? null;
+            if (is_string($propKey) && $propKey !== '') {
+                $byKey[$propKey] = $item;
+            }
+        }
+        foreach ($override as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $propKey = $item['key'] ?? null;
+            if (is_string($propKey) && $propKey !== '') {
+                if (isset($byKey[$propKey]) && is_array($byKey[$propKey])) {
+                    $byKey[$propKey] = array_merge($byKey[$propKey], $item);
+                } else {
+                    $byKey[$propKey] = $item;
+                }
+            }
+        }
+
+        return array_values($byKey);
+    }
+
+    /**
+     * @param array<string, mixed> $resolved
+     *
+     * @return array<string, mixed>
+     */
+    private function enrichDerivedFromPath(array $resolved, string $typeId): array
+    {
+        if (!isset($resolved['kind']) || !is_string($resolved['kind']) || $resolved['kind'] === '') {
+            $kind = $this->deriveKindFromTypeId($typeId);
+            if ($kind !== '') {
+                $resolved['kind'] = $kind;
+            }
+        }
+
+        return $resolved;
+    }
+
+    private function deriveKindFromTypeId(string $typeId): string
+    {
+        if (str_ends_with($typeId, '/_base')) {
+            return 'base';
+        }
+
+        $parts = explode('/', $typeId);
+        if (count($parts) === 0) {
+            return '';
+        }
+
+        $root = $parts[0];
+        if ($root === 'hubs') {
+            return 'hub';
+        }
+        if ($root === 'slots') {
+            return 'slot';
+        }
+        if ($root === 'fields') {
+            return 'field';
+        }
+        if ($root === 'content') {
+            return 'record';
+        }
+        if ($root === 'presets') {
+            return 'preset';
+        }
+        if ($root === 'md-blocks') {
+            return 'block';
+        }
+        if ($root === 'mixins') {
+            return 'mixin';
+        }
+        if ($root === 'settings') {
+            return 'settings';
+        }
+        if ($root === 'modules') {
+            return 'module';
+        }
+        if ($root === 'annotations') {
+            return 'annotation';
+        }
+        if ($root === 'viz') {
+            return 'viz';
+        }
+        if ($root === 'base') {
+            return 'base';
+        }
+
+        return '';
+    }
+}

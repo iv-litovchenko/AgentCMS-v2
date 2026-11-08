@@ -1,0 +1,12 @@
+name: Вложения
+status: deprecated
+description: |
+  Deprecated — поле awn-attachments объявлено в awn.content.base.fields. Mixin оставлен для совместимости ссылок в документации.
+fields:
+  awn-attachments:
+    type: fields/file/many
+    widget: attachments
+    title: Вложения
+    placement: aside-hero
+    group: materials
+    scope: attachments

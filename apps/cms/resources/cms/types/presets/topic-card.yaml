@@ -1,0 +1,10 @@
+name: 'Карточка темы'
+for_type: hubs/topic/topic
+form:
+  - awn-name
+  - awn-description
+  - awn-status
+list_columns:
+  - awn-name
+  - awn-status
+  - awn-update

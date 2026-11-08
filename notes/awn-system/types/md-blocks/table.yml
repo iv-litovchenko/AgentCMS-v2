@@ -1,0 +1,9 @@
+id: awn.block.table
+name: Таблица
+kind: block
+group: code
+sort: 2
+icon: "📊"
+description: 2 колонки, шапка
+template: "\n| Колонка | Колонка |\n| --- | --- |\n| ячейка | ячейка |\n\n"
+status: active

@@ -1,0 +1,25 @@
+<header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <h1 class="text-xl font-semibold tracking-tight text-zinc-900">{{ hub_label }}</h1>
+    <p class="mt-1 text-sm text-zinc-600">Корень хранилища — manifest в каталоге workspace.</p>
+    <p class="mt-2 font-mono text-xs text-zinc-500">{{ workspace.folder }}{% if hub_root_manifest.manifest_file|default('') != '' %}/{{ hub_root_manifest.manifest_file }}{% endif %}</p>
+</header>
+
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    {% if hub_root_manifest %}
+        <h2 class="text-sm font-medium text-zinc-900">Frontmatter</h2>
+        <dl class="mt-2 space-y-1 text-sm">
+            {% for key, value in hub_root_manifest.properties %}
+                <div class="flex gap-2">
+                    <dt class="shrink-0 font-mono text-xs text-zinc-500">{{ key }}</dt>
+                    <dd class="text-zinc-800">{{ value is iterable ? value|json_encode : value }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+        {% if hub_root_manifest.body|default('')|trim != '' %}
+            <h2 class="mt-4 text-sm font-medium text-zinc-900">Тело</h2>
+            <pre class="mt-2 max-h-64 overflow-auto rounded border border-zinc-100 bg-zinc-50 p-3 text-xs text-zinc-700 whitespace-pre-wrap">{{ hub_root_manifest.body|trim }}</pre>
+        {% endif %}
+    {% else %}
+        <p class="text-sm text-zinc-600">Файл <span class="font-mono">manifest.node.md</span> или <span class="font-mono">manifest.md</span> в корне не найден.</p>
+    {% endif %}
+</section>

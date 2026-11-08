@@ -1,0 +1,18 @@
+id: awn.slot.main-single-csv
+name: Память (табличная)
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: single-file
+storage-driver: tabular
+description: Табличная память топика — main.csv
+path: main.csv
+slot-order: 3
+allowed-content:
+  - awn.content.record-csv
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - ".csv"

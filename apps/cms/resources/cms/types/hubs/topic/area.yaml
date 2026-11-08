@@ -1,0 +1,4 @@
+name: Область
+status: active
+extends: hubs/topic/_base
+description: 'Область контента — папка-раздел в awn-container (не служебная секция корня)'

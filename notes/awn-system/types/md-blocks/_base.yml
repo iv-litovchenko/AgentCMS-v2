@@ -1,0 +1,30 @@
+id: awn.block.base
+name: База блока
+kind: block
+domain: md-blocks
+status: active
+extends: awn.entity
+description: Общий шаблон markdown-блока редактора
+kind-ui:
+  label: Блок
+  badge: { background: "#fdf2f8", border: "#f9a8d4", text: "#9d174d" }
+properties:
+  group:
+    title: Группа
+    description: В какой группе палитры блоков показывать (структура / текст / misc)
+  icon:
+    title: Иконка
+    description: Эмодзи-иконка в палитре
+  sort:
+    title: Порядок
+    description: Позиция в группе (меньше — выше)
+  render:
+    title: Способ рендера
+    description: template — вставить текст как есть; fence — рисовать через JS-рендер
+    enum: [template, fence]
+  fence-tag:
+    title: Fence-тег
+    description: Язык fenced-блока для render=fence (например awn-chart)
+  renderer:
+    title: JS-рендер
+    description: Путь к JS в awn-system/renderers/ для render=fence

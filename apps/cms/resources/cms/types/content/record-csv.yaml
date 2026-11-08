@@ -1,0 +1,47 @@
+name: 'Запись CSV'
+status: active
+extends: base/_base
+description: |
+  Базовые колонки строки CSV (main.csv, csv-накопитель). Системные awn-*; пользовательские поля в schema.yml — без префикса awn-.
+kind-ui:
+  label: 'Запись CSV'
+  badge:
+    background: '#f0f9ff'
+    border: '#bae6fd'
+    text: '#0369a1'
+fields:
+  awn-id:
+    type: fields/number/integer
+    title: ID
+    description: 'Глобальный номер workspace (счётчик в settings.yml)'
+    sort: 0
+  awn-parent-id:
+    type: fields/string
+    title: Родитель
+    description: 'awn-id родительской строки; пусто — корень'
+    sort: 1
+  awn-type:
+    type: fields/string
+    title: Тип
+    description: |
+      Тип узла в иерархии (например awn.content.record-csv, awn.content.category). Для агента и контекста CSV.
+    sort: 2
+  awn-name:
+    type: fields/string
+    title: Имя
+    description: 'Отображаемое имя строки'
+    sort: 3
+  awn-description:
+    type: fields/text
+    title: Описание
+    sort: 4
+  awn-code:
+    type: fields/string
+    title: Код
+    description: 'Ключ строки (slug/id в таблице)'
+    sort: 5
+  awn-sort:
+    type: fields/number/integer
+    title: Сортировка
+    default: 0
+    sort: 6

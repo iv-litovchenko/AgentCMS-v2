@@ -1,0 +1,19 @@
+name: 'Из справочника (одно)'
+extends: fields/_base
+widget: lookup-one
+storage: string
+mdbase: string
+description: 'Одно значение из CSV-справочника (taxonomies). Свой код для записи или добавление в справочник'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - source
+  - allow-custom
+  - allow-add
+  - value-kind
+  - enum-fallback
+group: lookup
+sort: 1
+status: active

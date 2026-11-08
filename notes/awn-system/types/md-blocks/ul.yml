@@ -1,0 +1,9 @@
+id: awn.block.ul
+name: Маркированный список
+kind: block
+group: lists
+sort: 1
+icon: "📋"
+description: Пункты с буллетами
+template: "\n- пункт 1\n- пункт 2\n- пункт 3\n\n"
+status: inactive

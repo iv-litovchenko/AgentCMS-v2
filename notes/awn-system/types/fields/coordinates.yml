@@ -1,0 +1,14 @@
+id: awn.field.coordinates
+name: Координаты
+kind: field
+domain: fields
+extends: awn.field.base
+widget: coordinates
+storage: string
+mdbase: string
+format: "55.7558, 37.6173"
+description: Географическая точка — широта и долгота (lat, lng)
+settings: [hint, required, locked, default, format]
+group: structure
+sort: 2
+status: active

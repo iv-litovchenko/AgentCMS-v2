@@ -1,0 +1,16 @@
+name: Дата
+extends: fields/_base
+widget: date
+storage: string
+mdbase: date
+format: YYYY-MM-DD
+description: 'Дата без времени (YYYY-MM-DD)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - format
+group: datetime
+sort: 1
+status: active

@@ -1,0 +1,14 @@
+id: awn.preset.onboarding
+name: "ONBOARDING.md — знакомство с workspace"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "ONBOARDING.md"
+hint-title: "ONBOARDING.md — первое знакомство с workspace"
+hint-text: "Служебный <code>ONBOARDING.md</code> workspace: краткий ритуал знакомства пользователя и агента, базовые договорённости и первые шаги. После прохождения можно архивировать или удалить."
+sort: 7
+body: |
+  # Onboarding
+  
+  > Первое знакомство с workspace: кто вы, кто агент, с чего начать.

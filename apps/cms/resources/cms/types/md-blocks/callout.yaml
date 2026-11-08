@@ -1,0 +1,9 @@
+name: Выноска
+match: '^\>\s*\[!(\w+)\]'
+variants:
+  note:
+    border: blue
+  warning:
+    border: amber
+  tip:
+    border: emerald

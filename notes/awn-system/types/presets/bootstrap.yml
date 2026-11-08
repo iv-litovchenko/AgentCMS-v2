@@ -1,0 +1,14 @@
+id: awn.preset.bootstrap
+name: "BOOTSTRAP.md — первичная настройка"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "BOOTSTRAP.md"
+hint-title: "BOOTSTRAP.md — загрузка и старт workspace"
+hint-text: "Служебный <code>BOOTSTRAP.md</code> workspace: что создать и проверить при первом запуске агента, порядок инициализации и обязательные шаги bootstrap."
+sort: 6
+body: |
+  # Bootstrap
+  
+  > Первичная настройка и загрузка workspace.

@@ -1,0 +1,13 @@
+id: awn.field.json
+name: JSON
+kind: field
+domain: fields
+extends: awn.field.base
+widget: json
+storage: string
+mdbase: text
+description: Структурированные данные в формате JSON (редактор с подсветкой)
+settings: [hint, required, locked, default]
+group: structure
+sort: 4
+status: active

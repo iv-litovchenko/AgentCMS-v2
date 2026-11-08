@@ -1,0 +1,19 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ hub_label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            {% include hub_view_template with {
+                hub_type: hub_type,
+                hub_path: hub_path,
+                hub_id: hub_id,
+                hub_label: hub_label,
+                hub_view_template: hub_view_template,
+                workspace: workspace,
+                hub_root_manifest: hub_root_manifest|default(null),
+            } %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

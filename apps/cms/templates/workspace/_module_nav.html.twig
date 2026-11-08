@@ -1,0 +1,20 @@
+<ul class="mb-3 space-y-0.5 border-t border-b border-zinc-100 pt-3 pb-3 text-sm">
+    {% for module in workspace_modules %}
+        <li>
+            {% if module.slug == active_module_slug %}
+                <span class="flex items-center gap-2 rounded-md bg-zinc-100 px-2.5 py-1.5 font-medium text-zinc-900">
+                    <span class="h-1.5 w-1.5 rounded-full {% if module.active %}bg-emerald-500{% else %}bg-zinc-300{% endif %}"></span>
+                    {{ module.label }}
+                </span>
+            {% elseif module.active %}
+                <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: module.slug}) }}" class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-zinc-700 hover:bg-zinc-50">
+                    {{ module.label }}
+                </a>
+            {% else %}
+                <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: module.slug}) }}" class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-zinc-400 hover:bg-zinc-50 hover:text-zinc-600">
+                    {{ module.label }}
+                </a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

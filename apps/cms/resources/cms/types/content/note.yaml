@@ -1,0 +1,15 @@
+name: Заметка
+slot: main
+properties:
+  -
+    key: awn-name
+    type: 'ref:fields/text'
+  -
+    key: awn-summary
+    type: 'ref:fields/text'
+  -
+    key: awn-status
+    type: 'ref:fields/awn-status'
+body:
+  format: markdown
+  blocks: 'ref:platform.md-blocks'

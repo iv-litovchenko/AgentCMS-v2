@@ -1,0 +1,13 @@
+id: awn.field.file.image.for-preview
+name: Превью сущности
+kind: field
+domain: fields
+extends: awn.field.file.image.one
+widget: preview
+storage: string
+mdbase: url
+description: Изображение превью сущности в awn-storage/assets/preview/
+settings: [hint, required, locked, default]
+group: cms
+sort: 1
+status: active

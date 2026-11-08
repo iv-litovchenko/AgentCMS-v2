@@ -1,0 +1,9 @@
+id: awn.block.paragraph
+name: Абзац
+kind: block
+group: text
+sort: 1
+icon: "📝"
+description: Пустой блок для текста
+template: "\n\nТекст...\n\n"
+status: draft

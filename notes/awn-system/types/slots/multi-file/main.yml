@@ -1,0 +1,17 @@
+id: awn.slot.main
+name: Память-страницы (многофайловая)
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: Многофайловая память топика — папка main/
+path: main/
+slot-order: 1
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

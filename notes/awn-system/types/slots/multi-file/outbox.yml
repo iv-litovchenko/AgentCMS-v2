@@ -1,0 +1,21 @@
+id: awn.slot.outbox
+name: Исходящие
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: >
+  Исходящий поток канала (awn.hub.channel) — awn-storage/outbox/.
+  Сообщения и материалы после обработки, готовые к отправке наружу.
+path: outbox/
+slot-order: 5
+allowed-containers:
+  - awn.hub.channel
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

@@ -1,0 +1,43 @@
+{# workspace, workspaces — list из listForDisplay() #}
+<div class="mb-3 space-y-3 pb-3">
+    <details class="group/ws relative w-full">
+        <summary class="flex w-full cursor-pointer list-none items-center gap-1.5 rounded-md border border-transparent bg-zinc-100 px-2 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden">
+            <span class="min-w-0 flex-1 truncate text-left">{{ workspace.name }}</span>
+            <svg class="h-4 w-4 shrink-0 text-zinc-400 transition group-open/ws:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+            </svg>
+        </summary>
+        <div class="absolute left-0 right-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border border-zinc-200 bg-white py-1 text-sm shadow-lg" role="menu" aria-label="Хранилища">
+            {% for item in workspaces %}
+                <a href="{{ path('workspace_show', {slug: item.slug}) }}"
+                   role="menuitem"
+                   class="block px-3 py-2 {% if item.slug == workspace.slug %}bg-zinc-100 font-medium text-zinc-900{% else %}text-zinc-700 hover:bg-zinc-50{% endif %}">
+                    <span class="block truncate">{{ item.name }}</span>
+                    {% if item.description|default('') != '' %}
+                        <span class="block truncate text-xs font-normal text-zinc-500">{{ item.description }}</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+            <div class="my-1 border-t border-zinc-100"></div>
+            <a href="{{ path('workspace_index') }}" role="menuitem" class="block px-3 py-2 text-zinc-600 hover:bg-zinc-50">Все хранилища</a>
+            <a href="{{ path('workspace_new') }}" role="menuitem" class="block px-3 py-2 text-zinc-600 hover:bg-zinc-50">+ Создать</a>
+        </div>
+    </details>
+
+    {% set onOverview = active_module_slug is not defined or active_module_slug == '' %}
+    <a href="{{ path('workspace_show', {slug: workspace.slug}) }}"
+       class="block overflow-hidden rounded-lg ring-1 {% if onOverview %}ring-emerald-500 ring-2{% else %}ring-zinc-200 hover:ring-zinc-300{% endif %}"
+       aria-label="Обзор хранилища"
+       title="Обзор">
+        {% include 'workspace/_avatar.html.twig' with {
+            avatar: workspace.avatar,
+            initials: workspace.initials,
+            full_width: true,
+        } %}
+    </a>
+
+    {% include 'workspace/_hub_tree.html.twig' with {
+        active_module_slug: active_module_slug|default(''),
+        active_hub_path: active_hub_path|default(''),
+    } %}
+</div>

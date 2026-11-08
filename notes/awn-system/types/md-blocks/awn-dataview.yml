@@ -1,0 +1,18 @@
+id: awn.block.awn-dataview
+name: Awn Dataview (DQL)
+kind: block
+group: misc
+sort: 42
+icon: "📊"
+description: Тот же DQL-lite, fence-tag awn-dataview (CMS-имя; ```dataview — алиас Obsidian)
+render: fence
+fence-tag: awn-dataview
+renderer: awn-system/renderers/dql-table.js
+template: |
+  ```awn-dataview
+  FROM .
+  WHERE awn-type = "awn.content.page"
+  LIMIT 20
+  ```
+
+status: active

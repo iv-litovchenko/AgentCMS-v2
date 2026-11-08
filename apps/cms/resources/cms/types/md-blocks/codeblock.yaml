@@ -1,0 +1,12 @@
+name: 'Блок кода'
+group: code
+sort: 1
+icon: 💻
+description: 'Многострочный код'
+template: |+
+
+  ```
+  код
+  ```
+
+status: active

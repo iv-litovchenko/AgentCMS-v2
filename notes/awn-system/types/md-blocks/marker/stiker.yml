@@ -1,0 +1,15 @@
+id: awn.block.marker-stiker
+name: Маркер · Стикер
+kind: block
+group: markers
+status: active
+sort: 4
+icon: "▤"
+description: Блок awn-marker-stiker — короткая заметка-стикер в конспекте
+template: |
+  ```awn-marker-stiker
+  awn-status: открыто
+  ---
+  Короткий текст стикера.
+
+  ```

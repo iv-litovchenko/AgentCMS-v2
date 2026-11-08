@@ -1,0 +1,11 @@
+name: Группа
+status: active
+extends: hubs/database/_base
+description: 'manifest + подпапки-накопители, без собственных записей'
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#ecfdf5'
+    border: '#a7f3d0'
+    text: '#047857'

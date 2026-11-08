@@ -1,0 +1,19 @@
+id: awn.block.mermaid-mindmap
+name: Mind map
+kind: block
+group: visualization
+sort: 8
+icon: "🧠"
+description: Древовидная карта идей
+template: |
+  ```mermaid
+  mindmap
+    root((Тема))
+      Раздел A
+        Подпункт 1
+        Подпункт 2
+      Раздел B
+        Подпункт 3
+  ```
+
+status: active

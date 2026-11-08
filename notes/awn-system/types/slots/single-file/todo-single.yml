@@ -1,0 +1,19 @@
+id: awn.slot.todo-single
+name: TODO
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: single-file
+storage-driver: internal
+description: Список задач топика — todo.md
+path: todo.md
+slot-order: 15
+allowed-containers:
+  - awn.page.topic
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - ".md"

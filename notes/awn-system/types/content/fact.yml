@@ -1,0 +1,69 @@
+id: awn.content.fact
+name: Факт
+kind: type
+domain: content
+status: active
+extends: awn.content.base
+description: Атомарный факт в банке awn-facts/ — решение, предпочтение, сущность
+
+fields:
+
+  awn-fact-kind:
+    type: awn.field.choice.one
+    title: "{A2!} Вид факта"
+    placement: aside-body
+    group: content
+    sort: 10
+    enum:
+      - key: decision
+        name: Решение
+      - key: preference
+        name: Предпочтение
+      - key: entity
+        name: Сущность
+      - key: procedure
+        name: Процедура
+      - key: open-question
+        name: Открытый вопрос
+      - key: note
+        name: Заметка
+      - key: fact
+        name: Факт
+
+  awn-source:
+    type: awn.field.choice.one
+    title: "{A2!} Источник"
+    placement: aside-body
+    group: content
+    sort: 11
+    enum:
+      - key: claude-desktop
+        name: Claude Desktop
+      - key: cursor
+        name: Cursor
+      - key: voice
+        name: Voice / Shell
+      - key: shell
+        name: Shell
+      - key: codex
+        name: Codex
+      - key: manual
+        name: Вручную
+      - key: other
+        name: Другое
+
+  awn-source-ref:
+    type: awn.field.string
+    title: "{A2!} Ссылка на источник"
+    description: Путь к дискуссии или записи (awn-dialogs/…, discussion/…)
+    placement: aside-body
+    group: content
+    sort: 12
+
+  awn-supersedes:
+    type: awn.field.string
+    title: "{A2!} Заменяет"
+    description: Путь или id более старого факта
+    placement: aside-body
+    group: content
+    sort: 13

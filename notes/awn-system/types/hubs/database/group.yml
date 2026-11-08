@@ -1,0 +1,13 @@
+id: awn.hub.database.group
+name: Группа
+kind: frame
+domain: database
+status: active
+extends: awn.hub.database.base
+description: manifest + подпапки-накопители, без собственных записей
+manifest-pattern: manifest.md
+
+kind-ui:
+  for: group
+  label: Группа
+  badge: { background: "#ecfdf5", border: "#a7f3d0", text: "#047857" }

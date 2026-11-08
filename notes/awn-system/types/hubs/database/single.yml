@@ -1,0 +1,13 @@
+id: awn.hub.database.single
+name: Одиночка
+kind: frame
+domain: database
+status: active
+extends: awn.hub.database.base
+description: manifest + schema в корне; main.md в awn-storage/data/
+manifest-pattern: manifest.md
+
+kind-ui:
+  for: single
+  label: Одиночка
+  badge: { background: "#ecfeff", border: "#a5f3fc", text: "#0e7490" }

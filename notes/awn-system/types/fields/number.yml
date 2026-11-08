@@ -1,0 +1,13 @@
+id: awn.field.number
+name: Число
+kind: field
+domain: fields
+extends: awn.field.base
+widget: number
+storage: number
+mdbase: number
+description: Число с дробной частью (float)
+settings: [hint, required, locked, default, format]
+group: numbers
+sort: 1
+status: active

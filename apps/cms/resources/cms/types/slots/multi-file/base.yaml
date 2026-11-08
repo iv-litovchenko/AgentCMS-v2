@@ -1,0 +1,14 @@
+name: База
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Структурированные данные — строки и категории'
+path: base/
+slot-order: 13
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

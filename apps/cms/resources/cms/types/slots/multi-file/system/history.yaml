@@ -1,0 +1,14 @@
+name: История
+status: active
+extends: slots/_base
+slot-category: records
+storage-driver: external
+description: 'Версии файлов и история правок — history/'
+path: history/
+slot-order: 91
+slot-tier: system
+allowed-content:
+  - content/record
+  - annotations/sidecar
+accept-files:
+  - '*'

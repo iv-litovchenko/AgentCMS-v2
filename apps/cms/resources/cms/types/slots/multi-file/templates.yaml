@@ -1,0 +1,14 @@
+name: Шаблоны
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Шаблоны записей и manifest'
+path: templates/
+slot-order: 12
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

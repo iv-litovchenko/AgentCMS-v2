@@ -1,0 +1,32 @@
+id: awn.hub.database.taxonomy-collection
+name: Справочник таксономии
+kind: frame
+domain: database
+status: active
+extends: awn.hub.database.collection
+description: CSV-коллекция в taxonomies; ключ в awn-taxonomy берётся из slug папки
+manifest-pattern: manifest.md
+
+kind-ui:
+  for: collection
+  label: Таксономия
+  badge: { background: "#ede9fe", border: "#c4b5fd", text: "#5b21b6" }
+
+fields:
+  awn-taxonomy-cardinality:
+    type: awn.field.choice.one
+    title: "{A2!} Кардинальность"
+    description: one — одно значение на запись; many — список значений в awn-taxonomy
+    placement: aside-body
+    group: infoblock
+    sort: 10
+    enum: [one, many]
+    default: one
+  awn-taxonomy-hierarchy:
+    type: awn.field.boolean
+    title: "{A2!} Иерархия значений"
+    description: Дерево кодов в справочнике (awn-parent-id в CSV)
+    placement: aside-body
+    group: infoblock
+    sort: 11
+    default: false

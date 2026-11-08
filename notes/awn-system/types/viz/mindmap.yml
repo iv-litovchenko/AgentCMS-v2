@@ -1,0 +1,14 @@
+id: mindmap
+label: Интеллект-карта
+section: knowledge
+icon: "🧠"
+description: Структура темы без жёсткого порядка — mermaid mindmap
+bodyFormat: mermaid-mindmap
+defaultTemplate: |
+  ```mermaid
+  mindmap
+    root((Тема))
+      Раздел A
+        Подпункт 1
+      Раздел B
+  ```

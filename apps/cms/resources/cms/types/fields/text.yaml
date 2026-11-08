@@ -1,0 +1,14 @@
+name: Текст
+extends: fields/_base
+widget: textarea
+storage: string
+mdbase: text
+description: 'Длинный текст или описание (многострочное)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: text-multiline
+sort: 4
+status: active

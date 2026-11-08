@@ -1,0 +1,19 @@
+id: awn.slot.flexible
+name: Гибкий слот
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: >
+  Режим темы (awn-slots-flexible): произвольная структура файлов и папок
+  в корне awn-storage/ без типовых слотов main, inbox, media…
+path: .
+slot-order: 0
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

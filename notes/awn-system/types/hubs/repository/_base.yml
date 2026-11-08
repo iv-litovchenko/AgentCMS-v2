@@ -1,0 +1,7 @@
+id: awn.hub.repository.base
+name: База семьи repository
+kind: base
+domain: hubs
+status: active
+extends: awn.hub.base
+description: Карточка репозитория в awn-repositories/

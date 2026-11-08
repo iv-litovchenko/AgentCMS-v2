@@ -1,0 +1,18 @@
+id: awn.block.mermaid-flowchart
+name: Блок-схема
+kind: block
+group: visualization
+sort: 1
+icon: "🔀"
+description: Flowchart — процессы и ветвления
+template: |
+  ```mermaid
+  flowchart LR
+    A[Начало] --> B{Условие?}
+    B -->|да| C[Действие]
+    B -->|нет| D[Другое]
+    C --> E[Конец]
+    D --> E
+  ```
+
+status: active

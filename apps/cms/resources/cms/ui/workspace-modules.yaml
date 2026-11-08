@@ -1,0 +1,44 @@
+# Модули внутри хранилища. URL: /workspaces/{slug}/module/{slug модуля}
+items:
+  - slug: search
+    module-id: module-search
+    label: Поиск
+    implementation: stub
+    sidebar: false
+    sort: 10
+  - slug: create
+    module-id: module-create
+    label: Создать
+    implementation: stub
+    sidebar: false
+    sort: 15
+  - slug: journal
+    module-id: module-journal
+    label: Бортовой журнал
+    implementation: stub
+    sidebar: true
+    sort: 20
+  - slug: dependencies
+    module-id: module-dependencies
+    label: Внешние зависимости
+    implementation: stub
+    sidebar: true
+    sort: 30
+  - slug: settings
+    module-id: module-settings
+    label: Настройки
+    implementation: stub
+    sidebar: true
+    sort: 40
+  - slug: trash
+    module-id: module-trash
+    label: Корзина
+    implementation: stub
+    sidebar: true
+    sort: 50
+  - slug: about
+    module-id: module-about
+    label: О хранилище
+    implementation: stub
+    sidebar: true
+    sort: 60

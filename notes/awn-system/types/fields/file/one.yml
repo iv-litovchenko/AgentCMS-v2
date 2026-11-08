@@ -1,0 +1,13 @@
+id: awn.field.file.one
+name: Файл (один)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: file
+storage: string
+mdbase: file
+description: Ссылка на один файл в storage
+settings: [hint, required, locked, default, accept, upload, insertInText, scope]
+group: media
+sort: 2
+status: active

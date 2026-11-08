@@ -1,0 +1,32 @@
+id: awn.mixin.indexing-container
+name: Индексирование (контейнер)
+kind: mixin
+domain: mixins
+status: active
+description: Исключение manifest/readme и/или содержимого папки из поисковых индексов
+kind-ui:
+  label: Миксин
+  badge: { background: "#f8fafc", border: "#cbd5e1", text: "#475569" }
+fields:
+  awn-index-exclude-record:
+    type: awn.field.boolean
+    title: "{A2!} Исключить запись из индексации"
+    description: >
+      Не индексировать только manifest.md или readme.md этой папки
+      (регистр имени файла не важен: README.md, Manifest.md и т.д.)
+      (актуально для репозиториев и контейнеров).
+    default: false
+    placement: aside-body
+    group: indexing
+    sort: 1
+
+  awn-index-exclude-subtree:
+    type: awn.field.boolean
+    title: "{A2!} Исключить контент из индексации"
+    description: >
+      Не индексировать всё внутри папки и на вложенных уровнях
+      (semantic, fulltext, storage, link).
+    default: false
+    placement: aside-body
+    group: indexing
+    sort: 2

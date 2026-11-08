@@ -1,0 +1,4 @@
+name: Корень
+status: active
+extends: hubs/root/_base
+description: 'Узел корня — читает manifest.node.md (или manifest.md) из корня workspace'

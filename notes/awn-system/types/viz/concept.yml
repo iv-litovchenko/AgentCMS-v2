@@ -1,0 +1,13 @@
+id: concept
+label: Концептуальная карта
+section: knowledge
+icon: "🔗"
+description: Как понятия связаны между собой — не дерево, а сеть с подписями на связях
+bodyFormat: mermaid-flowchart
+defaultTemplate: |
+  ```mermaid
+  flowchart LR
+    A[Понятие A] ---|связь| B[Понятие B]
+    B --> C[Понятие C]
+    A -.-> D[Понятие D]
+  ```

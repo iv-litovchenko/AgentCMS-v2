@@ -1,6 +1,16 @@
-{% set boxClass = size|default('h-10 w-10') %}
-{% if avatar %}
-    <img src="{{ path('workspace_avatar', {filename: avatar}) }}" alt="" class="{{ boxClass }} shrink-0 rounded-md object-cover ring-1 ring-zinc-200">
+{% set fullWidth = full_width|default(false) %}
+{% if fullWidth %}
+    {% set heroClass = 'h-[200px] w-full object-cover' %}
+    {% if avatar %}
+        <img src="{{ path('workspace_avatar', {filename: avatar}) }}" alt="" class="{{ heroClass }}">
+    {% else %}
+        <span class="flex {{ heroClass }} items-center justify-center bg-zinc-100 text-2xl font-medium text-zinc-600">{{ initials }}</span>
+    {% endif %}
 {% else %}
-    <span class="{{ boxClass }} flex shrink-0 items-center justify-center rounded-md bg-zinc-100 text-xs font-medium text-zinc-600">{{ initials }}</span>
+    {% set boxClass = size|default('h-10 w-10') %}
+    {% if avatar %}
+        <img src="{{ path('workspace_avatar', {filename: avatar}) }}" alt="" class="{{ boxClass }} shrink-0 rounded-md object-cover ring-1 ring-zinc-200">
+    {% else %}
+        <span class="{{ boxClass }} flex shrink-0 items-center justify-center rounded-md bg-zinc-100 text-xs font-medium text-zinc-600">{{ initials }}</span>
+    {% endif %}
 {% endif %}

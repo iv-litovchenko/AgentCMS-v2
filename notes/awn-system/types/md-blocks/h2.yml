@@ -1,0 +1,14 @@
+id: awn.block.h2
+name: Заголовок H2
+kind: block
+domain: md-blocks
+status: active
+extends: awn.block.base
+group: structure
+sort: 1
+icon: "2️⃣"
+description: Раздел второго уровня
+template: |
+  ## Заголовок
+
+  Текст раздела.

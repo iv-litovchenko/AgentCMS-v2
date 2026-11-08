@@ -1,0 +1,14 @@
+id: roadmap
+label: Дорожная карта
+section: plans
+icon: "🗺"
+description: Порядок и этапы — markdown или gantt
+bodyFormat: markdown-roadmap
+defaultTemplate: |
+  ## Этап 1
+  статус: не начато
+
+  Краткое описание этапа.
+
+  ## Этап 2
+  статус: в процессе

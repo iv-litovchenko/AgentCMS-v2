@@ -1,0 +1,16 @@
+<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6 lg:flex-row lg:items-start">
+    <aside class="w-full shrink-0 lg:w-52" aria-label="Хранилище">
+        <div class="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
+            {% include 'workspace/_workspace_switcher.html.twig' with {
+                workspace: workspace,
+                workspaces: workspaces,
+                active_module_slug: active_module_slug|default(''),
+            } %}
+            {% include 'workspace/_module_nav.html.twig' %}
+        </div>
+    </aside>
+
+    <div class="flex min-w-0 flex-1 flex-col gap-4">
+        {% block workspace_main %}{% endblock %}
+    </div>
+</div>

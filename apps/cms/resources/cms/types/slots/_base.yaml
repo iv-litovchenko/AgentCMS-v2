@@ -1,0 +1,86 @@
+name: 'Слот памяти'
+status: active
+extends: base/_base
+description: 'Базовый тип слоя памяти у топика'
+kind-ui:
+  label: Слот
+  badge:
+    background: '#f0fdfa'
+    border: '#5eead4'
+    text: '#0f766e'
+slot-categories:
+  -
+    id: memory
+    name: Память
+    sort: 1
+    description: 'Рабочая память темы — записи, входящие, заметки, источники'
+  -
+    id: files
+    name: Файлы
+    sort: 2
+    description: 'Медиа, активы, скрипты, шаблоны, база, NotebookLM, артефакты, репозитории'
+  -
+    id: single-file
+    name: Однофайловая
+    sort: 3
+    description: 'Один файл на слот — main.md, todo.md, log.md, CSV'
+  -
+    id: records
+    name: Записи
+    sort: 4
+    description: 'Системные слои — история, временные файлы, итоги'
+  -
+    id: communication
+    name: Общение
+    sort: 5
+    description: 'Диалоги и комментарии'
+properties:
+  storage-driver:
+    title: 'Драйвер памяти'
+    description: |
+      Форма хранения слота — тот же словарь, что рантайм показывает в счётчике узла: internal — Однофайловая (один .md на слот); external — Многофайловая (папка записей); tabular — Табличная (CSV, строки).
+    enum:
+      - internal
+      - external
+      - tabular
+    default: external
+  path:
+    title: Путь
+    description: 'Подпапка узла, куда складывается контент слота (например inbox/)'
+    required: true
+  allowed-content:
+    title: 'Разрешённый контент'
+    type: list
+    description: 'Какие content-типы можно класть в слот (awn.content.record…)'
+  accept-files:
+    title: 'Принимаемые файлы'
+    type: list
+    description: 'Расширения файлов, допустимые в слоте (.md, .png…)'
+  slot-category:
+    title: Категория
+    description: 'Группа слота в каталоге (канон — slot-categories в этом файле)'
+    enum:
+      - memory
+      - files
+      - single-file
+      - records
+      - communication
+  slot-order:
+    title: Порядок
+    type: integer
+    description: 'Сортировка внутри категории'
+  slot-tier:
+    title: Уровень
+    description: 'system — служебный слот, управляется runtime'
+    enum:
+      - user
+      - system
+  allowed-containers:
+    title: 'Где можно создавать'
+    type: list
+    description: |
+      Тип страницы-контейнера (awn.page.* / awn.hub.*): тема, медиатека, канал. Пустой список — везде, где слот есть в политике контейнера.
+    enum:
+      - awn.page.topic
+      - hubs/media/media
+      - hubs/channel/channel

@@ -1,0 +1,12 @@
+name: 'Маркированный список'
+group: lists
+sort: 1
+icon: 📋
+description: 'Пункты с буллетами'
+template: |+
+
+  - пункт 1
+  - пункт 2
+  - пункт 3
+
+status: inactive

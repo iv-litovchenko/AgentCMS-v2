@@ -1,0 +1,15 @@
+id: awn.field.taxonomy
+name: Таксономия
+kind: field
+domain: fields
+extends: awn.field.base
+widget: taxonomy
+storage: taxonomy
+mdbase: object
+description: >
+  Значения из CSV-справочников группы awn-databases/taxonomies/.
+  В YAML — объект awn-taxonomy с ключами словарей (tags, category, color…).
+settings: [hint, required, locked, default]
+group: lookup
+sort: 3
+status: active

@@ -1,0 +1,15 @@
+name: 'Память (табличная)'
+status: active
+extends: slots/_base
+slot-category: single-file
+storage-driver: tabular
+description: 'Табличная память топика — main.csv'
+path: main.csv
+slot-order: 3
+allowed-content:
+  - content/record-csv
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - .csv

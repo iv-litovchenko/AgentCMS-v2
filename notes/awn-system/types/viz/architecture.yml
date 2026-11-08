@@ -1,0 +1,18 @@
+id: architecture
+label: Архитектура
+section: process
+icon: "🏗"
+description: Устройство системы — компоненты и потоки данных
+bodyFormat: mermaid-flowchart
+defaultTemplate: |
+  ```mermaid
+  flowchart TB
+    subgraph Client["Клиент"]
+      UI[UI]
+    end
+    subgraph Server["Сервер"]
+      API[API]
+      Store[(Хранилище)]
+    end
+    UI --> API --> Store
+  ```

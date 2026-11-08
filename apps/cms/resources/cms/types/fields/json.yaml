@@ -1,0 +1,14 @@
+name: JSON
+extends: fields/_base
+widget: json
+storage: string
+mdbase: text
+description: 'Структурированные данные в формате JSON (редактор с подсветкой)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: structure
+sort: 4
+status: active

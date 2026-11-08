@@ -1,0 +1,16 @@
+name: 'Дата и время'
+extends: fields/date
+widget: datetime
+storage: string
+mdbase: datetime
+format: ISO-8601
+description: 'Дата и время (ISO 8601)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - format
+group: datetime
+sort: 2
+status: active

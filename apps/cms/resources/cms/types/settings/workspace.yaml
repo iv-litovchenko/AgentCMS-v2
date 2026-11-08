@@ -1,0 +1,1401 @@
+name: 'Настройки workspace'
+status: active
+extends: settings/_base
+description: |
+  Параметры конкретного хранилища (workspace): агент, слоты, TTL, счётчик awn-id. Значения — .agent-cms/settings/workspace.yml. Отдельная область, не сливается с platform/user.
+scope: workspace
+enabled: true
+consumer:
+  - mcp-server
+  - server
+  - ui
+  - context
+valuesFile: .agent-cms/settings/workspace.yml
+fieldGroups:
+  -
+    id: general
+    name: Общие
+    description: |
+      Язык агента и уведомления для этого хранилища (.agent-cms/settings/workspace.yml).
+  -
+    id: agent
+    name: Агент
+    description: 'Параметры агента для этого хранилища (settings.yml).'
+  -
+    id: autoincrement
+    name: Автоинкремент
+    description: |
+      Глобальный счётчик awn-id для записей workspace (только просмотр в UI). Значения в settings.yml; обновляются при присвоении id и sync-counter.
+  -
+    id: registry-queries
+    name: 'Реестр запросов'
+    description: |
+      Именованные выборки для агента: SQL-like по storage-index (поля frontmatter) или готовые runtime-сборки (cron, heartbeat). Файл .agent-cms/settings/registry-queries.yml. MCP list_workspace_registry_queries · run_workspace_registry_query.
+  -
+    id: memory
+    name: Память
+    description: 'Слоты и TTL временных данных workspace (пока не подключены в runtime).'
+  -
+    id: hooks
+    name: 'Крючки и триггеры'
+    description: |
+      Правила «когда в хранилище происходит событие — выполнить действие»: webhook, уведомление, скрипт или вызов MCP. Список правил будет здесь; исполнитель в runtime — позже. Сейчас раздел-заглушка.
+  -
+    id: voice-client
+    name: 'Голосовой клиент'
+    description: |
+      Настройки Agent CMS Voice для этого workspace. Секреты API — в .env; живая сессия Shell — в .agent-cms/state/shell.json.
+    subgroups:
+      -
+        id: voice-cms
+        name: 'CMS и канал'
+        description: 'Привязка Voice к теме workspace'
+        sort: 1
+        defaultOpen: true
+      -
+        id: voice-input
+        name: 'Ввод (микрофон)'
+        description: 'Режим 🎤 у поля ввода и доп. опции'
+        sort: 2
+      -
+        id: voice-route
+        name: 'Маршрут и агент'
+        description: 'Runtime по умолчанию и system prompt'
+        sort: 3
+        defaultOpen: true
+      -
+        id: voice-route-claude
+        name: 'Маршрут · Claude CLI'
+        description: |
+          Локальный CLI Claude. Shell запускает claude в workspaces/0-cli-sandbox/claude/<agent-id>/ — не в корне workspace. К CMS — через MCP.
+          Установка npm i -g @anthropic-ai/claude-code · claude login · claude auth status.
+        sort: 4
+      -
+        id: voice-route-codex
+        name: 'Маршрут · Codex CLI'
+        description: |
+          Локальный CLI Codex. Shell запускает codex exec в workspaces/0-cli-sandbox/codex/<agent-id>/ — хранилище CMS не монтируется.
+          Установка npm i -g @openai/codex · codex login · codex --version.
+        sort: 5
+      -
+        id: voice-route-cursor
+        name: 'Маршрут · Cursor'
+        description: 'Cursor Agent — OpenAI-compatible endpoint (скоро)'
+        disabled: true
+        sort: 6
+      -
+        id: voice-route-openclaw
+        name: 'Маршрут · OpenClaw'
+        description: 'OpenClaw Gateway — локальный агент :18789 (скоро)'
+        disabled: true
+        sort: 7
+      -
+        id: voice-route-hermes
+        name: 'Маршрут · Hermes Agent'
+        description: 'Hermes Agent (Nous Research) — API :8642/v1 (скоро)'
+        disabled: true
+        sort: 8
+      -
+        id: voice-route-agent-zero
+        name: 'Маршрут · Agent Zero'
+        description: 'Agent Zero gateway — :42617 (скоро)'
+        disabled: true
+        sort: 9
+      -
+        id: voice-route-qwenpaw
+        name: 'Маршрут · QwenPaw'
+        description: |
+          HTTP-агент QwenPaw. Shell отправляет сообщения на сервер и стримит ответ через SSE.
+          URL, agentId и session — в полях ниже.
+        sort: 10
+      -
+        id: voice-stt
+        name: 'Распознавание (STT)'
+        description: 'Включение, захват, промпт и движок'
+        sort: 11
+        defaultOpen: true
+      -
+        id: voice-stt-browser
+        name: 'Распознавание (STT) · Web Speech'
+        sort: 12
+      -
+        id: voice-stt-whisper
+        name: 'Распознавание (STT) · Whisper'
+        description: 'Локальный Whisper на сервере (скоро в Voice Shell)'
+        disabled: true
+        sort: 13
+      -
+        id: voice-stt-elevenlabs
+        name: 'Распознавание (STT) · ElevenLabs Scribe'
+        description: 'Облачный Scribe (скоро в Voice Shell)'
+        disabled: true
+        sort: 14
+      -
+        id: voice-tts
+        name: 'Озвучка (TTS)'
+        description: 'Включение, способ озвучки, промпт и активный движок'
+        sort: 15
+        defaultOpen: true
+      -
+        id: voice-tts-browser
+        name: 'Озвучка (TTS) · Web Speech'
+        sort: 16
+      -
+        id: voice-tts-edge
+        name: 'Озвучка (TTS) · Edge TTS'
+        sort: 17
+      -
+        id: voice-tts-piper
+        name: 'Озвучка (TTS) · Piper'
+        description: 'Локальный Piper на сервере (скоро в Voice Shell)'
+        disabled: true
+        sort: 18
+      -
+        id: voice-tts-elevenlabs
+        name: 'Озвучка (TTS) · ElevenLabs'
+        sort: 19
+      -
+        id: voice-proactive
+        name: 'Проактивные пинги'
+        sort: 20
+      -
+        id: voice-media
+        name: 'Камера и экран'
+        sort: 21
+      -
+        id: voice-window
+        name: 'Окно Voice'
+        description: 'Оформление окна Voice Shell — персонаж, компактный режим, фон, звук.'
+        sort: 22
+        defaultOpen: true
+      -
+        id: voice-ui
+        name: 'Интерфейс диалога'
+        sort: 23
+      -
+        id: voice-compose
+        name: 'Шаблоны compose'
+        description: 'Быстрые команды для поля сообщения в Voice Shell'
+        sort: 24
+      -
+        id: voice-file-hub
+        name: Файлообменник
+        description: |
+          Очередь выдачи файлов из хранилища в Voice Shell и Companion (📎 на вкладку).
+        sort: 25
+  -
+    id: dependencies
+    name: Зависимости
+    description: |
+      Файл dependencies.csv в корне workspace и схема колонок для агента. Строки — в CSV; набор колонок — здесь (readonly path + описания полей).
+  -
+    id: static
+    name: 'Статичные параметры'
+    description: |
+      Заглушка для интеграций — внешние плагины, Cursor skills и сторонние сервисы (settings.yml).
+    subgroups:
+      -
+        id: demo-plugin
+        name: demo-plugin
+        description: 'Заглушка внешнего плагина'
+        sort: 1
+        defaultOpen: true
+      -
+        id: examples
+        name: Примеры
+        description: 'Тестовые ключи для схемы'
+        sort: 2
+fields:
+  agent-language:
+    type: fields/choice/one
+    title: '{NOT WORK} Язык агента'
+    description: 'Предпочтительный язык ответов для этого хранилища'
+    default: ru
+    enum:
+      - ru
+      - en
+      - auto
+    group: general
+    sort: 10
+  response-style:
+    type: fields/choice/one
+    title: '{NOT WORK} Стиль ответов'
+    description: 'Кратко / подробно / как в AGENTS.md'
+    default: agents-md
+    enum:
+      - brief
+      - detailed
+      - agents-md
+    group: general
+    sort: 11
+  notify-on-complete:
+    type: fields/boolean
+    title: '{NOT WORK} Уведомление по завершении'
+    description: 'notify_user после длинных задач в этом workspace'
+    default: false
+    group: general
+    sort: 12
+  workspace-idle-screensaver-minutes:
+    type: fields/choice/one
+    title: 'Заставка при бездействии'
+    description: |
+      Полноэкранная заставка, если вы не взаимодействуете с этим хранилищем. «Выключено» — таймер не запускается (один отложенный таймер в браузере, без опроса).
+    default: '3'
+    enum:
+      -
+        key: 'off'
+        name: Выключено
+      -
+        key: '3'
+        name: '3 минуты'
+      -
+        key: '5'
+        name: '5 минут'
+      -
+        key: '10'
+        name: '10 минут'
+      -
+        key: '30'
+        name: '30 минут'
+    group: general
+    sort: 13
+  workspace-pomodoro-enabled:
+    type: fields/boolean
+    title: 'Метод помидора'
+    description: |
+      Кнопка 🍅 в футере: интервал фокуса, звуковой сигнал и окно короткого отдыха. Не связано с заставкой при бездействии. Выключите, если таймер не нужен.
+    default: true
+    group: general
+    sort: 14
+  workspace-pomodoro-work-minutes:
+    type: fields/choice/one
+    title: 'Интервал помидора'
+    description: 'Длительность фокуса до звонка и перерыва (кнопка 🍅 в футере).'
+    default: '25'
+    enum:
+      -
+        key: '1'
+        name: '1 минута'
+      -
+        key: '5'
+        name: '5 минут'
+      -
+        key: '25'
+        name: '25 минут'
+      -
+        key: '45'
+        name: '45 минут'
+      -
+        key: '60'
+        name: '60 минут'
+    group: general
+    sort: 15
+  workspace-pomodoro-break-minutes:
+    type: fields/choice/one
+    title: 'Перерыв помидора'
+    description: 'Длительность отдыха после фокуса (таймер в окне «Время отдохнуть»).'
+    default: '5'
+    enum:
+      -
+        key: '5'
+        name: '5 минут'
+      -
+        key: '10'
+        name: '10 минут'
+      -
+        key: '15'
+        name: '15 минут'
+      -
+        key: '60'
+        name: '60 минут'
+    group: general
+    sort: 16
+  awn-id-next:
+    type: fields/number/integer
+    title: 'Следующий id'
+    description: 'Следующий номер для присвоения awn-id новым записям'
+    locked: true
+    default: 1
+    group: autoincrement
+    sort: 20
+  awn-id-issued:
+    type: fields/number/integer
+    title: 'Выдано id'
+    description: 'Сколько awn-id уже выдано счётчиком'
+    locked: true
+    default: 0
+    group: autoincrement
+    sort: 21
+  awn-id-updated-at:
+    type: fields/string
+    title: Обновлено
+    description: 'Время последнего изменения счётчика (ISO 8601)'
+    locked: true
+    group: autoincrement
+    sort: 22
+  awn-id-model:
+    type: fields/string
+    title: 'Модель счётчика'
+    description: 'Версия схемы счётчика awn-id'
+    locked: true
+    default: workspace-id-autoincrement-v1
+    group: autoincrement
+    sort: 23
+  awn-recycle-id-next:
+    type: fields/number/integer
+    title: 'Следующая метка удаления'
+    description: 'Следующий номер для мягкого удаления (корзина awn-recycler)'
+    locked: true
+    default: 1
+    group: autoincrement
+    sort: 24
+  awn-recycle-id-issued:
+    type: fields/number/integer
+    title: 'Выдано меток удаления'
+    description: 'Сколько меток удаления уже выдано счётчиком'
+    locked: true
+    default: 0
+    group: autoincrement
+    sort: 25
+  awn-recycle-id-updated-at:
+    type: fields/string
+    title: 'Метки удаления — обновлено'
+    description: 'Время последнего изменения счётчика меток (ISO 8601)'
+    locked: true
+    group: autoincrement
+    sort: 26
+  awn-recycle-id-model:
+    type: fields/string
+    title: 'Модель меток удаления'
+    description: 'Версия схемы счётчика меток корзины'
+    locked: true
+    default: workspace-recycle-marker-v1
+    group: autoincrement
+    sort: 27
+  awn-recycle-id-pad-width:
+    type: fields/number/integer
+    title: 'Ширина метки (ведущие нули)'
+    description: 'Длина числовой метки в имени re-… и .trash.… (4–12)'
+    locked: true
+    default: 8
+    group: autoincrement
+    sort: 28
+  registry-queries-lead:
+    type: fields/text
+    title: 'Как это работает'
+    description: 'Концепция раздела'
+    readonly: true
+    group: registry-queries
+    sort: 5
+    default: |
+      Именованные выборки по индексу полей (как «Поля SQL-like»).
+      У каждого шаблона: id, название, фильтр where/fields/limit.
+      MCP: run_workspace_registry_query({ id: "cron" }). Свои шаблоны — кнопка «+».
+  registry-queries-filter-example:
+    type: fields/text/code
+    title: 'Пример запроса (фильтр)'
+    description: 'Скопируйте в свой шаблон и измените поля. Индекс — «Поля (SQL-like)».'
+    readonly: true
+    group: registry-queries
+    sort: 8
+    default: |
+      # Ограничить поддерево workspace (папка темы, контейнер, awn-databases/…)
+      pathPrefix: awn-container/moya-tema
+      # Условия (все строки where — AND). Поля — как в YAML-frontmatter записей.
+      where:
+        - field: awn-runtime-cron
+          eq: true
+        # - field: awn-tags
+        #   contains: важное
+        # - field: awn-id
+        #   gte: 100
+      fields:
+        - path
+        - awn-name
+        - awn-description
+      sort:
+        field: path
+        dir: asc
+      limit: 100
+      # Окно по дате (пересчёт при run): relativeDays: 7, relativeDaysField: awn-create
+      # (по умолчанию relativeDaysField — awn-update, «изменены за N дней»)
+      # Фиксированная дата без relativeDays:
+      # where:
+      #   - field: awn-create
+      #     gte: "2026-10-01T00:00:00.000Z"
+  registry-query-presets:
+    type: fields/repeater
+    title: 'Шаблоны реестров'
+    description: |
+      Встроенные шаблоны (только просмотр). Изменение — в .agent-cms/settings/registry-queries.yml или через MCP list_workspace_registry_queries / run_workspace_registry_query.
+    readonly: true
+    locked: true
+    group: registry-queries
+    sort: 10
+    properties:
+      id:
+        type: fields/string/slug
+        title: ID
+        description: 'cron, heartbeat, always-context, nav-focus, …'
+      name:
+        type: fields/string
+        title: Название
+      about:
+        type: fields/text
+        title: Описание
+        hint: 'Для агента и подсказок в UI — что возвращает выборка (в registry-queries.yml — ключ comment)'
+      query:
+        type: fields/text/code
+        title: 'Запрос (фильтр)'
+        description: |
+          Фильтр по каталогу полей workspace (storage-index). Ключи where: field + eq | contains | gte | lte | gt | lt.
+          pathPrefix в корне — только файлы под этой папкой (без ведущего /).
+        hint: 'where: [{ field, eq|contains… }], fields: [path, …], sort, limit'
+        default: |
+          where:
+            - field: awn-type
+              eq: awn.page.topic
+          fields:
+            - path
+            - awn-name
+          limit: 50
+  default-slot:
+    type: fields/string
+    title: '{NOT WORK} Слот по умолчанию'
+    default: main
+    group: memory
+    sort: 30
+  awn-temp-ttl-days:
+    type: fields/number/integer
+    title: '{NOT WORK} TTL awn-temp (дни)'
+    default: 0
+    group: memory
+    sort: 31
+  hooks-stub-plan:
+    type: fields/text
+    title: 'Как это будет работать'
+    description: 'Концепция раздела (только просмотр, пока не исполняется)'
+    readonly: true
+    group: hooks
+    sort: 40
+    default: |
+      1. Событие — file.saved, index.pipeline.done, cron, конец сессии агента…
+      2. Условие — путь, тип записи, тег (опционально).
+      3. Действие — POST на URL, notify_user, run_script, mcp.tool.
+
+      Правила хранятся в settings.yml (или отдельном awn-databases). Подписка — в server/MCP.
+  hooks-rules:
+    type: fields/repeater
+    title: '{NOT WORK} Правила'
+    description: 'Список крючков workspace — редактор и runtime позже'
+    locked: true
+    group: hooks
+    sort: 41
+    items: fields/trigger/rule
+  voice-route-runtime:
+    type: fields/choice/one
+    title: 'Runtime по умолчанию'
+    description: 'Дефолтный runtime при открытии Shell. В шапке можно выбрать другой на время сессии.'
+    default: codex
+    enum:
+      -
+        key: claude
+        name: 'Claude CLI (Anthropic)'
+      -
+        key: codex
+        name: 'Codex CLI (OpenAI)'
+      -
+        key: cursor
+        name: 'Cursor (Anysphere) — скоро'
+      -
+        key: openclaw
+        name: 'OpenClaw — скоро'
+      -
+        key: hermes
+        name: 'Hermes Agent — скоро'
+      -
+        key: agent-zero
+        name: 'Agent Zero — скоро'
+      -
+        key: qwenpaw
+        name: 'QwenPaw (AgentScope)'
+    group: voice-client
+    subgroup: voice-cms
+    sort: 49
+  voice-cms-topic-path:
+    type: fields/string
+    title: 'Тема агента (manifest)'
+    description: 'Путь к manifest темы для Voice Shell (cms.topicPath)'
+    default: awn-topics/0-agent-kit/0-agent/manifest.md
+    readonly: true
+    group: voice-client
+    subgroup: voice-cms
+    sort: 50
+  voice-cms-channel:
+    type: fields/choice/one
+    title: 'Канал диалога'
+    description: 'Канал сообщений Voice Shell (thread или session)'
+    default: thread
+    readonly: true
+    enum:
+      -
+        key: thread
+        name: thread
+      -
+        key: session
+        name: session
+    group: voice-client
+    subgroup: voice-cms
+    sort: 51
+  voice-route-system-prompt:
+    type: fields/text
+    title: 'System prompt Voice'
+    description: 'Доп. system prompt для Voice Shell'
+    group: voice-client
+    subgroup: voice-route
+    sort: 53
+  voice-route-claude-cli-path:
+    type: fields/string
+    title: 'Путь к Claude CLI'
+    description: 'Команда или путь к исполняемому файлу Claude CLI.'
+    default: claude
+    group: voice-client
+    subgroup: voice-route-claude
+    sort: 60
+  voice-route-claude-model:
+    type: fields/string
+    title: 'Модель Claude'
+    description: 'Модель Claude. Пусто — значение по умолчанию из CLI.'
+    group: voice-client
+    subgroup: voice-route-claude
+    sort: 61
+  voice-route-claude-session-id:
+    type: fields/string
+    title: 'Session ID'
+    description: 'Привязка к сессии Claude CLI (--resume). Пусто — новая сессия.'
+    group: voice-client
+    subgroup: voice-route-claude
+    sort: 62
+  voice-route-claude-permission-mode:
+    type: fields/choice/one
+    title: 'Подтверждение инструментов'
+    description: 'Как Claude CLI запрашивает подтверждение вызова инструментов.'
+    default: ''
+    enum:
+      -
+        key: ''
+        name: 'Спрашивать (модалка)'
+      -
+        key: manual
+        name: Manual
+      -
+        key: plan
+        name: Plan
+      -
+        key: auto
+        name: Auto
+      -
+        key: dontAsk
+        name: "Don't ask"
+      -
+        key: bypassPermissions
+        name: Bypass
+    group: voice-client
+    subgroup: voice-route-claude
+    sort: 63
+  voice-route-codex-cli-path:
+    type: fields/string
+    title: 'Путь к Codex CLI'
+    description: 'Команда или путь к исполняемому файлу Codex CLI.'
+    default: codex
+    group: voice-client
+    subgroup: voice-route-codex
+    sort: 70
+  voice-route-codex-model:
+    type: fields/string
+    title: 'Модель Codex'
+    description: 'Модель Codex. Пусто — значение по умолчанию из CLI.'
+    group: voice-client
+    subgroup: voice-route-codex
+    sort: 71
+  voice-route-codex-session-id:
+    type: fields/string
+    title: 'Session ID'
+    description: 'Привязка к сессии Codex CLI. Пусто — новая сессия.'
+    group: voice-client
+    subgroup: voice-route-codex
+    sort: 72
+  voice-route-codex-permission-mode:
+    type: fields/choice/one
+    title: 'Подтверждение команд'
+    description: 'Как Codex CLI запрашивает подтверждение выполнения команд.'
+    default: ''
+    enum:
+      -
+        key: ''
+        name: 'Спрашивать (on-request)'
+      -
+        key: untrusted
+        name: Untrusted
+      -
+        key: bypassPermissions
+        name: Never
+    group: voice-client
+    subgroup: voice-route-codex
+    sort: 73
+  voice-route-qwenpaw-url:
+    type: fields/string
+    title: 'URL QwenPaw'
+    description: 'Базовый URL API QwenPaw для Voice Shell.'
+    default: 'http://127.0.0.1:8088'
+    group: voice-client
+    subgroup: voice-route-qwenpaw
+    sort: 80
+  voice-route-qwenpaw-user-id:
+    type: fields/string
+    title: 'User ID'
+    description: 'Идентификатор пользователя в QwenPaw API.'
+    default: default
+    group: voice-client
+    subgroup: voice-route-qwenpaw
+    sort: 81
+  voice-route-qwenpaw-agent-id:
+    type: fields/string
+    title: 'Agent ID'
+    description: 'Идентификатор агента в QwenPaw.'
+    default: default
+    group: voice-client
+    subgroup: voice-route-qwenpaw
+    sort: 82
+  voice-route-qwenpaw-approval-level:
+    type: fields/choice/one
+    title: 'Подтверждение инструментов'
+    description: 'OFF — инструменты без окна «Разрешить?»; AUTO — с подтверждением.'
+    default: AUTO
+    enum:
+      -
+        key: AUTO
+        name: 'Спрашивать (AUTO)'
+      -
+        key: 'OFF'
+        name: 'Без подтверждения (OFF)'
+    group: voice-client
+    subgroup: voice-route-qwenpaw
+    sort: 83
+  voice-route-qwenpaw-session-id:
+    type: fields/string
+    title: 'Session ID'
+    description: 'ID чата QwenPaw для Voice Shell.'
+    group: voice-client
+    subgroup: voice-route-qwenpaw
+    sort: 84
+  voice-route-cursor-stub:
+    type: fields/text
+    title: Статус
+    description: 'Подключение в Voice Shell — скоро'
+    readonly: true
+    default: 'Cursor Agent — OpenAI-compatible endpoint. Настройки Base URL, model и session появятся после подключения runtime.'
+    group: voice-client
+    subgroup: voice-route-cursor
+    sort: 90
+  voice-route-openclaw-stub:
+    type: fields/text
+    title: Статус
+    description: 'Подключение в Voice Shell — скоро'
+    readonly: true
+    default: 'OpenClaw Gateway — :18789, token и agent id. Настройки появятся после подключения runtime.'
+    group: voice-client
+    subgroup: voice-route-openclaw
+    sort: 91
+  voice-route-hermes-stub:
+    type: fields/text
+    title: Статус
+    description: 'Подключение в Voice Shell — скоро'
+    readonly: true
+    default: 'Hermes Agent — API :8642/v1, Bearer API_SERVER_KEY, профиль и session.'
+    group: voice-client
+    subgroup: voice-route-hermes
+    sort: 92
+  voice-route-agent-zero-stub:
+    type: fields/text
+    title: Статус
+    description: 'Подключение в Voice Shell — скоро'
+    readonly: true
+    default: 'Agent Zero — gateway :42617, bearer после /pair.'
+    group: voice-client
+    subgroup: voice-route-agent-zero
+    sort: 93
+  voice-input-enabled:
+    type: fields/boolean
+    title: 'Включить голосовой ввод'
+    description: 'Микрофон и режим 🎤 у поля ввода'
+    default: false
+    group: voice-client
+    subgroup: voice-stt
+    sort: 50
+  voice-input-mode:
+    type: fields/choice/one
+    title: 'Режим 🎤'
+    description: 'Как вводить голос у поля ввода'
+    default: fn_button
+    enum:
+      -
+        key: live
+        name: 'Живой диалог'
+      -
+        key: meeting
+        name: 'Встреча (запись)'
+      -
+        key: hold
+        name: Голосовое
+      -
+        key: fn_button
+        name: 'По кнопке Shift'
+      -
+        key: lego_button
+        name: 'По кнопке Lego (todo)'
+    group: voice-client
+    subgroup: voice-stt
+    sort: 51
+  voice-input-response-enabled:
+    type: fields/boolean
+    title: Автоотправка
+    description: 'Сразу после 🎤 — агенту; выключите, чтобы править текст в диалоге'
+    default: false
+    group: voice-client
+    subgroup: voice-stt
+    sort: 52
+  voice-input-capture:
+    type: fields/choice/one
+    title: 'Что слушать'
+    default: microphone
+    enum:
+      -
+        key: microphone
+        name: Микрофон
+      -
+        key: system
+        name: 'Системный звук'
+      -
+        key: mix
+        name: 'Смешать потоки'
+    group: voice-client
+    subgroup: voice-stt
+    sort: 53
+  voice-stt-prompt:
+    type: fields/text
+    title: 'Промпт для обработки речи'
+    group: voice-client
+    subgroup: voice-stt
+    sort: 54
+  voice-stt-engine:
+    type: fields/choice/one
+    title: 'Движок STT'
+    default: browser
+    enum:
+      -
+        key: browser
+        name: 'Web Speech — в браузере (устройство)'
+      -
+        key: google
+        name: 'Google STT — облако (Google)'
+      -
+        key: whisper
+        name: 'Whisper — локально (сервер)'
+      -
+        key: elevenlabs
+        name: 'ElevenLabs Scribe — облако (ElevenLabs)'
+    group: voice-client
+    subgroup: voice-stt
+    sort: 55
+  voice-input-global-listen:
+    type: fields/boolean
+    title: 'Глобальное прослушивание'
+    description: 'Устарело — для voice sidecar; в браузерном Shell не используется'
+    readonly: true
+    default: false
+    group: voice-client
+    subgroup: voice-input
+    sort: 56
+  voice-input-to-compose:
+    type: fields/boolean
+    title: 'Вставлять в compose'
+    description: 'Устарело — заменено на «Автоотправка» (voice-input-response-enabled)'
+    readonly: true
+    default: false
+    group: voice-client
+    subgroup: voice-input
+    sort: 57
+  voice-stt-lang:
+    type: fields/string
+    title: 'Язык STT'
+    default: ru-RU
+    group: voice-client
+    subgroup: voice-stt-browser
+    sort: 70
+  voice-stt-whisper-model:
+    type: fields/choice/one
+    title: 'Модель Whisper'
+    default: base
+    enum:
+      -
+        key: tiny
+        name: 'tiny — быстро, хуже качество'
+      -
+        key: base
+        name: 'base — баланс'
+      -
+        key: small
+        name: small
+      -
+        key: medium
+        name: 'medium — медленнее, лучше'
+    group: voice-client
+    subgroup: voice-stt-whisper
+    sort: 80
+  voice-stt-elevenlabs-api-key:
+    type: fields/string/secret
+    title: 'API key · Scribe'
+    description: 'Если пусто — из TTS ElevenLabs; маскируется в форме'
+    group: voice-client
+    subgroup: voice-stt-elevenlabs
+    sort: 90
+  voice-stt-elevenlabs-model:
+    type: fields/string
+    title: 'Модель Scribe'
+    default: scribe_v2
+    group: voice-client
+    subgroup: voice-stt-elevenlabs
+    sort: 91
+  voice-tts-enabled:
+    type: fields/boolean
+    title: 'Включить озвучку ответа'
+    default: true
+    group: voice-client
+    subgroup: voice-tts
+    sort: 66
+  voice-tts-playback-mode:
+    type: fields/choice/one
+    title: 'Способ озвучки'
+    default: dialog
+    enum:
+      -
+        key: dialog
+        name: 'Диалог (озвучка по мере печати ответа)'
+      -
+        key: reading
+        name: 'Чтение (после полного ответа и маркера [tts-break])'
+    group: voice-client
+    subgroup: voice-tts
+    sort: 67
+  voice-wake-name:
+    type: fields/string
+    title: 'Имя для пробуждения (wake word)'
+    description: 'Только voice sidecar; в браузерном Shell пока не используется. Пусто — без wake word.'
+    readonly: true
+    default: ''
+    group: voice-client
+    subgroup: voice-tts
+    sort: 68
+  voice-tts-prompt:
+    type: fields/text
+    title: 'Промпт на ответ с озвучкой'
+    description: 'Формат с маркером [tts-break]'
+    group: voice-client
+    subgroup: voice-tts
+    sort: 69
+  voice-tts-include-captions:
+    type: fields/boolean
+    title: 'Субтитры при озвучке'
+    default: true
+    group: voice-client
+    subgroup: voice-tts
+    sort: 71
+  voice-tts-engine:
+    type: fields/choice/one
+    title: 'Провайдер (движок)'
+    default: browser
+    enum:
+      -
+        key: browser
+        name: 'Web Speech — в браузере (устройство)'
+      -
+        key: edge
+        name: 'Edge TTS — облако (Microsoft)'
+      -
+        key: piper
+        name: 'Piper — локально (сервер)'
+      -
+        key: elevenlabs
+        name: 'ElevenLabs — облако (ElevenLabs)'
+    group: voice-client
+    subgroup: voice-tts
+    sort: 72
+  voice-tts-browser-lang:
+    type: fields/string
+    title: Язык
+    default: ru-RU
+    group: voice-client
+    subgroup: voice-tts-browser
+    sort: 80
+  voice-tts-browser-voice:
+    type: fields/string
+    title: Голос
+    default: ''
+    group: voice-client
+    subgroup: voice-tts-browser
+    sort: 81
+  voice-tts-rate:
+    type: fields/string
+    title: Скорость
+    description: 'Web Speech'
+    default: '1'
+    group: voice-client
+    subgroup: voice-tts-browser
+    sort: 82
+  voice-tts-pitch:
+    type: fields/string
+    title: 'Высота голоса'
+    description: 'Только Web Speech'
+    default: '1'
+    group: voice-client
+    subgroup: voice-tts-browser
+    sort: 83
+  voice-tts-edge-voice:
+    type: fields/string
+    title: 'Голос Edge'
+    default: ru-RU-SvetlanaNeural
+    group: voice-client
+    subgroup: voice-tts-edge
+    sort: 90
+  voice-tts-edge-rate:
+    type: fields/string
+    title: Скорость
+    description: 'Edge TTS'
+    default: '1'
+    group: voice-client
+    subgroup: voice-tts-edge
+    sort: 91
+  voice-tts-piper-model:
+    type: fields/string
+    title: 'Модель Piper (.onnx)'
+    default: ''
+    group: voice-client
+    subgroup: voice-tts-piper
+    sort: 100
+  voice-tts-piper-binary:
+    type: fields/string
+    title: 'Бинарник Piper'
+    default: piper
+    group: voice-client
+    subgroup: voice-tts-piper
+    sort: 101
+  voice-tts-elevenlabs-api-key:
+    type: fields/string/secret
+    title: 'ElevenLabs API key · обязательно'
+    description: 'Маскируется в форме; для агента позже — зашифрованная выдача'
+    group: voice-client
+    subgroup: voice-tts-elevenlabs
+    sort: 110
+  voice-tts-elevenlabs-voice-id:
+    type: fields/string
+    title: 'ElevenLabs Voice ID'
+    default: EXAVITQu4vr4xnSDxMaL
+    group: voice-client
+    subgroup: voice-tts-elevenlabs
+    sort: 111
+  voice-tts-elevenlabs-model:
+    type: fields/string
+    title: 'Модель ElevenLabs'
+    default: eleven_multilingual_v2
+    group: voice-client
+    subgroup: voice-tts-elevenlabs
+    sort: 112
+  voice-tts-elevenlabs-rate:
+    type: fields/string
+    title: Скорость
+    description: 'ElevenLabs · speed (voice_settings)'
+    default: '1'
+    group: voice-client
+    subgroup: voice-tts-elevenlabs
+    sort: 113
+  voice-proactive-mode:
+    type: fields/choice/one
+    title: 'Режим проактивности'
+    description: 'Выключено — без фоновых пингов. По пингу — таймер бездействия. Естественная — скоро.'
+    default: 'off'
+    enum:
+      -
+        key: 'off'
+        name: 'Выключить проактивность'
+      -
+        key: natural
+        name: 'Естественная проактивность (скоро)'
+      -
+        key: ping
+        name: 'Проактивность по пингу'
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 100
+  voice-proactive-idle-seconds-min:
+    type: fields/number/integer
+    title: 'Бездействие, от (сек)'
+    default: 30
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 101
+  voice-proactive-idle-seconds-max:
+    type: fields/number/integer
+    title: 'До (сек)'
+    default: 60
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 102
+  voice-proactive-cooldown-seconds:
+    type: fields/number/integer
+    title: 'Пауза между пингами, сек'
+    default: 180
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 103
+  voice-proactive-quiet-hours-enabled:
+    type: fields/boolean
+    title: 'Не беспокоить по расписанию'
+    default: true
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 104
+  voice-proactive-quiet-hours-start:
+    type: fields/string
+    title: С
+    default: '23:00'
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 105
+  voice-proactive-quiet-hours-end:
+    type: fields/string
+    title: До
+    default: '07:00'
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 106
+  voice-proactive-prompt:
+    type: fields/text
+    title: 'Промпт проактивности'
+    description: 'То же поле, что в Shell → Проактивность. Пустое — заготовка shell-proactive-prompt.yml.'
+    group: voice-client
+    subgroup: voice-proactive
+    sort: 107
+  voice-media-camera-enabled:
+    type: fields/boolean
+    title: Камера
+    default: false
+    group: voice-client
+    subgroup: voice-media
+    sort: 84
+  voice-media-camera-on-speech:
+    type: fields/boolean
+    title: 'Камера при речи'
+    default: true
+    group: voice-client
+    subgroup: voice-media
+    sort: 85
+  voice-media-camera-facing:
+    type: fields/choice/one
+    title: 'Камера — сторона'
+    default: environment
+    enum:
+      -
+        key: user
+        name: Фронтальная
+      -
+        key: environment
+        name: Задняя
+    group: voice-client
+    subgroup: voice-media
+    sort: 86
+  voice-media-screen-enabled:
+    type: fields/boolean
+    title: 'Захват экрана'
+    default: false
+    group: voice-client
+    subgroup: voice-media
+    sort: 87
+  voice-media-screen-on-speech:
+    type: fields/boolean
+    title: 'Экран при речи'
+    default: false
+    group: voice-client
+    subgroup: voice-media
+    sort: 88
+  voice-window-character-model:
+    type: fields/choice/one
+    title: Персонаж
+    description: '3D-модель в окне Voice (превью в Shell → Окно).'
+    default: robot
+    enum:
+      -
+        key: robot
+        name: '🤖 Робот'
+      -
+        key: fox
+        name: '🦊 Лиса'
+      -
+        key: parrot
+        name: '🦜 Попугай'
+      -
+        key: flamingo
+        name: '🦩 Фламинго'
+      -
+        key: orc
+        name: '⚔️ Орк'
+      -
+        key: pirate
+        name: '🏴‍☠️ Пират'
+      -
+        key: kimono
+        name: '👘 Кимоно'
+      -
+        key: lego
+        name: LEGO
+    group: voice-client
+    subgroup: voice-window
+    sort: 801
+  voice-window-topmost:
+    type: fields/boolean
+    title: 'Поверх окон'
+    description: 'Окно Voice всегда поверх других приложений.'
+    default: true
+    group: voice-client
+    subgroup: voice-window
+    sort: 802
+  voice-window-transparent:
+    type: fields/boolean
+    title: 'Прозрачный фон'
+    description: 'Прозрачность окна, не выбор обоев.'
+    default: false
+    group: voice-client
+    subgroup: voice-window
+    sort: 803
+  voice-window-pet-overlay:
+    type: fields/boolean
+    title: 'Персонаж поверх окон'
+    description: 'Отдельная моделька на рабочем столе (Voice.app).'
+    default: false
+    group: voice-client
+    subgroup: voice-window
+    sort: 804
+  voice-window-compact-dialog-qa:
+    type: fields/boolean
+    title: 'Последний вопрос и ответ'
+    description: 'В компактном режиме показывать последнюю пару Q&A над микрофоном.'
+    default: true
+    group: voice-client
+    subgroup: voice-window
+    sort: 805
+  voice-window-keep-awake:
+    type: fields/boolean
+    title: 'Не гасить экран'
+    description: 'Wake Lock API — не давать экрану гаснуть, если поддерживается устройством/браузером.'
+    default: false
+    group: voice-client
+    subgroup: voice-window
+    sort: 806
+  voice-window-background:
+    type: fields/choice/one
+    title: Фон
+    description: 'Фон окна Voice. При «Своя картинка» — URL ниже.'
+    default: wallpaper
+    enum:
+      -
+        key: wallpaper
+        name: 'По умолчанию (обои)'
+      -
+        key: dark
+        name: Тёмный
+      -
+        key: custom
+        name: 'Своя картинка (URL)'
+    group: voice-client
+    subgroup: voice-window
+    sort: 807
+  voice-window-background-image-url:
+    type: fields/string
+    title: 'URL фона'
+    description: 'Путь от корня workspace или https://…'
+    default: ''
+    group: voice-client
+    subgroup: voice-window
+    sort: 808
+  voice-window-processing-sound:
+    type: fields/choice/one
+    title: 'Звук «думаю»'
+    description: 'Звук, пока агент обрабатывает запрос.'
+    default: 'off'
+    enum:
+      -
+        key: 'off'
+        name: Выкл
+      -
+        key: subtle
+        name: Тихий
+      -
+        key: 'on'
+        name: Вкл
+    group: voice-client
+    subgroup: voice-window
+    sort: 809
+  voice-window-compact-mode:
+    type: fields/boolean
+    title: 'Компактный режим'
+    description: |
+      Облачко вместо полного hero при открытии Voice. В Shell — клик по аватару включает, кнопка «Свернуть компакт» выключает; то же значение, что эта настройка.
+    default: false
+    group: voice-client
+    subgroup: voice-window
+    sort: 810
+  voice-window-dialog-auto-scroll:
+    type: fields/boolean
+    title: 'Автопрокрутка диалога'
+    description: 'Прокручивать диалог к новым сообщениям автоматически. В Shell — кнопка в шапке диалога.'
+    default: true
+    group: voice-client
+    subgroup: voice-window
+    sort: 811
+  voice-ui-dialog-scroll-ratio:
+    type: fields/string
+    title: 'Позиция скролла диалога'
+    description: |
+      Только для справки. Реально хранится в localStorage браузера и .agent-cms/state/shell.json (0–1). В CMS не редактируется.
+    readonly: true
+    default: '1'
+    group: voice-client
+    subgroup: voice-ui
+    sort: 98
+  voice-file-hub-max-attach-mb:
+    type: fields/choice/one
+    title: 'Максимальный размер выдаваемого файла'
+    description: |
+      Лимит для 📎 из файлообменника на открытую вкладку (файл загружается в память и передаётся через расширение). Больше лимита — выдача отклоняется.
+    default: '25'
+    enum:
+      -
+        key: '1'
+        name: '1 МБ'
+      -
+        key: '2.5'
+        name: '2,5 МБ'
+      -
+        key: '5'
+        name: '5 МБ'
+      -
+        key: '10'
+        name: '10 МБ'
+      -
+        key: '20'
+        name: '20 МБ'
+      -
+        key: '25'
+        name: '25 МБ'
+    group: voice-client
+    subgroup: voice-file-hub
+    sort: 10
+  voice-compose-templates:
+    type: fields/repeater
+    title: 'Шаблоны compose'
+    description: |
+      Ключ — маркер {{tpl:key}}; текст команды подставляется в сообщение Voice Shell. Пустой список в workspace.yml означает встроенные шаблоны по умолчанию (как во вкладке «Шаблоны» Shell).
+    group: voice-client
+    subgroup: voice-compose
+    sort: 99
+    default: {  }
+    properties:
+      id:
+        type: fields/string/slug
+        title: ID
+        description: 'Стабильный идентификатор шаблона'
+      key:
+        type: fields/string/slug
+        title: Ключ
+        description: 'Маркер {{tpl:key}} в тексте сообщения'
+      label:
+        type: fields/string
+        title: Название
+      text:
+        type: fields/text
+        title: 'Текст команды'
+      group:
+        type: fields/string
+        title: Группа
+        default: 'Стиль ответа'
+  ws-static-plugin-example:
+    type: fields/string
+    title: '{NOT WORK} Пример ключа плагина'
+    description: |
+      Заглушка статического параметра workspace для внешних плагинов, skills и сервисов.
+    default: ''
+    group: static
+    subgroup: demo-plugin
+    sort: 90
+  dependencies-file:
+    type: fields/string
+    title: 'Файл зависимостей'
+    description: 'Корневой CSV workspace — только просмотр пути'
+    readonly: true
+    default: dependencies.csv
+    group: dependencies
+    sort: 1
+  dependencies-columns-note:
+    type: fields/text
+    title: 'Как это работает'
+    description: 'Концепция раздела (только просмотр)'
+    readonly: true
+    group: dependencies
+    sort: 2
+    default: |
+      1. Строки зависимостей — в dependencies.csv (host, kind, name, …).
+      2. Схема колонок — в этом разделе (dependencies-columns).
+      3. MCP: workspace_dependencies_read / workspace_dependencies_write.
+      4. Менять колонки — здесь; менять строки — в CSV или через workspace_dependencies_write.
+  dependencies-columns:
+    type: fields/repeater
+    title: 'Колонки CSV'
+    description: |
+      Схема колонок dependencies.csv. Строки зависимостей — в CSV (MCP: workspace_dependencies_read / workspace_dependencies_write). Колонку host меняют только здесь; это среда/агент (cursor, claude, any), не имя LLM-модели.
+    group: dependencies
+    sort: 3
+    properties:
+      key:
+        type: fields/string/slug
+        title: 'Ключ колонки'
+        description: 'Имя колонки в CSV (host, kind, name, …). Не путать с LLM-моделью — модель задаётся отдельно (env, runtime).'
+      title:
+        type: fields/string
+        title: Название
+      description:
+        type: fields/text
+        title: 'Описание для агента'
+      required:
+        type: fields/boolean
+        title: 'Обязательная колонка'
+  ws-static-example-1:
+    type: fields/string
+    title: '{NOT WORK} Ключ 1'
+    default: 'значение 1'
+    group: static
+    subgroup: examples
+    sort: 91
+  ws-static-example-2:
+    type: fields/string
+    title: '{NOT WORK} Ключ 2'
+    default: 'значение 2'
+    group: static
+    subgroup: examples
+    sort: 92
+  ws-static-example-3:
+    type: fields/string
+    title: '{NOT WORK} Ключ 3'
+    default: 'значение 3'
+    group: static
+    subgroup: examples
+    sort: 93

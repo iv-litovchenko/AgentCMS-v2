@@ -85,12 +85,18 @@ class WorkspaceManifestReader
             $updatedAt = $createdAt;
         }
 
+        $typeId = $this->stringProperty($properties, 'awn-type');
+        if ($typeId === '') {
+            $typeId = 'hubs/topic/ws';
+        }
+
         return [
             'name' => $name,
             'description' => $description,
             'location' => $location,
             'sort_order' => $sortOrder,
             'avatar' => $avatar,
+            'type_id' => $typeId,
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];

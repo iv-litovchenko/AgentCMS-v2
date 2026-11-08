@@ -1,0 +1,15 @@
+id: awn.block.marker-mistake
+name: Маркер · Ошибка
+kind: block
+group: markers
+status: active
+sort: 7
+icon: "✕"
+description: Блок awn-marker-mistake — типичная ошибка
+template: |
+  ```awn-marker-mistake
+  awn-status: открыто
+  ---
+  В чём ошибка и как правильно.
+
+  ```

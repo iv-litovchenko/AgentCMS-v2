@@ -1,0 +1,31 @@
+id: awn.hub.database.collection
+name: Коллекция
+kind: frame
+domain: database
+status: active
+extends: awn.hub.database.base
+description: manifest + schema в корне; записи в awn-storage/data/, вложения в awn-storage/assets/
+manifest-pattern: manifest.md
+
+kind-ui:
+  for: collection
+  label: Коллекция
+  badge: { background: "#f5f3ff", border: "#ddd6fe", text: "#5b21b6" }
+
+fields:
+  awn-record-hierarchy:
+    type: awn.field.boolean
+    title: "{A2!} Поддержка разделов"
+    description: Для md, csv-files и files; не для единой csv-таблицы main.csv
+    placement: aside-body
+    group: infoblock
+    sort: 4
+    default: false
+  awn-record-file-types:
+    type: awn.field.string
+    title: "{A2!} Типы файлов"
+    description: "Только для files: image/*,.pdf,.md"
+    placement: aside-body
+    group: infoblock
+    sort: 5
+    default: ""

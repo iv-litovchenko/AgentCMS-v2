@@ -1,0 +1,25 @@
+name: Секция
+status: draft
+extends: hubs/topic/_base
+description: |
+  Служебная секция workspace — под awn-topics (awn-topics/0-agent-kit, awn-topics/0-shared, awn-container). Черновик: UI секций — в следующих итерациях.
+storage-slots: {  }
+fields:
+  awn-section-bg:
+    type: fields/lookup/one
+    source: colors
+    value-kind: color
+    title: '{A2!} Цвет фона'
+    description: 'Фон секции в меню workspace'
+    placement: aside-body
+    group: nav
+    sort: 10
+  awn-section-border:
+    type: fields/lookup/one
+    source: colors
+    value-kind: color
+    title: '{A2!} Цвет бордюра'
+    description: 'Обводка секции в меню workspace'
+    placement: aside-body
+    group: nav
+    sort: 11

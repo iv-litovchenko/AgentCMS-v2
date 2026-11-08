@@ -1,0 +1,7 @@
+id: awn.hub.channel.base
+name: База семьи channel
+kind: base
+domain: hubs
+status: active
+extends: awn.hub.base
+description: Карточка канала ingress в awn-channels/

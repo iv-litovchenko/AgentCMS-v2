@@ -1,0 +1,13 @@
+id: people
+label: Карта людей
+section: people
+icon: "👥"
+description: Кто с кем связан — роли, контакты, проекты
+bodyFormat: mermaid-flowchart
+defaultTemplate: |
+  ```mermaid
+  flowchart LR
+    ME[Вы] --- COL1[Коллега]
+    ME --- COL2[Контакт]
+    COL1 --- PRJ[Проект]
+  ```

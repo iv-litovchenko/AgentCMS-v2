@@ -1,0 +1,13 @@
+id: awn.field.choice.one
+name: Один из списка
+kind: field
+domain: fields
+extends: awn.field.base
+widget: select
+storage: string
+mdbase: enum
+description: Одно значение из заданного списка. Виджет select или radio
+settings: [hint, required, locked, default, widget, enum]
+group: choice
+sort: 2
+status: active

@@ -1,0 +1,18 @@
+id: awn.slot.comments
+name: Комментарии
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: communication
+storage-driver: external
+description: Комментарии к узлам — comments/
+path: comments/
+slot-order: 94
+slot-tier: system
+allowed-content:
+  - awn.annotation.comment
+  - awn.content.record
+  - awn.annotation.sidecar
+accept-files:
+  - ".md"

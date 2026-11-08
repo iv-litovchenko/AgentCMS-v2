@@ -1,0 +1,17 @@
+id: awn.slot.artefacts
+name: Артефакты
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Артефакты и экспорты
+path: artefacts/
+slot-order: 7
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

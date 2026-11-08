@@ -1,0 +1,4 @@
+name: Workspace
+status: active
+extends: hubs/topic/_base
+description: 'Корневой манифест агента — manifest.md в корне workspace'

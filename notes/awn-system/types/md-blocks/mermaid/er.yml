@@ -1,0 +1,23 @@
+id: awn.block.mermaid-er
+name: ER-диаграмма
+kind: block
+group: visualization
+sort: 7
+icon: "🗄️"
+description: Сущности и связи в БД
+template: |
+  ```mermaid
+  erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--|{ LINE_ITEM : contains
+    USER {
+      int id
+      string email
+    }
+    ORDER {
+      int id
+      date created
+    }
+  ```
+
+status: active

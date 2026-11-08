@@ -1,0 +1,20 @@
+id: awn.slot.atlas
+name: Карты
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: >
+  Атлас топика (слот atlas) — произвольные markdown и viz-файлы в папке atlas/.
+  Roadmap по этапам (## + статус), mindmap, scene3d и другие *.viz.md.
+path: atlas/
+slot-order: 16
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*.md"
+  - "*.viz.md"

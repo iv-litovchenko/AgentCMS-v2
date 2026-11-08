@@ -1,0 +1,8 @@
+name: Категория
+status: active
+extends: content/_base
+description: 'Папка-категория для группировки контента в любом слоте'
+allow-children: true
+mixins:
+  - mixins/runtime
+  - mixins/indexing-record

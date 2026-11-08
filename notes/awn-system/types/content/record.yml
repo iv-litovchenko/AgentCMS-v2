@@ -1,0 +1,31 @@
+id: awn.content.record
+name: Запись
+kind: type
+domain: content
+status: active
+extends: awn.content.base
+description: Запись в слоте памяти (main, inbox, references, artefacts…)
+mixins:
+  - awn.mixin.runtime
+  - awn.mixin.indexing-record
+
+fields:
+
+  # --- materials (aside-hero) ---
+  awn-attachments:
+    type: awn.field.file.many
+    widget: attachments
+    title: "{A2!} Вложения"
+    description: awn-storage/assets/attachments/
+    scope: attachments
+    placement: aside-hero
+    group: content
+    sort: 1
+
+  awn-materials:
+    type: awn.field.materials
+    title: "{A2!} Доп. материалы"
+    description: Папка awn-storage/assets/materials/{awn-id}/
+    placement: aside-hero
+    group: content
+    sort: 2

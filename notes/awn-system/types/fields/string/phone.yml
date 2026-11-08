@@ -1,0 +1,14 @@
+id: awn.field.string.phone
+name: Телефон
+kind: field
+domain: fields
+extends: awn.field.string
+widget: tel
+storage: string
+mdbase: string
+format: "+7 900 000-00-00"
+description: Номер телефона (международный или локальный формат)
+settings: [hint, required, locked, default, format]
+group: text-single
+sort: 7
+status: active

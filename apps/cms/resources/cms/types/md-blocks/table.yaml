@@ -1,0 +1,12 @@
+name: Таблица
+group: code
+sort: 2
+icon: 📊
+description: '2 колонки, шапка'
+template: |+
+
+  | Колонка | Колонка |
+  | --- | --- |
+  | ячейка | ячейка |
+
+status: active

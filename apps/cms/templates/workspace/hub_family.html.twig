@@ -1,0 +1,16 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ hub_group.label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            {% include 'workspace/hubs/_family.html.twig' with {
+                hub_group: hub_group,
+                hub_family: hub_family,
+                hub_family_base: hub_family_base,
+                workspace: workspace,
+            } %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

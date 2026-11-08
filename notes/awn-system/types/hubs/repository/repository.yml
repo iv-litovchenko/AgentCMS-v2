@@ -1,0 +1,104 @@
+id: awn.hub.repository
+name: Репозиторий (workspace)
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.repository.base
+description: >
+  Карточка исходников в awn-repositories/{slug}/ — в индексе manifest.md и readme.md
+  (регистр не важен); код клона по умолчанию не индексируется.
+manifest-pattern: "awn-repositories/{slug}/manifest.md"
+
+form:
+  panel-title: "{A2!} Репозиторий"
+  create:
+    title: "Новый репозиторий"
+    edit-title: "Репозиторий"
+    adopt-title: "Подхватить репозиторий"
+    hint: >
+      Папка в awn-repositories/{slug}/ с manifest.md. Код клонируйте отдельно — в поиск CMS не попадёт.
+    bootstrap:
+      slug:
+        title: "Папка (slug)"
+        placeholder: "voice-shell-fork"
+        footnote: "kebab-case, одна папка — без /"
+        required: true
+    field-keys:
+      - awn-name
+      - awn-description
+      - awn-repo-origin
+      - awn-repository-group
+      - awn-repo-tech
+      - awn-repo-related-topic
+      - awn-index-exclude-subtree
+
+field-groups:
+  - id: repository
+    name: "{A2!} Репозиторий"
+    description: Git-источник и группа в sidebar
+    collapsed: false
+  - id: indexing
+    name: "{A2!} Индексирование"
+    description: Что попадает в поиск workspace
+    collapsed: true
+
+fields:
+  awn-slots-flexible:
+    hidden: true
+
+  awn-main:
+    hidden: true
+
+  awn-focus:
+    hidden: true
+
+  awn-index-exclude-record:
+    hidden: true
+
+  awn-name:
+    title: Название
+
+  awn-description:
+    title: Описание
+
+  awn-repo-origin:
+    type: awn.field.string.url
+    title: Git origin
+    description: URL удалённого репозитория (https://github.com/…)
+    placeholder: "https://github.com/org/repo"
+    placement: aside-body
+    group: repository
+    sort: 1
+
+  awn-repository-group:
+    type: awn.field.string
+    title: Группа
+    description: Логическая группа из awn-repositories/groups.yml (без подпапок)
+    placement: aside-body
+    group: repository
+    sort: 2
+
+  awn-repo-tech:
+    type: awn.field.string
+    title: Стек / теги
+    description: Технологии и метки через запятую (React, Python, fork…)
+    placeholder: "react, typescript, fork"
+    placement: aside-body
+    group: repository
+    sort: 3
+
+  awn-repo-related-topic:
+    type: awn.field.string
+    title: Связанная тема
+    description: Путь manifest.md темы CMS, к которой привязан репозиторий
+    placeholder: "awn-container/moya-tema/manifest.md"
+    placement: aside-body
+    group: repository
+    sort: 4
+
+  awn-index-exclude-subtree:
+    default: true
+    title: Запретить индексирование содержимого
+    description: >
+      Не индексировать файлы внутри папки репозитория.
+      manifest.md и readme.md (любой регистр) остаются в индексе.

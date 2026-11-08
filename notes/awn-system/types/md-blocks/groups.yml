@@ -1,0 +1,13 @@
+id: awn.block.groups
+kind: meta
+status: active
+domain: md-blocks
+groupOrder: [structure, markers, text, lists, code, visualization, misc]
+groupNames:
+  structure: Структура
+  text: Текст
+  markers: Маркеры и пометки
+  lists: Списки
+  code: Код и таблицы
+  visualization: Визуализация
+  misc: Прочее

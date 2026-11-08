@@ -1,0 +1,18 @@
+name: Файлы
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: |
+  Библиотека файлов hub — awn-storage/files/ у awn.hub.media и awn.hub.channel. Разделы (awn.content.category), записи .md, бинарники + sidecar — как слот media у темы.
+path: files/
+slot-order: 8
+allowed-containers:
+  - hubs/media/media
+  - hubs/channel/channel
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

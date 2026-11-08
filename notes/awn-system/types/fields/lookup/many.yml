@@ -1,0 +1,13 @@
+id: awn.field.lookup.many
+name: Из справочника (несколько)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: lookup-many
+storage: array
+mdbase: list
+description: Несколько значений из CSV-справочника
+settings: [hint, required, locked, default, source, allow-custom, allow-add]
+group: lookup
+sort: 2
+status: active

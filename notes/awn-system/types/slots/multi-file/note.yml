@@ -1,0 +1,17 @@
+id: awn.slot.note
+name: Заметки
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: Заметки топика
+path: notes/
+slot-order: 5
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

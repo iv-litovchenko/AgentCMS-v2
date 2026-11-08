@@ -1,0 +1,13 @@
+id: awn.field.number.importance
+name: Важность (0–10)
+kind: field
+domain: fields
+extends: awn.field.number.integer
+widget: importance
+storage: number
+mdbase: integer
+description: Личная важность темы или записи для приоритета в поиске
+settings: [hint, required, locked, default, format]
+group: numbers
+sort: 4
+status: active

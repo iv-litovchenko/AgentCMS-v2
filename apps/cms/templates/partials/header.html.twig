@@ -35,17 +35,18 @@
                 <div class="hidden h-5 w-px bg-zinc-200 sm:block" aria-hidden="true"></div>
             {% endif %}
 
-            <form class="flex min-w-0 max-w-[14rem] flex-1 items-center sm:max-w-xs" role="search" action="#" method="get" data-search-stub="true">
+            <form class="flex min-w-0 max-w-[14rem] flex-1 items-center sm:max-w-xs" role="search" action="{{ ui_menu_search_url }}" method="get">
                 <label for="header-search" class="sr-only">Поиск</label>
                 <input
                     id="header-search"
                     type="search"
                     name="q"
+                    value="{{ app.request.query.get('q')|default('') }}"
                     placeholder="Поиск…"
                     autocomplete="off"
-                    disabled
-                    class="w-full rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-70"
-                    title="Заготовка — поиск будет позже"
+                    {% if not ui_menu_search_available %}disabled{% endif %}
+                    class="w-full rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-70 {% if ui_menu_search_active %}ring-1 ring-blue-500 border-blue-500 bg-white{% endif %}"
+                    title="{% if ui_menu_search_available %}Строка поиска по текущему хранилищу{% else %}Сначала создайте хранилище{% endif %}"
                 >
             </form>
 

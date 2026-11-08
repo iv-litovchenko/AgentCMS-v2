@@ -1,0 +1,20 @@
+id: awn.mixin.indexing-record
+name: Индексирование (запись)
+kind: mixin
+domain: mixins
+status: active
+description: Исключение содержимого записи из поисковых индексов
+kind-ui:
+  label: Миксин
+  badge: { background: "#f8fafc", border: "#cbd5e1", text: "#475569" }
+fields:
+  awn-index-exclude-record:
+    type: awn.field.boolean
+    title: "{A2!} Исключить запись из индексации"
+    description: >
+      Не индексировать содержимое этой записи
+      (semantic, fulltext, storage, link).
+    default: false
+    placement: aside-body
+    group: indexing
+    sort: 1

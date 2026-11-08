@@ -28,6 +28,9 @@ class UiMenuExtension extends AbstractExtension implements GlobalsInterface
             'ui_menu_services' => $this->uiMenuService->getServiceItems(),
             'ui_menu_services_active' => $this->uiMenuService->hasActiveService(),
             'ui_menu_profile_dropdown' => $this->uiMenuService->getZoneItems('profile_dropdown'),
+            'ui_menu_search_url' => $this->uiMenuService->getHeaderSearchUrl(),
+            'ui_menu_search_available' => $this->uiMenuService->isHeaderSearchAvailable(),
+            'ui_menu_search_active' => $this->uiMenuService->isHeaderSearchActive(),
         ];
     }
 }

@@ -1,0 +1,11 @@
+name: Чеклист
+group: lists
+sort: 3
+icon: ☑️
+description: 'Задачи с галочками'
+template: |+
+
+  - [ ] Задача 1
+  - [ ] Задача 2
+
+status: active

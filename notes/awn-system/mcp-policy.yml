@@ -1,0 +1,213 @@
+version: 1
+description: >
+  Центральная MCP policy платформы Agent CMS.
+  Значения лимитов per-workspace — в config.yml → awn_settings (batch-read-limit, batch-write-limit).
+  Этот файл — denylist, категории tools, паттерны. Меняется редко, одно на платформу.
+
+mcp:
+  # single-call write tools (blocked in mcp-mode=readonly)
+  write_tool_pattern: "^(write_|create_|register_|delete_|move_|rename_|append_|upload_|import_|triage_|inbox_item_triage|retain_|write_database_|register_database|create_database|delete_database|rename_database|database_register|database_update|database_delete|database_rename|database_schema_write|database_properties_write|database_property_write|delete_channel|rename_channel|channel_register|channel_update|channel_delete|channel_rename|delete_media_library|rename_media_library|media_library_register|media_library_update|media_library_delete|media_library_rename|delete_repository|rename_repository|repository_register|repository_update|repository_delete|repository_rename|nav_map_workspace_refresh|nav_index_toc_topics_refresh|nav_index_toc_contents_refresh|nav_index_toc_databases_refresh|nav_index_toc_channels_refresh|nav_index_toc_repositories_refresh|nav_index_toc_media_libraries_refresh|databases_index_toc_refresh|channels_index_toc_refresh|repositories_index_toc_refresh|media_libraries_index_toc_refresh|topics_index_toc_refresh|contents_index_toc_refresh|workspace_map_refresh|refresh_databases_index_toc|database_frame_write_|database_frame_create_|database_frame_refresh_|refresh_database_frame_index_toc|database_frame_delete_|database_frame_rename_|fact_create|fact_update|workspace_fact_create|workspace_fact_update|glossary_term_create|glossary_term_update|reference_entry_create|reference_entry_update|topic_create|topic_update|topic_delete|topic_rename|topic_move|topic_body_write|topic_properties_write|topic_property_write|topic_schema_write|topic_config_write|topic_env_write|topic_slots_template_set|content_create|content_write|content_delete|content_rename|content_move|content_split|content_merge|content_binary_write|content_binary_write_from_url|content_binary_upload_begin|content_binary_upload_complete|content_binary_upload_abort|content_property_write|session_note_write|session_todo_write|workspace_note_write|workspace_todo_write|annotation_sidecar_create|annotation_sidecar_update|annotation_sidecar_write|annotation_sidecar_delete|sidecar_create|sidecar_write|sidecar_delete|annotation_comment_append|annotation_comment_update|annotation_comment_delete|session_context_buffer_items_append|session_context_buffer_append|session_buffer_append|session_context_buffer_items_remove|session_context_buffer_remove|session_buffer_item_remove|session_context_buffer_items_clear|session_context_buffer_clear|session_buffer_clear|context_buffer_append|context_buffer_item_remove|context_buffer_clear|append_context_buffer|remove_context_buffer_item|clear_context_buffer|session_context_buffer_text_write|session_buffer_text_write|comment_append|comment_update|comment_delete|journal_entry_append|setting_write|platform_doc_write|workspace_dependencies_write|workspace_create|workspace_register|workspace_update|workspace_default_set|workspace_orchestrator_set|workspace_group_create|workspace_group_update|workspace_group_delete|workspace_group_assign|workspace_group_unassign|workspace_groups_reorder|user_notification_send|notify_user|utility_script_run|utility_command_exec|utility_shell_exec|tool_script_run|tool_command_exec|tool_shell_exec|run_script|exec_|module_git_commit|module_git_init|module_git_push|module_git_pull|module_git_remote)"
+  exec_tools:
+    - utility_script_run
+    - utility_command_exec
+    - utility_shell_exec
+    - tool_script_run
+    - tool_command_exec
+    - tool_shell_exec
+    - run_script
+    - exec_command
+    - exec_shell
+  # exec разрешён только при mcp-mode=full
+  exec_allowed_modes:
+    - full
+
+batch_invoke:
+  absolute_max_items: 50
+  default_parallel:
+    read: true
+    write: false
+
+  denied_tools:
+    - batch_tools_invoke
+    - request_batch_invoke
+    - tool_batch_invoke
+    - batch_invoke
+    - index_search_query_batch
+    - search_batch
+    - search_workspace_batch
+    - session_context_get
+    - get_session_context
+    - session_context_get_user_open_url_location_in_ui
+    - session_ui_focus_get
+    - get_ui_focus
+    - get_user_active_context_now
+    - get_ui_open_location
+    - workspaces_list
+    - list_workspaces
+    - list_vaults
+    - query_workspace_ask
+    - ask_workspace
+    - search_and_get_context
+    - user_notification_send
+    - notify_user
+    - utility_mcp_ping
+    - tool_mcp_ping
+    - mcp_connection_test
+    - test_mcp_connection
+    - annotation_comment_reaction_toggle
+    - comment_reaction_toggle
+    - toggle_comment_reaction
+    - inbox_item_triage
+    - triage_inbox_item
+    - index_rebuild_all
+    - indexes_rebuild
+    - index_rebuild
+    - index_3_semantic_rebuild
+    - index_semantic_rebuild
+    - index_4_storage_rebuild
+    - index_storage_rebuild
+    - index_2_fulltext_rebuild
+    - index_fulltext_rebuild
+    - index_5_link_rebuild
+    - index_link_rebuild
+    - index_6_entity_rebuild
+    - index_entity_rebuild
+    - index_1_ocr_run
+    - index_ocr_run
+    - index_record_sync
+    - rebuild_workspace_indexes
+    - rebuild_workspace_semantic_index
+    - rebuild_workspace_storage_index
+    - rebuild_workspace_fulltext_index
+    - rebuild_workspace_link_index
+    - run_workspace_ocr_index
+    - sync_workspace_index_file
+
+  exec_tools:
+    - utility_script_run
+    - utility_command_exec
+    - utility_shell_exec
+    - tool_script_run
+    - tool_command_exec
+    - tool_shell_exec
+    - run_script
+    - exec_command
+    - exec_shell
+
+  read_name_patterns:
+    - "^read_"
+    - "^list_"
+    - "^get_"
+    - "_list$"
+    - "_get$"
+    - "^search_"
+    - "^recall_"
+    - "^resolve_"
+    - "^refresh_"
+
+  read_tools:
+    - repositories_list
+    - repository_get
+    - media_libraries_list
+    - media_library_get
+    - channels_list
+    - channel_get
+    - topics_list
+    - topic_get
+    - topic_meta_get
+    - topic_slots_template_get
+    - topic_body_read
+    - topic_properties_read
+    - topic_property_read
+    - topic_schema_read
+    - topic_config_read
+    - topic_env_read
+    - topic_exists
+    - content_exists
+    - contents_list
+    - contents_count
+    - content_history_version_count
+    - content_history_version_list
+    - content_history_version_read
+    - content_history_version_diff
+    - content_history_version_restore
+    - contents_list_reconcile
+    - content_read
+    - content_meta_get
+    - content_binary_read
+    - content_binary_upload_status
+    - content_binary_metadata_get
+    - record_binary_url_get
+    - content_binary_url_get
+    - get_content_binary_url
+    - content_property_read
+    - session_note_read
+    - session_todo_read
+    - workspace_note_read
+    - workspace_todo_read
+    - annotation_sidecar_path_resolve
+    - annotation_sidecar_read
+    - sidecar_path_resolve
+    - sidecar_read
+    - session_context_buffer_items_read
+    - session_context_buffer_read
+    - session_buffer_read
+    - context_buffer_read
+    - read_context_buffer
+    - session_context_buffer_text_read
+    - session_buffer_text_read
+    - annotation_comments_list
+    - annotation_comment_read
+    - comments_list
+    - comment_read
+    - utility_web_search
+    - utility_web_images_search
+    - utility_web_page_read
+    - utility_document_text_extract
+    - tool_web_search
+    - tool_web_images_search
+    - tool_web_page_read
+    - tool_document_text_extract
+    - settings_list
+    - setting_read
+    - list_settings
+    - read_setting
+    - databases_list
+    - database_get
+    - nav_map_workspace_read
+    - nav_index_toc_topics_read
+    - nav_index_toc_contents_read
+    - nav_index_toc_databases_read
+    - nav_index_toc_channels_read
+    - nav_index_toc_repositories_read
+    - nav_index_toc_media_libraries_read
+    - database_schema_read
+    - database_properties_read
+    - database_property_read
+    - facts_list
+    - facts_search
+    - workspace_facts_list
+    - workspace_facts_search
+    - glossary_terms_list
+    - glossary_terms_search
+    - reference_entries_list
+    - reference_entries_search
+    - index_4_storage_query
+    - index_storage_query
+    - query_workspace_storage
+    - index_status_get
+    - index_status_get
+    - get_workspace_index_status
+    - index_monitor_get
+    - index_monitor_get
+    - get_workspace_index_monitor
+    - index_2_fulltext_search_query
+    - search_content
+    - index_3_semantic_search_query
+    - search_semantic
+    - index_3_hybrid_search_query
+    - search_hybrid
+    - index_5_link_search_query
+    - search_links
+    - module_git_status
+    - module_git_diff

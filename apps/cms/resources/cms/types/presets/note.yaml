@@ -1,0 +1,11 @@
+name: 'NOTE.md — быстрая заметка'
+status: active
+extends: presets/_base
+target-file: NOTE.md
+hint-title: 'NOTE.md — быстрая заметка'
+hint-text: ''
+sort: 9
+body: |
+  # NOTE
+
+  > Быстрая заметка workspace.

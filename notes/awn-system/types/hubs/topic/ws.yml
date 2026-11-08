@@ -1,0 +1,7 @@
+id: awn.hub.topic.ws
+name: Workspace
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.topic.base
+description: Корневой манифест агента — manifest.md в корне workspace

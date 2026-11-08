@@ -1,0 +1,14 @@
+id: awn.preset.readme
+name: "README.md — описание workspace"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "README.md"
+hint-title: "README.md — описание workspace"
+hint-text: ""
+sort: 8
+body: |
+  # README
+  
+  > Описание workspace.

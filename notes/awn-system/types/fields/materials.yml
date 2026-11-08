@@ -1,0 +1,13 @@
+id: awn.field.materials
+name: Доп. материалы
+kind: field
+domain: fields
+extends: awn.field.base
+widget: materials
+storage: boolean
+mdbase: scalar
+description: Служебная кнопка — создаёт awn-storage/assets/materials/{awn-id}/; при наличии записывает awn-materials: true
+settings: [hint, locked]
+group: cms
+sort: 5
+status: active

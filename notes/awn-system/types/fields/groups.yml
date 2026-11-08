@@ -1,0 +1,18 @@
+id: awn.field.groups
+kind: meta
+status: active
+domain: fields
+kind-ui:
+  label: Мета
+  badge: { background: "#f0fdf4", border: "#86efac", text: "#15803d" }
+groupOrder: [text-single, text-multiline, numbers, choice, datetime, media, structure, lookup, cms]
+groupNames:
+  text-single: Текст (однострочный)
+  text-multiline: Текст (многострочный)
+  numbers: Числа
+  choice: Выбор
+  datetime: Дата и время
+  media: Медиа
+  structure: Структура
+  lookup: Справочники
+  cms: CMS / платформа

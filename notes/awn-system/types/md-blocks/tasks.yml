@@ -1,0 +1,9 @@
+id: awn.block.tasks
+name: Чеклист
+kind: block
+group: lists
+sort: 3
+icon: "☑️"
+description: Задачи с галочками
+template: "\n- [ ] Задача 1\n- [ ] Задача 2\n\n"
+status: active

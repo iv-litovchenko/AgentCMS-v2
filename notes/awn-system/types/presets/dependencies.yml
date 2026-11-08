@@ -1,0 +1,18 @@
+id: awn.preset.dependencies
+name: "Зависимости — dependencies.csv"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "dependencies.csv"
+hint-title: "Внешние зависимости workspace"
+hint-text: >
+  Корневой <code>dependencies.csv</code>: плагины, MCP, runtime, env-ключи.
+  Схема колонок — в настройках проекта → «Зависимости».
+  MCP: <code>workspace_dependencies_read</code> / <code>workspace_dependencies_write</code>.
+sort: 2
+body: |
+  host,kind,name,description,path,version,status,required,notes
+  any,runtime,node,Сервер CMS и MCP,node,>=22,active,yes,
+  any,mcp,agent-cms,MCP workspace,mcp-server/,,active,yes,
+  any,env,XAI_API_KEY,Voice xAI (без значения в CSV),.env,XAI_API_KEY,missing,no,

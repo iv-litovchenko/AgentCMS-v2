@@ -1,0 +1,6 @@
+name: Статус
+widget: choice
+choices:
+  - draft
+  - active
+  - archived

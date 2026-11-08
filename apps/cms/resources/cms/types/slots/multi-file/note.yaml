@@ -1,0 +1,14 @@
+name: Заметки
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: 'Заметки топика'
+path: notes/
+slot-order: 5
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

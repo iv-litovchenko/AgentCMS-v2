@@ -1,0 +1,11 @@
+name: 'TODO.md — список задач'
+status: active
+extends: presets/_base
+target-file: TODO.md
+hint-title: 'TODO.md — список задач'
+hint-text: ''
+sort: 10
+body: |
+  # TODO
+
+  - [ ]

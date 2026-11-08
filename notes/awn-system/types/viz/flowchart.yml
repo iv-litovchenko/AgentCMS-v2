@@ -1,0 +1,16 @@
+id: flowchart
+label: Блок-схема
+section: process
+icon: "🔀"
+description: Процесс, ветвления, архитектура системы — Mermaid flowchart
+bodyFormat: mermaid-flowchart
+defaultTemplate: |
+  ```mermaid
+  flowchart TD
+    START([Начало]) --> STEP[Шаг]
+    STEP --> CHECK{Условие?}
+    CHECK -->|да| OK[Действие]
+    CHECK -->|нет| ALT[Альтернатива]
+    OK --> END([Конец])
+    ALT --> END
+  ```

@@ -1,0 +1,13 @@
+id: awn.field.object
+name: Объект (new!)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: object
+storage: string
+mdbase: json
+description: Вложенная структура ключ–значение (JSON-объект)
+settings: [hint, required, locked, default]
+group: structure
+sort: 3
+status: active

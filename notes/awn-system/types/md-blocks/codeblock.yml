@@ -1,0 +1,9 @@
+id: awn.block.code
+name: Блок кода
+kind: block
+group: code
+sort: 1
+icon: "💻"
+description: Многострочный код
+template: "\n```\nкод\n```\n\n"
+status: active

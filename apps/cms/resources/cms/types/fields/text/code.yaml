@@ -1,0 +1,14 @@
+name: 'Код / YAML (new!)'
+extends: fields/text
+widget: code
+storage: string
+mdbase: text
+description: 'Исходный код, YAML, JSON или конфиг с моноширинным редактором'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: text-multiline
+sort: 6
+status: active

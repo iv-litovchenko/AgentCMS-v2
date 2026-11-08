@@ -1,0 +1,62 @@
+id: awn.mixin.runtime
+name: Runtime
+kind: mixin
+domain: mixins
+status: active
+description: Загрузка в контекст агента, cron, heartbeat, команды
+kind-ui:
+  label: Миксин
+  badge: { background: "#f8fafc", border: "#cbd5e1", text: "#475569" }
+fields:
+  awn-runtime-load-always:
+    type: awn.field.boolean
+    title: Всегда в контексте
+    description: Тема всегда в контексте агента; иначе — только по запросу (по умолчанию)
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 1
+
+  awn-runtime-heartbeat:
+    type: awn.field.boolean
+    title: Heartbeat
+    placement: aside-body
+    group: runtime
+    sort: 2
+
+  awn-runtime-cron:
+    type: awn.field.boolean
+    title: "Тип расписания (выполнение по расписанию)"
+    placement: aside-body
+    group: runtime
+    sort: 3
+
+  awn-runtime-cron-schedule:
+    type: awn.field.string.cron-schedule
+    title: Расписание
+    description: День и время, шаблон или своё cron-выражение
+    placement: aside-body
+    group: runtime
+    sort: 4
+    show-when:
+      field: awn-runtime-cron
+      equals: true
+
+  awn-runtime-reminder:
+    type: awn.field.boolean
+    title: В напоминание
+    description: >
+      Включить запись в реестр «Напоминания» (флаг не связан с «Дата события» и расписанием).
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 4.5
+
+  awn-runtime-commands:
+    type: awn.field.boolean
+    title: Выполнение команд
+    description: В инструкции темы есть команды для выполнения (визуальный маркер)
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 5

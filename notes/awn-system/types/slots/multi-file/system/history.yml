@@ -1,0 +1,17 @@
+id: awn.slot.history
+name: История
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: records
+storage-driver: external
+description: Версии файлов и история правок — history/
+path: history/
+slot-order: 91
+slot-tier: system
+allowed-content:
+  - awn.content.record
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

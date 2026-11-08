@@ -1,0 +1,13 @@
+id: awn.field.array
+name: Произвольные значения
+kind: field
+domain: fields
+extends: awn.field.base
+storage: array
+mdbase: list
+items: awn.field.string
+description: Произвольный список значений одного типа
+settings: [hint, required, locked, default, items, widget]
+group: choice
+sort: 4
+status: active

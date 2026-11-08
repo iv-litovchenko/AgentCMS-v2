@@ -1,0 +1,15 @@
+id: decision
+label: Дерево решений
+section: process
+icon: "🔀"
+description: Ветвления «если — то» при выборе варианта
+bodyFormat: mermaid-flowchart
+defaultTemplate: |
+  ```mermaid
+  flowchart TD
+    Q{Вопрос?}
+    Q -->|вариант A| A[Действие A]
+    Q -->|вариант B| B[Действие B]
+    A --> R[Результат]
+    B --> R
+  ```

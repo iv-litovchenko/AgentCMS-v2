@@ -1,0 +1,31 @@
+id: awn.preset
+name: Пресет системного файла
+kind: preset
+domain: presets
+status: active
+extends: awn.entity
+description: >
+  Заготовка содержимого файла workspace (.env, AGENTS.md, SKILL.md, промпты Shell).
+  Канон — awn-system/types/presets/*.yml. Используются UI «Вставить шаблон» и API system-file-templates.
+kind-ui:
+  label: Пресет
+  badge: { background: "#fff7ed", border: "#fb923c", text: "#c2410c" }
+
+properties:
+  target-file:
+    title: Целевой файл
+    description: Имя файла в корне workspace или путь (например .env, AGENTS.md)
+    required: true
+  hint-title:
+    title: Подсказка — заголовок
+    description: Заголовок в UI при вставке шаблона
+  hint-text:
+    title: Подсказка — текст
+    description: Краткое описание для UI (может содержать HTML)
+  sort:
+    title: Порядок
+    type: integer
+    description: Сортировка в меню пресетов
+  body:
+    title: Тело шаблона
+    description: Содержимое файла при вставке пресета

@@ -1,0 +1,10 @@
+name: 'База семьи media'
+status: active
+folder: acms-media
+tree-ui:
+  label: Медиатека
+  sort: 40
+  icon: image
+  icon-class: text-sky-500
+extends: hubs/_base
+description: 'Карточка медиатеки в awn-media/'

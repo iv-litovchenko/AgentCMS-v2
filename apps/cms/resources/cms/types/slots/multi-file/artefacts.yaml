@@ -1,0 +1,14 @@
+name: Артефакты
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Артефакты и экспорты'
+path: artefacts/
+slot-order: 7
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

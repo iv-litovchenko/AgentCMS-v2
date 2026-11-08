@@ -1,0 +1,13 @@
+id: goaltree
+label: Дерево целей
+section: plans
+icon: "🎯"
+description: Цели и подцели — иерархия «зачем → что сделать»
+bodyFormat: markdown-outline
+defaultTemplate: |
+  ## Главная цель
+
+  - [ ] Подцель 1
+    - [ ] Шаг 1.1
+    - [ ] Шаг 1.2
+  - [ ] Подцель 2

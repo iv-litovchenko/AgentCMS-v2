@@ -1,0 +1,13 @@
+name: 'Маркер · Заметка'
+group: markers
+status: active
+sort: 3
+icon: ✎
+description: 'Блок awn-marker-note в тексте конспекта'
+template: |
+  ```awn-marker-note
+  awn-status: открыто
+  ---
+  Текст заметки.
+
+  ```

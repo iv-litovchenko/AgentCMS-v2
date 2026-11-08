@@ -1,0 +1,12 @@
+name: 'Заголовок H3'
+group: structure
+sort: 2
+icon: 3️⃣
+description: Подраздел
+template: |+
+
+  ### Подраздел
+
+  Текст подраздела.
+
+status: active

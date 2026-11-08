@@ -1,0 +1,13 @@
+id: awn.field.string.email
+name: Email
+kind: field
+domain: fields
+extends: awn.field.string
+widget: email
+storage: string
+mdbase: string
+description: Адрес электронной почты
+settings: [hint, required, locked, default]
+group: text-single
+sort: 2
+status: active

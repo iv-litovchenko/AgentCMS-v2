@@ -1,0 +1,25 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ module.label }} — {{ workspace.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'workspace/_shell.html.twig' %}
+        {% block workspace_main %}
+            <header class="rounded-lg border border-zinc-200 bg-white px-4 py-4 shadow-sm">
+                <h1 class="text-xl font-semibold tracking-tight text-zinc-900">{{ module.label }}</h1>
+                <p class="mt-2 font-mono text-xs text-zinc-500">{{ module.module_id }}</p>
+            </header>
+
+            <section class="rounded-lg border border-dashed border-zinc-200 bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500 shadow-sm">
+                {% if module.slug == 'search' and search_query|default('') != '' %}
+                    <p class="text-zinc-700">Запрос: <span class="font-medium text-zinc-900">{{ search_query }}</span></p>
+                    <p class="mt-2">Поиск по хранилищу — следующий этап.</p>
+                {% elseif module.active %}
+                    Модуль в разработке.
+                {% else %}
+                    Заглушка — экран появится позже.
+                {% endif %}
+            </section>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

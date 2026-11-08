@@ -1,0 +1,16 @@
+name: 'Связь (одна)'
+extends: fields/_base
+widget: relation
+storage: string
+mdbase: link
+description: 'Одно отношение с другой нодой в CMS (топик, запись, категория) — wiki [[путь]]'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - targets
+  - scope
+group: structure
+sort: 5
+status: active

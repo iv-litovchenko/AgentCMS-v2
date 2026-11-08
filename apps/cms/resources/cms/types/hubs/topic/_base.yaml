@@ -1,0 +1,10 @@
+name: 'База семьи topic'
+status: active
+folder: acms-topics
+tree-ui:
+  label: Темы
+  sort: 20
+  icon: topic
+  icon-class: text-emerald-600
+extends: hubs/_base
+description: 'Дерево тем workspace — ws, area, section, topic'

@@ -1,0 +1,17 @@
+id: awn.slot.references
+name: Источники
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: Ссылки и источники
+path: references/
+slot-order: 6
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

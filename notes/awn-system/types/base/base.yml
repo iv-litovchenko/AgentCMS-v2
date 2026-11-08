@@ -1,0 +1,533 @@
+id: awn.base
+name: База сущности
+kind: base
+domain: base
+status: active
+extends: awn.entity
+description: >
+  Общие поля любой сущности CMS. UI формы свойств строится только из этой схемы
+  (form / field-groups / fields.placement / type).
+kind-ui:
+  label: База
+  badge: { background: "#eef2ff", border: "#a5b4fc", text: "#3730a3" }
+
+form:
+  panel-title: "{A2!} Метаданные"
+  zones:
+    - id: title-bar
+      role: primary-title
+    - id: editor-body
+      role: inline-fields
+    - id: aside-hero
+      role: media-links
+    - id: aside-body
+      role: field-groups
+    - id: hidden
+      role: system-storage
+
+field-groups:
+  - id: content
+    name: "{A2!} Основное"
+    description: Что заполняет человек или агент
+    collapsed: false
+  - id: work-note
+    name: "{A2!} Заметки"
+    description: Саммари, заметки и следующий шаг — для вас и агента
+    collapsed: false
+  - id: nav
+    name: "{A2!} Дерево и вид"
+    description: Поведение в меню и на главной
+    collapsed: true
+  - id: runtime
+    name: "{A2!} Runtime агента"
+    description: Загрузка в контекст, cron, heartbeat
+    collapsed: true
+  - id: indexing
+    name: "{A2!} Индексирование"
+    description: Поиск, индексы workspace и автооглавление
+    collapsed: true
+  - id: taxonomy
+    name: "{A2!} Таксономия"
+    description: Справочники из awn-databases/taxonomies/
+    collapsed: true
+  - id: visualization
+    name: "{A2!} Визуализация"
+    description: RMM (awn-viz-*) и живые карты *.viz.md — см. блок внизу группы
+    collapsed: true
+  - id: system
+    name: "{A2!} Системные"
+    description: Заполняется автоматически, только чтение
+    collapsed: true
+
+fields:
+  # --- Основное (title-bar / hidden) ---
+  awn-name:
+    type: awn.field.string
+    title: "{A2!} Имя"
+    description: Отображаемое имя в меню; пустое → slug
+    placement: title-bar
+    group: content
+    sort: 1
+
+  awn-description:
+    type: awn.field.text
+    title: "{A2!} Описание"
+    placement: hidden
+    group: content
+    sort: 4
+
+  # --- aside-hero ---
+  awn-preview:
+    type: awn.field.file.image.for-preview
+    title: "{A2!} Превью"
+    description: awn-storage/assets/preview/
+    placement: aside-hero
+    group: content
+    sort: 1
+
+  awn-web-url:
+    type: awn.field.string.url
+    title: "{A2!} Веб-источник"
+    description: URL оригинала в интернете (https://…)
+    placement: aside-hero
+    widget: url
+    group: content
+    sort: 2
+
+  # --- content (aside-body) ---
+  awn-status:
+    type: awn.field.choice.one
+    title: "{A2!} Статус"
+    placement: aside-body
+    group: content
+    sort: 2
+    enum:
+      - key: new
+        name: 🔵 Новая
+      - key: draft
+        name: 🟡 Черновик
+      - key: open
+        name: 🟢 Открыта
+      - key: planned
+        name: 🟠 Запланирована
+      - key: in-progress
+        name: 🟣 В работе
+      - key: blocked
+        name: 🚧 Заблокирована
+      - key: waiting-review
+        name: ⏳ Ожидает проверку
+      - key: done
+        name: ✅ Готова
+      - key: closed
+        name: 🔴 Закрыта
+      - key: archived
+        name: ⚫ Архив
+      - key: backlog
+        name: 📥 Backlog
+      - key: incoming
+        name: 📬 Входящей
+      - key: in-discussion
+        name: 💬 На обсуждении
+      - key: outgoing
+        name: 📤 Исходящей
+      - key: none
+        name: ⚪ Без статуса
+    default: open
+
+  awn-quality:
+    type: awn.field.number.stars
+    title: "{A2!} Качество проверки"
+    description: >
+      Насколько запись готова после совместной проверки с агентом.
+      Ниже 4 — требует доработки; 4 — норма; 10 — отлично.
+    hint: "0 — очень низко · 4 — норма · 10 — высоко · ниже 4 нужна обработка"
+    placement: aside-body
+    group: content
+    sort: 3
+    default: 4
+
+  awn-importance:
+    type: awn.field.number.importance
+    title: "{A2!} Важность для меня"
+    description: >
+      Насколько тема или запись важны лично для вас. Влияет на приоритет
+      в поиске агента: важные темы поднимаются выше при абстрактных вопросах.
+      Наследуется от темы к записям внутри.
+    hint: "0 — не отмечено · 5 — заметно · 10 — критично важно"
+    placement: aside-body
+    group: content
+    sort: 3.5
+    default: 0
+
+  awn-summary:
+    type: awn.field.text
+    title: "{A2!} Саммари (о чем это? - книга, текст, сущность, запись)"
+    description: >
+      Развёрнутое резюме записи для вас и агента: может быть объёмнее и
+      содержательнее, чем awn-description (факты, контекст, выводы).
+    hint: "Несколько предложений или абзацев (краткое изложение записи); удобно для поиска и контекста LLM"
+    placement: aside-body
+    group: work-note
+    sort: 1
+
+  awn-note:
+    type: awn.field.text
+    title: "{A2!} Заметка"
+    description: >
+      Рабочая заметка по этой записи: уточнения, договорённости, черновые мысли.
+    hint: "Свободный текст; не обязательно про «следующий шаг»"
+    placement: aside-body
+    group: work-note
+    sort: 2
+
+  awn-todo:
+    type: awn.field.text
+    title: "{A2!} Todo"
+    description: >
+      На чём остановились и что сделать дальше; блокеры — одной строкой или списком.
+    hint: "На чём остановились — следующий шаг"
+    placement: aside-body
+    group: work-note
+    sort: 3
+
+  awn-note-todo-sticker:
+    type: awn.field.text
+    title: "{A2!} Заметка остановки (устар.)"
+    description: >
+      Устарело: используйте awn-todo. Оставлено для чтения старых manifest.
+    placement: hidden
+    group: work-note
+    sort: 99
+    hidden: true
+
+  awn-emoji:
+    type: awn.field.string
+    title: "{A2!} Эмодзи"
+    description: Показывается вместо иконки, если превью не задано
+    placement: aside-body
+    group: content
+    sort: 4
+
+  awn-sort:
+    type: awn.field.number.integer
+    title: "{A2!} Сортировка"
+    placement: aside-body
+    group: content
+    sort: 5
+
+  # --- runtime ---
+  awn-runtime-load-always:
+    type: awn.field.boolean
+    title: "{A2!} Всегда в контексте"
+    description: Тема всегда в контексте агента; иначе — только по запросу (по умолчанию)
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 1
+
+  awn-runtime-heartbeat:
+    type: awn.field.boolean
+    title: "{A2!} Heartbeat"
+    placement: aside-body
+    group: runtime
+    sort: 2
+
+  awn-runtime-cron:
+    type: awn.field.boolean
+    title: "Тип расписания (выполнение по расписанию)"
+    placement: aside-body
+    group: runtime
+    sort: 3
+
+  awn-runtime-cron-schedule:
+    type: awn.field.string.cron-schedule
+    title: "{A2!} Расписание"
+    description: День и время, шаблон или своё cron-выражение
+    placement: aside-body
+    group: runtime
+    sort: 4
+    show-when:
+      field: awn-runtime-cron
+      equals: true
+
+  awn-runtime-reminder:
+    type: awn.field.boolean
+    title: "{A2!} В напоминание"
+    description: >
+      Включить запись в реестр «Напоминания» (флаг не связан с «Дата события» и расписанием).
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 4.5
+
+  awn-runtime-commands:
+    type: awn.field.boolean
+    title: "{A2!} Выполнение команд"
+    description: В инструкции темы есть команды для выполнения (визуальный маркер)
+    default: false
+    placement: aside-body
+    group: runtime
+    sort: 5
+
+  # --- visualization ---
+  awn-viz-graph:
+    type: awn.field.object
+    title: Граф
+    description: Узел на графе связей workspace
+    placement: aside-body
+    group: visualization
+    sort: 1
+    properties:
+      enabled:
+        type: awn.field.boolean
+        title: На графе
+        description: Пока всегда включено — узел участвует в графе
+        locked: true
+        readonly: true
+        default: true
+      pin:
+        type: awn.field.boolean
+        title: Закрепить узел
+        description: Не сдвигать при авто-раскладке
+        default: false
+      weight:
+        type: awn.field.number.importance
+        title: Вес узла
+        description: Влияет на силу связей и размер на графе
+        default: 0
+
+  awn-viz-mindmap:
+    type: awn.field.object
+    title: Карта (mind map)
+    description: Узел на карте знаний темы
+    placement: aside-body
+    group: visualization
+    sort: 2
+    properties:
+      enabled:
+        type: awn.field.boolean
+        title: На карте
+        description: Пока всегда включено — узел на mind map
+        locked: true
+        readonly: true
+        default: true
+      type:
+        type: awn.field.choice.one
+        title: Тип узла
+        widget: radio
+        enum:
+          - key: required
+            name: "! Required"
+          - key: recommended
+            name: "★ Recommended"
+          - key: optional
+            name: "○ Optional"
+          - key: advanced
+            name: "⚡ Advanced"
+          - key: milestone
+            name: "◆ Milestone"
+        default: optional
+      color:
+        type: awn.field.choice.one
+        title: Цвет
+        widget: radio
+        enum:
+          - key: blue
+            name: Blue
+          - key: teal
+            name: Teal
+          - key: slate
+            name: Slate
+          - key: amber
+            name: Amber
+          - key: red
+            name: Red
+          - key: purple
+            name: Purple
+          - key: green
+            name: Green
+          - key: pink
+            name: Pink
+        default: slate
+      size:
+        type: awn.field.choice.one
+        title: Размер
+        widget: radio
+        enum:
+          - key: auto
+            name: Auto
+          - key: small
+            name: Small
+          - key: medium
+            name: Medium
+          - key: large
+            name: Large
+          - key: junction
+            name: Junction
+        default: auto
+      layout-independent:
+        type: awn.field.boolean
+        title: Свой layout-бокс
+        description: Независимая раскладка ветки (Independent Layout Box)
+        default: false
+      direction:
+        type: awn.field.choice.one
+        title: Направление ветки
+        widget: radio
+        enum:
+          - key: auto
+            name: Auto
+          - key: left
+            name: "← Left"
+          - key: right
+            name: "→ Right"
+          - key: up
+            name: "↑ Up"
+          - key: down
+            name: "↓ Down"
+        default: auto
+
+  awn-viz-roadmap:
+    type: awn.field.object
+    title: Roadmap
+    description: Позиция на дорожной карте workspace
+    placement: aside-body
+    group: visualization
+    sort: 3
+    properties:
+      enabled:
+        type: awn.field.boolean
+        title: На roadmap
+        description: Пока всегда включено — узел на roadmap
+        locked: true
+        readonly: true
+        default: true
+      order:
+        type: awn.field.number.integer
+        title: Порядок
+        description: Сортировка в колонке roadmap (колонка — из awn-status)
+        default: 0
+      parallel-group:
+        type: awn.field.string
+        title: Параллельная группа
+        description: Задачи в одной группе идут параллельно на диаграмме
+      column:
+        type: awn.field.string
+        title: Колонка
+        description: Переопределить колонку roadmap (если пусто — по awn-status)
+
+  # --- indexing (поля base; флаги exclude — в mixin indexing-*) ---
+  awn-auto-toc:
+    type: awn.field.boolean
+    title: "{A2!} Автооглавление"
+    description: >
+      Table of contents (TOC): автоматически собирать оглавление документа по
+      заголовкам (кнопка «Сформировать» позже).
+    locked: true
+    readonly: true
+    default: false
+    placement: aside-body
+    group: indexing
+    sort: 3
+
+  # --- taxonomy ---
+  awn-tags:
+    type: awn.field.array
+    items: awn.field.string
+    title: "{A2!} Теги"
+    description: Произвольные теги — список строк в YAML-frontmatter
+    placement: aside-body
+    group: taxonomy
+    sort: 0
+
+  awn-taxonomy:
+    type: awn.field.taxonomy
+    title: "{A2!} Таксономия"
+    description: Теги, категория, цвет и другие справочники из awn-databases/taxonomies/
+    placement: aside-body
+    group: taxonomy
+    sort: 1
+
+  # --- system ---
+  awn-id:
+    type: awn.field.number.integer
+    title: "{A2!} ID"
+    description: Глобальный номер workspace (счётчик в settings.yml → Автоинкремент). Дубликаты допустимы — можно изменить вручную.
+    placement: aside-body
+    group: system
+    sort: 0
+
+  awn-type:
+    type: awn.field.string
+    title: "{A2!} Тип"
+    required: true
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 1
+
+  awn-create:
+    type: awn.field.date.datetime
+    title: "{A2!} Создан"
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 2
+
+  awn-update:
+    type: awn.field.date.datetime
+    title: "{A2!} Изменён"
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 3
+
+  awn-viewed:
+    type: awn.field.date.datetime
+    title: "{A2!} Просмотрен (последний раз)"
+    description: >
+      Когда запись последний раз открывали в интерфейсе (заглушка: пока не заполняется автоматически).
+    locked: true
+    readonly: true
+    placement: aside-body
+    group: system
+    sort: 3.5
+
+  awn-event-at:
+    type: awn.field.date.datetime
+    title: "{A2!} Дата события"
+    description: >
+      Дата и время встречи, мероприятия и других событий по записи.
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 3.55
+
+  awn-deadline:
+    type: awn.field.date.datetime
+    title: "{A2!} Дедлайн"
+    description: >
+      Крайний срок по записи (заглушка: пока ни на что не влияет).
+    locked: true
+    readonly: true
+    placement: aside-body
+    group: system
+    sort: 3.6
+
+  awn-version:
+    type: awn.field.number.integer
+    title: "{A2!} Версия"
+    default: 1
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 4
+
+  awn-owner:
+    type: awn.field.string
+    title: "{A2!} Владелец"
+    description: Владелец записи (позже — связь с users)
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 5

@@ -1,0 +1,14 @@
+id: awn.field.duration
+name: Длительность (new!)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: duration
+storage: string
+mdbase: string
+format: "2h 30m"
+description: Длительность интервала (2h 30m, 45m, 1d 4h)
+settings: [hint, required, locked, default, format]
+group: datetime
+sort: 4
+status: active

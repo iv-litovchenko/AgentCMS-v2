@@ -1,0 +1,16 @@
+sortOrder:
+  - gitignore
+  - dependencies
+  - env
+  - skill
+  - agents
+  - auth
+  - bootstrap
+  - onboarding
+  - readme
+  - note
+  - todo
+  - shell-tts-prompt
+  - shell-stt-prompt
+  - shell-proactive-prompt
+  - shell-system-prompt

@@ -1,0 +1,16 @@
+id: awn.block.mermaid-pie
+name: Круговая диаграмма
+kind: block
+group: visualization
+sort: 4
+icon: "🥧"
+description: Доли и проценты
+template: |
+  ```mermaid
+  pie title Распределение
+    "Категория A" : 45
+    "Категория B" : 30
+    "Категория C" : 25
+  ```
+
+status: active

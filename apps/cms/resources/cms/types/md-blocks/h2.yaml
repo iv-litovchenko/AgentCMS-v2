@@ -1,0 +1,11 @@
+name: 'Заголовок H2'
+status: active
+extends: md-blocks/_base
+group: structure
+sort: 1
+icon: 2️⃣
+description: 'Раздел второго уровня'
+template: |
+  ## Заголовок
+
+  Текст раздела.

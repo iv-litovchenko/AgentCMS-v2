@@ -1,0 +1,13 @@
+id: awn.field.relation.one
+name: Связь (одна)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: relation
+storage: string
+mdbase: link
+description: Одно отношение с другой нодой в CMS (топик, запись, категория) — wiki [[путь]]
+settings: [hint, required, locked, default, targets, scope]
+group: structure
+sort: 5
+status: active

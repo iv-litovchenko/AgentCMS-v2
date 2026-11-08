@@ -1,0 +1,22 @@
+name: 'Сообщение дискуссии'
+status: active
+extends: content/_base
+description: 'Одно сообщение в слоте discussion/ — дискуссия по теме (люди и агент)'
+slot: discussion
+fields:
+  awn-role:
+    type: fields/choice/one
+    title: '{A2!} Роль'
+    placement: aside-body
+    group: content
+    sort: 10
+    enum:
+      -
+        key: user
+        name: Пользователь
+      -
+        key: assistant
+        name: Ассистент
+      -
+        key: system
+        name: Система

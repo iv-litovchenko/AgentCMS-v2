@@ -1,0 +1,17 @@
+id: awn.block.marker-repeat
+name: Маркер · Повторить
+kind: block
+group: markers
+status: active
+sort: 9
+icon: "↻"
+description: Блок awn-marker-repeat — spaced repetition
+template: |
+  ```awn-marker-repeat
+  awn-status: открыто
+  awn-create: 2026-09-27
+  awn-repeat: 2026-10-01
+  ---
+  Что нужно повторить.
+
+  ```

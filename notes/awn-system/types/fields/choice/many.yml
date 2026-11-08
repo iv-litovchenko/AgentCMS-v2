@@ -1,0 +1,13 @@
+id: awn.field.choice.many
+name: Несколько из списка
+kind: field
+domain: fields
+extends: awn.field.base
+widget: checkbox
+storage: array
+mdbase: list
+description: Несколько значений из заданного списка. Виджет checkbox или select-multiple
+settings: [hint, required, locked, default, widget, enum]
+group: choice
+sort: 3
+status: active

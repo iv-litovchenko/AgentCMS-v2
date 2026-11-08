@@ -1,0 +1,8 @@
+id: awn.hub.topic.area
+name: Область
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.topic.base
+description: Область контента — папка-раздел в awn-container (не служебная секция корня)
+manifest-pattern: "{slug}/manifest.md"

@@ -1,0 +1,14 @@
+id: awn.field.repeater
+name: Repeater (new!)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: repeater
+storage: array
+mdbase: list
+items: awn.field.object
+description: Список однотипных записей (повторяющихся блоков)
+settings: [hint, required, locked, default, items]
+group: structure
+sort: 2
+status: active

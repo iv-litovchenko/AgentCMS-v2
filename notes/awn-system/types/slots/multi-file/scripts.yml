@@ -1,0 +1,17 @@
+id: awn.slot.script
+name: Скрипты
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Скрипты и автоматизация
+path: scripts/
+slot-order: 11
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

@@ -1,0 +1,10 @@
+# hub path (без hubs/) → Twig-шаблон экрана
+default: workspace/hubs/_default.html.twig
+views:
+  root/root: workspace/hubs/root_root.html.twig
+  topic/ws: workspace/hubs/topic_ws.html.twig
+  topic/topic: workspace/hubs/topic_topic.html.twig
+  channel/channel: workspace/hubs/channel_channel.html.twig
+  database/collection: workspace/hubs/database_collection.html.twig
+  media/media: workspace/hubs/media_media.html.twig
+  repository/repository: workspace/hubs/repository_repository.html.twig

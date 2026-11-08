@@ -1,0 +1,13 @@
+id: awn.field.text.code
+name: Код / YAML (new!)
+kind: field
+domain: fields
+extends: awn.field.text
+widget: code
+storage: string
+mdbase: text
+description: Исходный код, YAML, JSON или конфиг с моноширинным редактором
+settings: [hint, required, locked, default]
+group: text-multiline
+sort: 6
+status: active

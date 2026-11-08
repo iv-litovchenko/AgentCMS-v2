@@ -1,0 +1,18 @@
+id: awn.block.mermaid-state
+name: Диаграмма состояний
+kind: block
+group: visualization
+sort: 6
+icon: "🔁"
+description: Состояния и переходы
+template: |
+  ```mermaid
+  stateDiagram-v2
+    [*] --> Черновик
+    Черновик --> На_ревью : отправить
+    На_ревью --> Опубликовано : одобрить
+    На_ревью --> Черновик : вернуть
+    Опубликовано --> [*]
+  ```
+
+status: active

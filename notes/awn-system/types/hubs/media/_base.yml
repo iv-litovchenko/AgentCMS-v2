@@ -1,0 +1,7 @@
+id: awn.hub.media.base
+name: База семьи media
+kind: base
+domain: hubs
+status: active
+extends: awn.hub.base
+description: Карточка медиатеки в awn-media/

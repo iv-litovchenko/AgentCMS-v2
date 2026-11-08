@@ -1,0 +1,14 @@
+name: Медиа
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Медиа-файлы и sidecar'
+path: media/
+slot-order: 8
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

@@ -1,0 +1,13 @@
+id: awn.field.string.url
+name: URL
+kind: field
+domain: fields
+extends: awn.field.string
+widget: url
+storage: string
+mdbase: url
+description: Внешняя ссылка (https://...)
+settings: [hint, required, locked, default]
+group: text-single
+sort: 6
+status: active

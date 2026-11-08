@@ -1,0 +1,10 @@
+name: 'База семьи channel'
+status: active
+folder: acms-channels
+tree-ui:
+  label: Каналы
+  sort: 10
+  icon: channel
+  icon-class: text-indigo-600
+extends: hubs/_base
+description: 'Карточка канала ingress в awn-channels/'

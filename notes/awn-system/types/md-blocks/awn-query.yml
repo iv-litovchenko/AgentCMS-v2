@@ -1,0 +1,20 @@
+id: awn.block.query
+name: DQL-запрос
+kind: block
+group: misc
+sort: 40
+icon: "🗃️"
+description: Таблица по DQL-lite (storage-index)
+render: fence
+fence-tag: awn-query
+renderer: awn-system/renderers/dql-table.js
+template: |
+  ```awn-query
+  FROM awn-container/finansy
+  WHERE awn-type = "awn.page.topic"
+  SORT path ASC
+  LIMIT 20
+  SELECT path, awn-name
+  ```
+
+status: active

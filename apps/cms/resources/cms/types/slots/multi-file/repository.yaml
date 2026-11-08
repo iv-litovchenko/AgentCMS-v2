@@ -1,0 +1,14 @@
+name: Репозитории
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Файловый репозиторий топика'
+path: repository/
+slot-order: 8
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

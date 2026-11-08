@@ -1,0 +1,17 @@
+id: awn.slot.main-single
+name: Память (однофайловая)
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: single-file
+storage-driver: internal
+description: Однофайловая память топика — main.md рядом с manifest
+path: main.md
+slot-order: 2
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - ".md"

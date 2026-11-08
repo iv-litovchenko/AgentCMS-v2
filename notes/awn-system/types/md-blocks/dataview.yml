@@ -1,0 +1,18 @@
+id: awn.block.dataview
+name: Dataview (DQL)
+kind: block
+group: misc
+sort: 41
+icon: "📊"
+description: Алиас Obsidian — ```dataview (не awn-dataview), тот же рендер что awn-query
+render: fence
+fence-tag: dataview
+renderer: awn-system/renderers/dql-table.js
+template: |
+  ```dataview
+  FROM awn-container/finansy
+  WHERE awn-type = "awn.content.record"
+  LIMIT 30
+  ```
+
+status: active

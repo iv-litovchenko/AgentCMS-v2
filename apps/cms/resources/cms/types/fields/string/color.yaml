@@ -1,0 +1,14 @@
+name: Цвет
+extends: fields/string
+widget: color
+storage: string
+mdbase: color
+description: 'Цвет в формате'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: media
+sort: 1
+status: active

@@ -1,0 +1,11 @@
+name: Веб-источник
+status: deprecated
+description: |
+  Deprecated — поле awn-web-url объявлено в awn.base.fields. Mixin оставлен для совместимости ссылок в документации.
+fields:
+  awn-web-url:
+    type: fields/string/url
+    title: Веб-источник
+    placement: aside-hero
+    widget: url
+    group: content

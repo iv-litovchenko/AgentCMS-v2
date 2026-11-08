@@ -1,0 +1,11 @@
+name: 'AGENTS.md — инструкции для LLM'
+status: active
+extends: presets/_base
+target-file: AGENTS.md
+hint-title: 'AGENTS.md — инструкции для LLM'
+hint-text: ''
+sort: 4
+body: |
+  # Agent
+
+  > Инструкции для LLM-агента.

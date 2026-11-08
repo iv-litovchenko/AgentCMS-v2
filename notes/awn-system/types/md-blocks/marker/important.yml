@@ -1,0 +1,15 @@
+id: awn.block.marker-important
+name: Маркер · Важно
+kind: block
+group: markers
+status: active
+sort: 2
+icon: "!"
+description: Блок awn-marker-important — выделить важное
+template: |
+  ```awn-marker-important
+  awn-status: открыто
+  ---
+  Кратко, что важно запомнить.
+
+  ```

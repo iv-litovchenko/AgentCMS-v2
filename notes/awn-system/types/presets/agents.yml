@@ -1,0 +1,14 @@
+id: awn.preset.agents
+name: "AGENTS.md — инструкции для LLM"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "AGENTS.md"
+hint-title: "AGENTS.md — инструкции для LLM"
+hint-text: ""
+sort: 4
+body: |
+  # Agent
+  
+  > Инструкции для LLM-агента.

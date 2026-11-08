@@ -1,0 +1,24 @@
+id: awn.content.discussion
+name: Сообщение дискуссии
+kind: type
+domain: content
+status: active
+extends: awn.content.base
+description: Одно сообщение в слоте discussion/ — дискуссия по теме (люди и агент)
+slot: discussion
+
+fields:
+
+  awn-role:
+    type: awn.field.choice.one
+    title: "{A2!} Роль"
+    placement: aside-body
+    group: content
+    sort: 10
+    enum:
+      - key: user
+        name: Пользователь
+      - key: assistant
+        name: Ассистент
+      - key: system
+        name: Система

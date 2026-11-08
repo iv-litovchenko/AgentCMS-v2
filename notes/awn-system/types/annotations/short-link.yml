@@ -1,0 +1,64 @@
+id: awn.annotation.short-link
+name: Короткая ссылка
+kind: type
+domain: annotations
+status: active
+extends: awn.content.record-lite
+description: >
+  Запись реестра awn-short-links/{code}.md — публичный короткий URL (/link/{workspace}/{code})
+  на страницу workspace. Якорь только в реестре; при перемещении файла цели ссылка может устареть.
+
+kind-ui:
+  label: Короткая ссылка
+  badge: { background: "#f3e8ff", border: "#c4b5fd", text: "#6d28d9" }
+
+form:
+  panel-title: "{A2!} Короткая ссылка"
+
+field-groups:
+  - id: link
+    name: "{A2!} Ссылка"
+    description: Код, цель и представление для полного URL
+    collapsed: false
+  - id: system
+    name: "{A2!} Системные"
+    description: Заполняется при создании
+    collapsed: true
+
+fields:
+
+  awn-code:
+    type: awn.field.string.slug
+    title: "{A2!} Код"
+    description: Сегмент URL (a-z0-9, 6–32). Имя файла в awn-short-links/
+    placement: aside-body
+    group: link
+    sort: 1
+    locked: true
+
+  awn-target-path:
+    type: awn.field.string.link
+    title: "{A2!} Целевой путь"
+    description: Workspace-relative путь (manifest, .md, слот)
+    placement: aside-body
+    group: link
+    sort: 2
+    locked: true
+    widget: relation
+
+  awn-view:
+    type: awn.field.string
+    title: "{A2!} CHPU view"
+    description: Необязательно — preview, edit, nav, todo… для полной ссылки
+    placement: aside-body
+    group: link
+    sort: 3
+    placeholder: preview
+
+  awn-created-at:
+    type: awn.field.date.datetime
+    title: "{A2!} Создана"
+    placement: aside-body
+    group: system
+    sort: 10
+    locked: true

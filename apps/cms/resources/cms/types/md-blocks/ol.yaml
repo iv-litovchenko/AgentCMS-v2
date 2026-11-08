@@ -1,0 +1,12 @@
+name: 'Нумерованный список'
+group: lists
+sort: 2
+icon: 🔢
+description: 'Шаги или порядок'
+template: |+
+
+  1. пункт 1
+  2. пункт 2
+  3. пункт 3
+
+status: active

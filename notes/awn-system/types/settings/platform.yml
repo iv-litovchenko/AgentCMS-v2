@@ -1,0 +1,496 @@
+id: awn.settings.platform
+name: Настройки платформы
+kind: type
+domain: settings
+status: active
+extends: awn.settings.base
+description: >
+  Политика всей платформы Agent CMS (0-ws-core): MCP, лимиты, индексы, память.
+  Значения — .agent-cms-global/settings/platform.yml. Не перекрываются workspace/user.
+scope: platform
+enabled: true
+consumer: [mcp-server, server, ui, context]
+valuesFile: .agent-cms-global/settings/platform.yml
+
+fieldGroups:
+  - id: main
+    name: Основные
+    description: Режим обслуживания, хранилище по умолчанию и язык UI для всей платформы (.agent-cms-global/settings/platform.yml).
+  - id: ui
+    name: Интерфейс
+    description: Глобальные настройки интерфейса — заглушка. Персональные параметры (дерево, сайдбар) — в «Пользовательские настройки».
+  - id: auto-context
+    name: Автоконтекст
+    description: >
+      Что всегда попадает в контекст агента (always-context): документы платформы, корневые .md workspace
+      (галочки ниже) и текстовые файлы из каталога ws/ (platform.yml).
+  - id: mcp
+    name: MCP
+    description: Политика MCP-tools — режим доступа, batch_invoke и лимиты чтения/записи файлов.
+  - id: indexing
+    name: Индексирование
+    description: >
+      Pipeline и политика индексации — те же шаги, что в меню «Индексирование»
+      (OCR → слова → смысл → поля → связи → id).
+  - id: indexing-search
+    name: Поиск (RAG)
+    description: Параметры семантического чанкинга и весов hybrid-поиска (из runtime, настраиваются здесь).
+  - id: memory
+    name: Память
+    description: Параметры долговременной памяти агента (пока не подключены в runtime).
+  - id: media-cloud
+    name: Медиа в облаке
+    description: >
+      Справочник облаков (Google, Яндекс…). Файлы уезжают в awn-media-cloud/_blobs/ (в git не коммитятся),
+      на месте — symlink. Sidecar не переносится.
+
+fields:
+
+  sys-core-path:
+    type: awn.field.string
+    title: Каталог ядра
+    readonly: true
+    group: main
+    sort: 1
+
+  maintenance-mode:
+    type: awn.field.boolean
+    title: Режим обслуживания
+    description: Закрывает API (кроме platform.yml). В UI — оверлей.
+    default: false
+    group: main
+    sort: 20
+
+  default-locale:
+    type: awn.field.choice.one
+    title: Язык UI по умолчанию
+    description: Атрибут lang у document (ru/en)
+    default: ru
+    enum: [ru, en]
+    group: main
+    sort: 21
+
+  default-workspace-id:
+    type: awn.field.choice.one
+    title: Хранилище по умолчанию
+    description: >
+      Какой workspace открывать при старте CMS и Voice. Текущий выбор в шапке Shell — сессия
+      (localStorage), это поле задаёт дефолт при первом открытии.
+    default: ""
+    enum: []
+    group: main
+    sort: 22
+
+  ui-theme:
+    type: awn.field.choice.one
+    title: "{NOT WORK} Тема оформления"
+    description: Глобальная тема UI для всех workspace (пока заглушка)
+    default: system
+    enum: [system, light, dark]
+    group: ui
+    sort: 1
+
+  ui-density:
+    type: awn.field.choice.one
+    title: "{NOT WORK} Плотность интерфейса"
+    description: Отступы и высота строк в UI
+    default: comfortable
+    enum: [compact, comfortable]
+    group: ui
+    sort: 2
+
+  ui-show-breadcrumbs:
+    type: awn.field.boolean
+    title: "{NOT WORK} Хлебные крошки"
+    description: Показывать breadcrumbs по умолчанию
+    default: true
+    group: ui
+    sort: 3
+
+  ui-default-sidebar-width:
+    type: awn.field.number.integer
+    title: "{NOT WORK} Ширина сайдбара по умолчанию"
+    description: Глобальный default (px). Персонально — user settings.
+    default: 280
+    group: ui
+    sort: 4
+
+  always-context-md-files:
+    type: awn.field.choice.many
+    title: Корневые .md workspace
+    description: Какие системные .md из корня workspace добавлять в always-context всех агентов
+    default: [AGENTS.md]
+    enum:
+      - key: AGENTS.md
+        name: AGENTS.md
+      - key: AUTH.md
+        name: AUTH.md
+      - key: BOOTSTRAP.md
+        name: BOOTSTRAP.md
+      - key: ONBOARDING.md
+        name: ONBOARDING.md
+      - key: SKILL.md
+        name: SKILL.md
+      - key: README.md
+        name: README.md
+      - key: NOTE.md
+        name: NOTE.md
+      - key: TODO.md
+        name: TODO.md
+    group: auto-context
+    sort: 6
+
+  always-context-ws-folder:
+    type: awn.field.string
+    title: Папка автоконтекста (shared)
+    description: >
+      Относительный путь от корня workspace — каталог с файлами для always-context
+      (по умолчанию awn-topics/0-shared/0-context/awn-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
+    default: awn-topics/0-shared/0-context/awn-storage/
+    group: auto-context
+    sort: 12
+
+  mcp-mode:
+    type: awn.field.choice.one
+    title: Режим MCP
+    description: readonly — только read/list/search; standard — + write/create; full — exec
+    default: standard
+    enum: [readonly, standard, full]
+    group: mcp
+    sort: 10
+
+  batch-enabled:
+    type: awn.field.boolean
+    title: batch_invoke
+    description: Разрешить пакетные вызовы одного MCP-tool
+    default: true
+    group: mcp
+    sort: 11
+
+  batch-read-limit:
+    type: awn.field.number.integer
+    title: Лимит read/list/search
+    default: 20
+    group: mcp
+    sort: 12
+
+  batch-write-limit:
+    type: awn.field.number.integer
+    title: Лимит write/create/delete
+    default: 10
+    group: mcp
+    sort: 13
+
+  batch-deny-exec:
+    type: awn.field.boolean
+    title: Запретить exec в batch
+    description: true — tool_command_exec / tool_shell_exec / tool_script_run нельзя в batch_invoke (рекомендуется)
+    default: true
+    group: mcp
+    sort: 14
+
+  confirm-exec:
+    type: awn.field.boolean
+    title: Подтверждение exec
+    description: true — tool_* exec (и legacy exec_* / run_script) требуют confirm=true в вызове MCP
+    default: true
+    group: mcp
+    sort: 15
+
+  confirm-delete:
+    type: awn.field.boolean
+    title: Подтверждение delete
+    description: true — delete_* требуют confirm=true в вызове MCP
+    default: true
+    group: mcp
+    sort: 16
+
+  read-text-max-bytes:
+    type: awn.field.choice.one
+    title: Лимит read_file (текст)
+    description: read_workspace / scan folder / partial text read
+    default: "120000"
+    enum:
+      - key: "65536"
+        name: 64 KB
+      - key: "120000"
+        name: 120 KB
+      - key: "262144"
+        name: 256 KB
+      - key: "524288"
+        name: 512 KB
+      - key: "1048576"
+        name: 1 MB
+      - key: "2097152"
+        name: 2 MB
+    group: mcp
+    sort: 17
+
+  read-binary-max-bytes:
+    type: awn.field.choice.one
+    title: Лимит read_file (base64)
+    description: Бинарные файлы через read_file format=base64
+    default: "1500000"
+    enum:
+      - key: "524288"
+        name: 512 KB
+      - key: "1048576"
+        name: 1 MB
+      - key: "1500000"
+        name: 1.5 MB
+      - key: "3145728"
+        name: 3 MB
+      - key: "5242880"
+        name: 5 MB
+      - key: "10485760"
+        name: 10 MB
+    group: mcp
+    sort: 18
+
+  mcp-response-max-kb:
+    type: awn.field.number.integer
+    title: "{NOT WORK} Лимит ответа MCP"
+    description: >
+      Максимальный размер ответа tool-call со стороны MCP-сервера, килобайты.
+      Если ответ больше лимита — вместо данных возвращается сообщение с просьбой
+      сузить запрос или изменить параметры вызова инструмента.
+    default: 512
+    group: mcp
+    sort: 19
+
+  indexing-ocr-langs:
+    type: awn.field.string
+    title: Языки OCR
+    description: >
+      Коды языков tesseract.js через «+», например rus+eng.
+      Модели скачиваются автоматически при первом запуске OCR.
+    default: rus+eng
+    group: indexing
+    sort: 19
+
+  index-ocr-enabled:
+    type: awn.field.boolean
+    title: OCR (вложения)
+    description: Шаг 1 pipeline — текст из jpg/png/pdf в sidecar.md
+    default: false
+    group: indexing
+    sort: 20
+
+  index-fulltext-enabled:
+    type: awn.field.boolean
+    title: Слова (fulltext)
+    description: Шаг 2 pipeline — точный поиск по словам
+    default: true
+    group: indexing
+    sort: 21
+
+  index-semantic-enabled:
+    type: awn.field.boolean
+    title: Смысл (RAG)
+    description: Шаг 3 pipeline — семантический индекс
+    default: true
+    group: indexing
+    sort: 22
+
+  index-storage-enabled:
+    type: awn.field.boolean
+    title: Поля (storage)
+    description: Шаг 4 pipeline — каталог frontmatter / schema
+    default: true
+    group: indexing
+    sort: 23
+
+  index-links-enabled:
+    type: awn.field.boolean
+    title: Связи (links)
+    description: Шаг 5 pipeline — граф wikilinks и relation-полей
+    default: true
+    group: indexing
+    sort: 24
+
+  index-entities-enabled:
+    type: awn.field.boolean
+    title: Сущности (entities)
+    description: Реестр объектов из текста заметок (regex/frontmatter, опционально GLiNER)
+    default: true
+    group: indexing
+    sort: 241
+
+  index-entity-gliner-enabled:
+    type: awn.field.boolean
+    title: GLiNER для сущностей
+    description: Пересборка entity-index через GLiNER (.venv-entity). Установка вручную pip install gliner (install-deps пока без GLiNER)
+    default: false
+    group: indexing
+    sort: 242
+
+  index-workspace-id-enabled:
+    type: awn.field.boolean
+    title: ID (awn-id)
+    description: Шаг 6 pipeline — синхронизация счётчика awn-id
+    default: true
+    group: indexing
+    sort: 25
+
+  index-wsmap-enabled:
+    type: awn.field.boolean
+    title: Карта (WS-MAP)
+    description: Шаг 7 pipeline — собрать WS-MAP.md (реестр manifest.md) в корне workspace
+    default: true
+    group: indexing
+    sort: 26
+
+  index-storage-mode:
+    type: awn.field.choice.one
+    title: Режим индекса полей
+    description: Быстрый — только frontmatter; полный — schema + типы полей
+    default: quick
+    enum:
+      - key: quick
+        name: Быстрый — только frontmatter
+      - key: full
+        name: Полный — schema + типы
+    group: indexing
+    sort: 27
+
+  index-storage-sqlite-enabled:
+    type: awn.field.boolean
+    title: Каталог полей в SQLite
+    description: >
+      Дополнительно писать catalog.sqlite при пересборке (DQL-lite и SQL-подобные запросы).
+      JSON-индекс всегда сохраняется; при DQL возможен on-demand sync.
+    default: true
+    group: indexing
+    sort: 28
+
+  index-storage-batch-size:
+    type: awn.field.number.integer
+    title: Пачка записей (поля → SQLite)
+    description: >
+      Сколько записей каталога полей записывать в catalog.sqlite за одну транзакцию
+      при пересборке индекса (1–500). Меньше — чаще коммит и отзывчивее UI; больше — быстрее на больших workspace.
+    default: 30
+    group: indexing
+    sort: 29
+
+  index-file-extensions:
+    type: awn.field.choice.many
+    title: Типы файлов для индекса
+    description: Какие расширения попадают в pipeline и поиск
+    default: [".md", ".sidecar.md"]
+    enum:
+      - key: ".md"
+        name: Markdown (.md)
+      - key: ".sidecar.md"
+        name: Markdown Sidecar (.sidecar.md)
+      - key: ".html"
+        name: HTML (.html)
+      - key: ".csv"
+        name: CSV (.csv)
+      - key: ".txt"
+        name: Text (.txt)
+      - key: ".json"
+        name: JSON (.json)
+      - key: ".yml"
+        name: YAML (.yml)
+      - key: ".yaml"
+        name: YAML (.yaml)
+    group: indexing
+    sort: 30
+
+  index-exclude-patterns:
+    type: awn.field.text
+    title: Исключить из индекса
+    description: >
+      Одна строка — правило. Префикс пути или glob (*.mdback);
+      исключения файлов через !имя (например repo/ !manifest.md).
+    default: |
+      .git/
+      .agent-cms/cache/
+      node_modules/
+      awn-temp/
+      awn-media-cloud/
+      awn-google-drive/
+      *.mdback
+    group: indexing
+    sort: 29
+
+  search-default-scopes:
+    type: awn.field.choice.many
+    title: Слои hybrid-поиска
+    description: Слои по умолчанию для hybrid/batch (только включённые в политике)
+    default: [semantic, fulltext]
+    enum:
+      - key: semantic
+        name: Смысл (semantic)
+      - key: fulltext
+        name: Слова (fulltext)
+    group: indexing
+    sort: 30
+
+  search-semantic-chunk-size:
+    type: awn.field.number.integer
+    title: Чанк RAG
+    description: Макс. длина фрагмента, символы
+    default: 900
+    group: indexing-search
+    sort: 1
+
+  search-semantic-chunk-overlap:
+    type: awn.field.number.integer
+    title: Overlap чанков
+    description: Перекрытие соседних фрагментов, символы
+    default: 100
+    group: indexing-search
+    sort: 2
+
+  search-hybrid-semantic-weight:
+    type: awn.field.number.integer
+    title: Hybrid — semantic
+    description: Вес семантики, 0–100
+    default: 60
+    group: indexing-search
+    sort: 3
+
+  search-hybrid-fulltext-weight:
+    type: awn.field.number.integer
+    title: Hybrid — fulltext
+    description: Вес полнотекста, 0–100
+    default: 40
+    group: indexing-search
+    sort: 4
+
+  media-cloud-default-provider:
+    type: awn.field.string.slug
+    title: Облако по умолчанию
+    description: Ключ из списка ниже — выбор в кнопке «Отправить в облако». Пока только просмотр.
+    default: google-drive
+    readonly: true
+    group: media-cloud
+    sort: 1
+
+  media-cloud-providers:
+    type: awn.field.repeater
+    title: Облачные сервисы
+    description: >
+      Название для UI и ключ папки awn-media-cloud/{ключ}/. Пока только просмотр — правки в platform.yml.
+    group: media-cloud
+    sort: 2
+    readonly: true
+    default: []
+    properties:
+      key:
+        type: awn.field.string.slug
+        title: Ключ папки
+        description: Подкаталог awn-media-cloud/{ключ}/ (google-drive, yandex-disk)
+      title:
+        type: awn.field.string
+        title: Название сервиса
+        description: Подпись в UI (Google Диск, Яндекс Диск)
+
+  auto-retain-facts:
+    type: awn.field.boolean
+    title: "{NOT WORK} Авто-факты"
+    default: false
+    group: memory
+    sort: 30

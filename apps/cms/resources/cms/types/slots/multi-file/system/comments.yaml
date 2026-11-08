@@ -1,0 +1,15 @@
+name: Комментарии
+status: active
+extends: slots/_base
+slot-category: communication
+storage-driver: external
+description: 'Комментарии к узлам — comments/'
+path: comments/
+slot-order: 94
+slot-tier: system
+allowed-content:
+  - annotations/comment
+  - content/record
+  - annotations/sidecar
+accept-files:
+  - .md

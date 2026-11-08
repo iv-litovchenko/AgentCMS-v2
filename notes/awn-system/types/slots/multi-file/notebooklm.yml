@@ -1,0 +1,17 @@
+id: awn.slot.notebooklm
+name: NotebookLM
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Материалы для NotebookLM — любые файлы (PDF, аудио, markdown и др.)
+path: notebooklm/
+slot-order: 14
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

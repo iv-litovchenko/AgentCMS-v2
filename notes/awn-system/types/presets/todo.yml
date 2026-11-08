@@ -1,0 +1,14 @@
+id: awn.preset.todo
+name: "TODO.md — список задач"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "TODO.md"
+hint-title: "TODO.md — список задач"
+hint-text: ""
+sort: 10
+body: |
+  # TODO
+  
+  - [ ]

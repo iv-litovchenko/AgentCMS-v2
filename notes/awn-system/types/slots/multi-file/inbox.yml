@@ -1,0 +1,20 @@
+id: awn.slot.inbox
+name: Входящие
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: Входящие заметки и черновики
+path: inbox/
+slot-order: 4
+allowed-containers:
+  - awn.page.topic
+  - awn.hub.channel
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

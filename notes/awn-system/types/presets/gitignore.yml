@@ -1,0 +1,58 @@
+id: awn.preset.gitignore
+name: "Git — .gitignore"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: ".gitignore"
+hint-title: "Git — что не попадает в репозиторий"
+hint-text: "Корневой <code>.gitignore</code> workspace: секреты, кэш <code>.agent-cms/cache/</code>, временные <code>awn-temp/</code>, OS-мусор, вся папка <code>awn-media-cloud/</code> кроме <code>registry.json</code>, legacy <code>awn-google-drive/gd_*</code> (симлинки медиа в теме — в git). В <code>awn-repositories/</code> в git: в корне <code>index.md</code> и <code>groups.yml</code>; у карточек — <code>manifest.md</code> и <code>readme.md</code>; код клона — нет."
+sort: 1
+body: |
+  # Секреты — не коммитить
+  .env
+  .env.*
+  !.env.example
+
+  # macOS / Windows
+  .DS_Store
+  Thumbs.db
+  Desktop.ini
+
+  # IDE
+  .idea/
+  .vscode/
+
+  # Кэш индексов / поиска (настройки в .agent-cms/settings/ — в git)
+  .agent-cms/cache/
+
+  # Временные файлы workspace
+  awn-temp/
+
+  # Прочий кэш и временные файлы
+  .cache/
+  tmp/
+  temp/
+  *.tmp
+  *.log
+
+  # Зависимости (если есть npm-скрипты)
+  node_modules/
+
+  # Медиа-облако: в git только registry.json; _blobs, провайдеры, symlink — локально
+  awn-media-cloud/*
+  !awn-media-cloud/registry.json
+  awn-google-drive/gd_*
+
+  # Каталог клонов — корень: index.md + groups.yml; в {slug}/ — manifest/readme; код — нет
+  awn-repositories/**
+  !awn-repositories/**/
+  !awn-repositories/index.md
+  !awn-repositories/groups.yml
+  !awn-repositories/**/index.md
+  !awn-repositories/**/manifest.md
+  !awn-repositories/**/Manifest.md
+  !awn-repositories/**/readme.md
+  !awn-repositories/**/README.md
+  !awn-repositories/**/Readme.md
+  !awn-repositories/**/ReadMe.md

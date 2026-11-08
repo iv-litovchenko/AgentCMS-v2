@@ -1,0 +1,21 @@
+version: 1
+label: Настройки платформы
+groups:
+  - id: general
+    label: Общие
+    fields:
+      - key: cms.site_title
+        label: Заголовок сайта
+        type: ref:fields/text
+        default: Agent CMS
+      - key: cms.default_workspace
+        label: Workspace по умолчанию
+        type: ref:fields/slug
+        help: slug каталога в workspaces/
+  - id: search
+    label: Поиск
+    fields:
+      - key: search.hybrid_enabled
+        label: Гибридный поиск
+        type: ref:fields/boolean
+        default: true

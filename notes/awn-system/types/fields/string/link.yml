@@ -1,0 +1,13 @@
+id: awn.field.string.link
+name: Путь в workspace
+kind: field
+domain: fields
+extends: awn.field.string
+widget: path
+storage: string
+mdbase: path
+description: Произвольный путь к файлу в workspace (без семантики отношения)
+settings: [hint, required, locked, default]
+group: structure
+sort: 1
+status: active

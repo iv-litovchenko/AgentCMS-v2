@@ -1,0 +1,14 @@
+id: timeline
+label: Лента времени
+section: time
+icon: "⏳"
+description: События и этапы на оси времени
+bodyFormat: mermaid-timeline
+defaultTemplate: |
+  ```mermaid
+  timeline
+    title История
+    section 2026
+      Q1 : Старт
+      Q2 : Этап 2
+  ```

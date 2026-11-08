@@ -1,0 +1,114 @@
+id: awn.settings.user
+name: Пользовательские настройки
+kind: type
+domain: settings
+status: active
+extends: awn.settings.base
+description: >
+  UI и дерево меню для текущего пользователя в этом workspace (аналог uc в TYPO3).
+  Значения — .agent-cms/settings/user.yml. Не влияют на MCP-политику.
+scope: user
+enabled: true
+consumer: [ui]
+valuesFile: .agent-cms/settings/user.yml
+
+fieldGroups:
+  - id: tree
+    name: Настройки дерева
+    description: Отображение дерева меню — пустые папки, активные темы, глубина раскрытия (.agent-cms/settings/user.yml).
+  - id: ui
+    name: Интерфейс
+    description: Персональные параметры UI — ширина сайдбара и закреплённая ветка меню.
+  - id: static
+    name: Статичные параметры
+    description: >
+      Заглушка для персональных интеграций — внешние плагины, skills и сервисы (.agent-cms/settings/user.yml).
+
+fields:
+
+  tree-show-empty-folders:
+    type: awn.field.boolean
+    title: Показывать свободную память
+    description: Пустые папки и «свободная память» в дереве меню
+    default: true
+    group: tree
+    sort: 10
+
+  tree-active-topics-only:
+    type: awn.field.boolean
+    title: Выводить только активные темы
+    description: Скрывать темы со статусом не «активна»
+    default: false
+    group: tree
+    sort: 11
+
+  tree-pad-sort-indexes:
+    type: awn.field.boolean
+    title: Добавлять ведущие нули к названиям
+    description: При сортировке sort.json — префиксы 001, 002…
+    default: false
+    group: tree
+    sort: 12
+
+  tree-max-depth:
+    type: awn.field.number.integer
+    title: Макс. уровень загрузки
+    description: Глубина раскрытия дерева меню (1–12)
+    default: 7
+    group: tree
+    sort: 13
+
+  sidebar-width:
+    type: awn.field.number.integer
+    title: Ширина боковой панели
+    description: Пиксели (200–520). Синхронизируется с кнопками +/- в меню.
+    default: 280
+    group: ui
+    sort: 20
+
+  pinned-branch-path:
+    type: awn.field.string
+    title: Закреплённая ветка
+    description: Путь папки в дереве (folderPath), как при pin в меню
+    default: ""
+    group: ui
+    sort: 21
+
+  hide-sensitive-data:
+    type: awn.field.boolean
+    title: Скрывать персональные данные
+    description: >
+      Маскирует чувствительные поля (URL remote, секреты) и синхронизируется
+      с кнопкой «глаз» в шапке. На полях с глазиком можно временно показать значение.
+    default: false
+    group: ui
+    sort: 22
+
+  user-static-plugin-example:
+    type: awn.field.string
+    title: "{NOT WORK} Пример персонального ключа"
+    description: Заглушка статического параметра пользователя для внешних плагинов и skills.
+    default: ""
+    group: static
+    sort: 90
+
+  user-static-example-1:
+    type: awn.field.string
+    title: "{NOT WORK} Ключ 1"
+    default: значение 1
+    group: static
+    sort: 91
+
+  user-static-example-2:
+    type: awn.field.string
+    title: "{NOT WORK} Ключ 2"
+    default: значение 2
+    group: static
+    sort: 92
+
+  user-static-example-3:
+    type: awn.field.string
+    title: "{NOT WORK} Ключ 3"
+    default: значение 3
+    group: static
+    sort: 93

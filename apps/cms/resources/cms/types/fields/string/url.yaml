@@ -1,0 +1,14 @@
+name: URL
+extends: fields/string
+widget: url
+storage: string
+mdbase: url
+description: 'Внешняя ссылка (https://...)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: text-single
+sort: 6
+status: active

@@ -1,0 +1,14 @@
+id: awn.field.file.image.one
+name: Изображение (одно)
+kind: field
+domain: fields
+extends: awn.field.file.one
+widget: image
+storage: string
+mdbase: image
+accept: image/*
+description: Одно изображение с миниатюрой в форме — загрузка или выбор из медиатеки
+settings: [hint, required, locked, default, upload, scope]
+group: media
+sort: 4
+status: active

@@ -1,0 +1,22 @@
+name: 'База настройки'
+status: active
+extends: base/_base
+description: |
+  Базовый формат настройки агента. По умолчанию это ДАННЫЕ ДЛЯ АГЕНТА — на UI Agent CMS напрямую не влияет, пока не появится код-потребитель, который эти настройки читает.
+properties:
+  scope:
+    title: Область
+    description: 'К чему относится настройка'
+    enum:
+      - agent
+      - workspace
+      - ui
+    default: agent
+  value:
+    title: Значение
+    description: 'Значение настройки (строка / число / флаг)'
+  enabled:
+    title: Включено
+    description: 'Активна ли настройка'
+    widget: checkbox
+    default: true

@@ -1,0 +1,14 @@
+name: 'Объект (new!)'
+extends: fields/_base
+widget: object
+storage: string
+mdbase: json
+description: 'Вложенная структура ключ–значение (JSON-объект)'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+group: structure
+sort: 3
+status: active

@@ -1,0 +1,148 @@
+name: 'Каталог модулей workspace'
+status: active
+extends: modules/_base
+description: |
+  Реестр встроенных модулей Agent CMS. Соответствует кнопкам в picker агента и CHPU ~module-*. Пока справочник — не меняет runtime workspace.
+entries:
+  -
+    module-id: module-git
+    label: Git-репозиторий
+    view: git
+    implementation: active
+    ui-surfaces:
+      - picker
+    mcp:
+      - module_git_status
+      - module_git_diff
+      - module_git_commit
+      - module_git_init
+      - module_git_push
+      - module_git_pull
+      - module_git_remote
+  -
+    module-id: module-journal
+    label: Журнал
+    view: journal
+    implementation: active
+    ui-surfaces:
+      - picker
+      - footer
+      - menu-stats
+  -
+    module-id: module-settings
+    label: 'Настройки проекта'
+    view: project-settings
+    implementation: active
+    ui-surfaces:
+      - picker
+  -
+    module-id: module-awn-types
+    label: 'Реестр типов, модулей, компонентов и расширений'
+    view: awn-types
+    implementation: active
+    ui-surfaces:
+      - picker
+  -
+    module-id: module-registry
+    label: 'Реестр контекста'
+    view: runtime-registry
+    implementation: active
+    ui-surfaces:
+      - picker
+  -
+    module-id: module-large-files
+    label: 'Крупные файлы'
+    view: large-files
+    implementation: active
+    ui-surfaces:
+      - picker
+  -
+    module-id: module-short-links
+    label: 'Короткие ссылки'
+    view: short-links
+    implementation: active
+    ui-surfaces:
+      - picker
+    mcp:
+      - module_short_link_create
+      - module_short_link_get
+      - module_short_link_delete
+      - module_short_link_list
+  -
+    module-id: module-broken-links
+    label: 'Битые ссылки'
+    view: broken-links
+    implementation: active
+    ui-surfaces:
+      - picker
+  -
+    module-id: module-run-scripts
+    label: 'Запуск скриптов'
+    view: run-scripts
+    implementation: stub
+    ui-surfaces:
+      - picker
+    mcp:
+      - run_script
+  -
+    module-id: module-todo-list
+    label: 'Список задач'
+    view: todo-list
+    implementation: stub
+    ui-surfaces:
+      - picker
+    mcp:
+      - session_todo_read
+      - session_todo_write
+  -
+    module-id: module-catalog
+    label: 'Каталог модулей и инструментов'
+    view: module-catalog
+    implementation: stub
+    ui-surfaces:
+      - picker
+    mcp:
+      - list_tools
+  -
+    module-id: module-visualization
+    label: 'Визуализация workspace'
+    view: roadmap-map
+    implementation: active
+    ui-surfaces:
+      - picker
+      - sidebar-globe
+  -
+    module-id: module-search
+    label: Поиск
+    view: search
+    implementation: stub
+    ui-surfaces:
+      - sidebar
+  -
+    module-id: module-create
+    label: Создать
+    view: create
+    implementation: stub
+    ui-surfaces:
+      - tree
+  -
+    module-id: module-dependencies
+    label: 'Внешние зависимости'
+    view: dependencies
+    implementation: stub
+    ui-surfaces:
+      - sidebar
+  -
+    module-id: module-trash
+    label: Корзина
+    view: trash
+    implementation: stub
+    ui-surfaces:
+      - sidebar
+  -
+    module-id: module-about
+    label: 'О хранилище'
+    view: about
+    implementation: stub
+    ui-surfaces:
+      - sidebar

@@ -1,0 +1,14 @@
+name: 'Краткое описание'
+group: misc
+sort: 1
+icon: 🏷️
+description: 'Превью + полный текст'
+template: |+
+
+  > [!AWN-DESC] Краткое описание для превью.
+
+  ---
+
+  Полный текст ниже.
+
+status: active

@@ -1,0 +1,78 @@
+id: awn.base.lite
+name: База сущности (lite)
+kind: base
+domain: base
+status: draft
+extends: awn.entity
+description: |
+  Минимальная база: id + status + type. Заготовка, не в цепочке наследования.
+
+  Дерево (целевое):
+    awn.entity
+    └── awn.base.lite          ← этот файл
+        ├── awn.base           (полная base.yml — параллель, не child)
+        └── awn.*.lite.*       (будущие узкие типы / record-lite v2)
+
+  Включение: status → active, затем extends: awn.base.lite вместо awn.base.
+kind-ui:
+  label: База (lite)
+  badge: { background: "#f8fafc", border: "#cbd5e1", text: "#475569" }
+
+form:
+  panel-title: "{A2!} Минимум"
+  zones:
+    - id: aside-body
+      role: field-groups
+    - id: hidden
+      role: system-storage
+
+field-groups:
+  - id: main
+    name: "{A2!} Основное"
+    collapsed: false
+  - id: system
+    name: "{A2!} Системные"
+    description: Заполняется платформой
+    collapsed: true
+
+fields:
+  awn-status:
+    type: awn.field.choice.one
+    title: "{A2!} Статус"
+    hint: "Единственное поле «жизненного цикла» в lite-схеме"
+    placement: aside-body
+    group: main
+    sort: 1
+    enum:
+      - key: new
+        name: 🔵 Новая
+      - key: draft
+        name: 🟡 Черновик
+      - key: open
+        name: 🟢 Открыта
+      - key: done
+        name: ✅ Готова
+      - key: archived
+        name: ⚫ Архив
+      - key: none
+        name: ⚪ Без статуса
+    default: open
+
+  awn-id:
+    type: awn.field.number.integer
+    title: "{A2!} ID"
+    description: Глобальный номер workspace (settings → автоинкремент)
+    placement: aside-body
+    group: system
+    sort: 0
+    locked: true
+
+  awn-type:
+    type: awn.field.string
+    title: "{A2!} Тип"
+    description: awn-type из manifest / frontmatter
+    required: true
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 1

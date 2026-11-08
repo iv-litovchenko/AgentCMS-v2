@@ -1,0 +1,17 @@
+id: awn.slot.templates
+name: Шаблоны
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Шаблоны записей и manifest
+path: templates/
+slot-order: 12
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

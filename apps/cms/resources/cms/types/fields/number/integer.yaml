@@ -1,0 +1,15 @@
+name: 'Целое число'
+extends: fields/number
+widget: number
+storage: number
+mdbase: integer
+description: 'Целое число без дробной части'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - format
+group: numbers
+sort: 2
+status: active

@@ -1,0 +1,14 @@
+id: awn.preset.note
+name: "NOTE.md — быстрая заметка"
+kind: preset
+domain: presets
+status: active
+extends: awn.preset
+target-file: "NOTE.md"
+hint-title: "NOTE.md — быстрая заметка"
+hint-text: ""
+sort: 9
+body: |
+  # NOTE
+  
+  > Быстрая заметка workspace.

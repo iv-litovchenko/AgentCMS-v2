@@ -1,0 +1,7 @@
+id: awn.hub.topic.base
+name: База семьи topic
+kind: base
+domain: hubs
+status: active
+extends: awn.hub.base
+description: Дерево тем workspace — ws, area, section, topic

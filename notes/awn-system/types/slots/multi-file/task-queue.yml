@@ -1,0 +1,20 @@
+id: awn.slot.task-queue
+name: Очередь задач
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: memory
+storage-driver: external
+description: Чекпоинты и очередь задач — многофайловая папка с записями и разделами
+path: task-queue/
+slot-order: 25
+allowed-containers:
+  - awn.page.topic
+  - awn.hub.channel
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

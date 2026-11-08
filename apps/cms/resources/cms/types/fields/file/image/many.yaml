@@ -1,0 +1,18 @@
+name: 'Изображения (несколько)'
+extends: fields/file/many
+widget: file
+storage: array
+mdbase: list
+items: fields/file/image/one
+accept: 'image/*'
+description: 'Несколько изображений'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - upload
+  - scope
+group: media
+sort: 6
+status: active

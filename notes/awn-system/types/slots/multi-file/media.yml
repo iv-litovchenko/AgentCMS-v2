@@ -1,0 +1,17 @@
+id: awn.slot.media
+name: Медиа
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: files
+storage-driver: external
+description: Медиа-файлы и sidecar
+path: media/
+slot-order: 8
+allowed-content:
+  - awn.content.record
+  - awn.content.category
+  - awn.annotation.sidecar
+accept-files:
+  - "*"

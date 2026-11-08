@@ -1,0 +1,10 @@
+name: 'База семьи repository'
+status: active
+folder: acms-repositories
+tree-ui:
+  label: Репозитории
+  sort: 50
+  icon: code
+  icon-class: text-orange-600
+extends: hubs/_base
+description: 'Карточка репозитория в awn-repositories/'

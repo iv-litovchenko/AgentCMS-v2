@@ -1,0 +1,29 @@
+id: awn.module.base
+name: Модуль workspace
+kind: base
+domain: modules
+status: active
+extends: awn.entity
+description: >
+  Встроенный модуль Agent CMS — отдельный экран workspace (canvas),
+  открывается из picker агента или нижней панели. Пока каталог
+  описательный: не влияет на данные проекта, пока нет кода-потребителя.
+
+properties:
+  module-id:
+    title: ID модуля
+    description: CHPU-сегмент (~module-…)
+  view:
+    title: View id
+    description: Ключ agentWorkspaceView в UI
+  ui-surfaces:
+    title: Точки входа
+    description: picker, footer, menu-stats
+    enum: [picker, footer, menu-stats]
+  mcp:
+    title: MCP-инструменты
+    description: Связанные MCP tools (если есть)
+  implementation:
+    title: Статус
+    description: active — работает; stub — заглушка UI
+    enum: [active, stub]

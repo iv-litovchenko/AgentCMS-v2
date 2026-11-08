@@ -3,8 +3,14 @@ parameters:
     app.cms_site_title: '%env(default:app_cms_site_title_default:CMS_SITE_TITLE)%'
     app_cms_site_title_default: 'Agent CMS'
     app.workspaces_dir: '%env(default:app_workspaces_dir_default:WORKSPACES_DIR)%'
+    app.platform_types_dir: '%kernel.project_dir%/resources/cms/types'
+    app.type_aliases_file: '%kernel.project_dir%/resources/cms/types/aliases.yaml'
+    app.bootstrap_types_dir: '%env(default:app_bootstrap_types_dir_default:BOOTSTRAP_TYPES_DIR)%'
+    app_bootstrap_types_dir_default: ''
     app_workspaces_dir_default: '%kernel.project_dir%/../../workspaces'
     app.ui_menu_config: '%kernel.project_dir%/resources/cms/ui/menu.yaml'
+    app.workspace_modules_config: '%kernel.project_dir%/resources/cms/ui/workspace-modules.yaml'
+    app.hub_views_config: '%kernel.project_dir%/resources/cms/ui/hub-views.yaml'
     app.ui_asset_packages_registry: '%kernel.project_dir%/resources/cms/ui/asset-packages.yaml'
     app.ui_asset_toggles_file: '%kernel.project_dir%/var/ui/asset-toggles.yaml'
     app.footer_quotes_registry: '%kernel.project_dir%/resources/cms/ui/footer-quotes.yaml'
@@ -52,6 +58,24 @@ services:
     App\Service\WorkspaceService:
         arguments:
             $workspacesDir: '%app.workspaces_dir%'
+
+    App\Service\TypeSchemaRegistry:
+        arguments:
+            $platformTypesDir: '%app.platform_types_dir%'
+            $workspacesDir: '%app.workspaces_dir%'
+            $projectRoot: '%app.project_root%'
+            $bootstrapTypesDir: '%app.bootstrap_types_dir%'
+            $aliasesFile: '%app.type_aliases_file%'
+
+    App\Service\WorkspaceModuleRegistry:
+        arguments:
+            $platformConfigPath: '%app.workspace_modules_config%'
+            $projectRoot: '%app.project_root%'
+            $workspacesDir: '%app.workspaces_dir%'
+
+    App\Service\HubViewRegistry:
+        arguments:
+            $configPath: '%app.hub_views_config%'
 
     App\Service\UiAssetPackageService:
         arguments:

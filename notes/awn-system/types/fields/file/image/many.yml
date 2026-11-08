@@ -1,0 +1,15 @@
+id: awn.field.file.image.many
+name: Изображения (несколько)
+kind: field
+domain: fields
+extends: awn.field.file.many
+widget: file
+storage: array
+mdbase: list
+items: awn.field.file.image.one
+accept: image/*
+description: Несколько изображений
+settings: [hint, required, locked, default, upload, scope]
+group: media
+sort: 6
+status: active

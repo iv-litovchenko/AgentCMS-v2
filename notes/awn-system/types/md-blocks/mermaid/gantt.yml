@@ -1,0 +1,19 @@
+id: awn.block.mermaid-gantt
+name: Диаграмма Ганта
+kind: block
+group: visualization
+sort: 3
+icon: "📅"
+description: Roadmap и сроки задач
+template: |
+  ```mermaid
+  gantt
+    title Пример roadmap
+    dateFormat YYYY-MM-DD
+    section Этап 1
+    Задача A     :done, a1, 2026-05-01, 7d
+    Задача B     :active, a2, 2026-05-20, 5d
+    Задача C     :a3, after a2, 7d
+  ```
+
+status: active

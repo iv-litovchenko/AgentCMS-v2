@@ -1,0 +1,21 @@
+id: awn.block.mermaid-class
+name: Диаграмма классов
+kind: block
+group: visualization
+sort: 5
+icon: "🏗️"
+description: UML — классы и связи
+template: |
+  ```mermaid
+  classDiagram
+    class Animal {
+      +String name
+      +makeSound()
+    }
+    class Dog {
+      +bark()
+    }
+    Animal <|-- Dog
+  ```
+
+status: active

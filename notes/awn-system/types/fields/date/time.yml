@@ -1,0 +1,14 @@
+id: awn.field.date.time
+name: Время (new!)
+kind: field
+domain: fields
+extends: awn.field.date
+widget: time
+storage: string
+mdbase: string
+format: HH:mm
+description: Время суток без даты (14:30)
+settings: [hint, required, locked, default, format]
+group: datetime
+sort: 3
+status: active

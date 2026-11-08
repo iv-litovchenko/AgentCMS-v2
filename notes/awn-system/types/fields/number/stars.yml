@@ -1,0 +1,13 @@
+id: awn.field.number.stars
+name: Звёзды (0–10)
+kind: field
+domain: fields
+extends: awn.field.number.integer
+widget: stars
+storage: number
+mdbase: integer
+description: Шкала качества от 0 (очень низко) до 10 (отлично)
+settings: [hint, required, locked, default, format]
+group: numbers
+sort: 3
+status: active

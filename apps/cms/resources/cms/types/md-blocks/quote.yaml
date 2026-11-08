@@ -1,0 +1,10 @@
+name: Цитата
+group: text
+sort: 2
+icon: 💬
+description: 'Выделенная цитата'
+template: |+
+
+  > Цитата
+
+status: active

@@ -1,0 +1,130 @@
+id: awn.content.record-lite
+name: Запись (lite)
+kind: type
+domain: content
+status: active
+extends: awn.entity
+description: >
+  Минимальная запись для простых списков (md-lite в инфоблоках, тексты, слоганы).
+  Без runtime/nav/taxonomy — базовые метаданные и поля schema store.
+mixins:
+  - awn.mixin.indexing-record
+
+kind-ui:
+  label: Запись (lite)
+  badge: { background: "#faf5ff", border: "#e9d5ff", text: "#7e22ce" }
+
+form:
+  panel-title: "{A2!} Свойства записи"
+
+field-groups:
+  - id: content
+    name: "{A2!} Основное"
+    description: Что заполняет человек или агент
+    collapsed: false
+  - id: indexing
+    name: "{A2!} Индексирование"
+    description: Поиск и индексы workspace
+    collapsed: true
+  - id: system
+    name: "{A2!} Системные"
+    description: Заполняется автоматически, только чтение
+    collapsed: true
+
+fields:
+  awn-name:
+    type: awn.field.string
+    title: "{A2!} Имя"
+    description: Отображаемое имя; пустое → slug
+    placement: title-bar
+    group: content
+    sort: 1
+
+  awn-description:
+    type: awn.field.text
+    title: "{A2!} Описание"
+    placement: hidden
+    group: content
+    sort: 2
+
+  awn-preview:
+    type: awn.field.file.image.for-preview
+    title: "{A2!} Превью"
+    description: awn-storage/assets/preview/
+    placement: aside-hero
+    group: content
+    sort: 3
+
+  awn-id:
+    type: awn.field.number.integer
+    title: "{A2!} ID"
+    description: Глобальный номер workspace (счётчик в settings.yml)
+    placement: aside-body
+    group: system
+    sort: 0
+
+  awn-type:
+    type: awn.field.string
+    title: "{A2!} Тип"
+    required: true
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 1
+
+  awn-create:
+    type: awn.field.date.datetime
+    title: "{A2!} Создан"
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 2
+
+  awn-update:
+    type: awn.field.date.datetime
+    title: "{A2!} Изменён"
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 3
+
+  awn-viewed:
+    type: awn.field.date.datetime
+    title: "{A2!} Просмотрен (последний раз)"
+    description: >
+      Когда запись последний раз открывали в интерфейсе (заглушка: пока не заполняется автоматически).
+    locked: true
+    readonly: true
+    placement: aside-body
+    group: system
+    sort: 3.5
+
+  awn-event-at:
+    type: awn.field.date.datetime
+    title: "{A2!} Дата события"
+    description: >
+      Дата и время встречи, мероприятия и других событий по записи.
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 3.55
+
+  awn-deadline:
+    type: awn.field.date.datetime
+    title: "{A2!} Дедлайн"
+    description: >
+      Крайний срок по записи (заглушка: пока ни на что не влияет).
+    locked: true
+    readonly: true
+    placement: aside-body
+    group: system
+    sort: 3.6
+
+  awn-version:
+    type: awn.field.number.integer
+    title: "{A2!} Версия"
+    default: 1
+    locked: true
+    placement: aside-body
+    group: system
+    sort: 4

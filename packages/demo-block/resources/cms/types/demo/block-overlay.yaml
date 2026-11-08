@@ -1,0 +1,4 @@
+id: demo/block-overlay
+name: Демо-тип пакета
+kind: record
+description: Пример слоя package поверх platform types

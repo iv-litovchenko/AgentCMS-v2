@@ -1,0 +1,9 @@
+id: awn.block.h3
+name: Заголовок H3
+kind: block
+group: structure
+sort: 2
+icon: "3️⃣"
+description: Подраздел
+template: "\n### Подраздел\n\nТекст подраздела.\n\n"
+status: active

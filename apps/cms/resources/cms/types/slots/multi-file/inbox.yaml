@@ -1,0 +1,17 @@
+name: Входящие
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: 'Входящие заметки и черновики'
+path: inbox/
+slot-order: 4
+allowed-containers:
+  - awn.page.topic
+  - hubs/channel/channel
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

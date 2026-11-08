@@ -1,0 +1,64 @@
+id: awn.field.string.cron-schedule
+name: Cron-расписание
+kind: field
+domain: fields
+extends: awn.field.string
+widget: cron-schedule
+storage: string
+mdbase: string
+description: Cron-выражение с шаблонами и быстрым выбором дня и времени
+settings: [hint, required, locked, default]
+group: cms
+sort: 3
+status: active
+presets:
+  - id: ""
+    label: "— шаблон —"
+  - id: __quick__
+    label: "День и время…"
+  - id: "*/15 * * * *"
+    label: "Каждые 15 минут"
+  - id: "*/30 * * * *"
+    label: "Каждые 30 минут"
+  - id: "0 * * * *"
+    label: "Каждый час"
+  - id: "0 9 * * *"
+    label: "Каждый день в 09:00"
+  - id: "0 9 * * 1-5"
+    label: "По будням в 09:00"
+  - id: "0 9 * * 1"
+    label: "По понедельникам в 09:00"
+  - id: "0 0 * * *"
+    label: "Каждый день в полночь"
+  - id: "0 9 1 * *"
+    label: "1-го числа месяца в 09:00"
+  - id: __custom__
+    label: "Своё выражение…"
+day-modes:
+  - id: daily
+    label: Каждый день
+    dow: "*"
+  - id: weekdays
+    label: По будням
+    dow: "1-5"
+  - id: monday
+    label: Понедельник
+    dow: "1"
+  - id: tuesday
+    label: Вторник
+    dow: "2"
+  - id: wednesday
+    label: Среда
+    dow: "3"
+  - id: thursday
+    label: Четверг
+    dow: "4"
+  - id: friday
+    label: Пятница
+    dow: "5"
+  - id: saturday
+    label: Суббота
+    dow: "6"
+  - id: sunday
+    label: Воскресенье
+    dow: "0"

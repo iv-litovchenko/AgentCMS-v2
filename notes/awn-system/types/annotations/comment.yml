@@ -1,0 +1,19 @@
+id: awn.annotation.comment
+name: Комментарий
+kind: type
+domain: annotations
+status: active
+extends: awn.annotation.base
+description: Комментарий к manifest, записи или файлу — слот comments/
+slot: comments
+
+fields:
+
+  awn-target:
+    type: awn.field.relation.one
+    title: "{A2!} К чему привязан"
+    description: manifest.md или запись в awn-storage
+    placement: aside-body
+    group: content
+    sort: 10
+    widget: relation

@@ -1,0 +1,34 @@
+id: awn.hub.channel
+name: Канал ingress (workspace)
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.channel.base
+description: >
+  Карточка канала в awn-channels/{slug}/ — manifest.md и awn-storage/: inbox/ (ingress), task-queue/ (очередь задач),
+  outbox/ (исходящие), files/ и assets/ (как у медиатеки). Triage сырого потока до тем и инфоблоков.
+manifest-pattern: "awn-channels/{slug}/manifest.md"
+
+storage-slots:
+  - inbox
+  - task-queue
+  - outbox
+  - files
+  - assets
+
+form:
+  panel-title: "{A2!} Канал"
+  create:
+    title: "Новый канал"
+    edit-title: "Канал"
+    hint: >
+      Папка awn-channels/{slug}/ с manifest.md; при создании — awn-storage/inbox/, task-queue/, outbox/, files/, assets/.
+    bootstrap:
+      slug:
+        title: "Папка (slug)"
+        placeholder: "telegram"
+        footnote: "kebab-case, одна папка — без /"
+        required: true
+    field-keys:
+      - awn-name
+      - awn-description

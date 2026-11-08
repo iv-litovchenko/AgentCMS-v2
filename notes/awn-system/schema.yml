@@ -1,0 +1,15 @@
+version: 1
+layer: core
+description: >
+  Базовая схема CMS (core). Переопределения типов, слотов, полей.
+  Пока основные типы — в awn-system/types/*.yml; этот файл — слой для дополнений и будущей миграции.
+
+# pages: {}
+# slots: {}
+# content: {}
+# fields: {}
+# layouts: {}
+# settings: {}
+
+# Topic overrides: {topic}/schema.yml
+# Workspace overrides: schema.yml в корне workspace агента

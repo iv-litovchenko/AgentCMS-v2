@@ -1,0 +1,9 @@
+id: awn.block.note
+name: Примечание
+kind: block
+group: text
+sort: 3
+icon: "💡"
+description: Короткое выделение
+template: "\n> **Примечание:** текст\n\n"
+status: active

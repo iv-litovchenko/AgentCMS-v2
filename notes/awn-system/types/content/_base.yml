@@ -1,0 +1,128 @@
+id: awn.content.base
+name: База контента
+kind: base
+domain: content
+status: active
+extends: awn.base
+description: >
+  Запись, категория, discussion. Nav контента — awn-focus и awn-main
+  (awn-slots-flexible только у manifest темы, не у content). Runtime — через mixin.
+kind-ui:
+  for: type
+  label: Тип
+  badge: { background: "#ecfdf5", border: "#86efac", text: "#166534" }
+
+# Свои field-groups (см. resolveTypeFieldGroups).
+
+form:
+  panel-title: "{A2!} Свойства записи"
+
+field-groups:
+  - id: content
+    name: "{A2!} Основное"
+    description: Что заполняет человек или агент
+    collapsed: false
+  - id: work-note
+    name: "{A2!} Заметки"
+    description: Саммари, заметки и следующий шаг — для вас и агента
+    collapsed: false
+  - id: nav
+    name: "{A2!} Дерево и вид"
+    description: Поведение в меню и на главной
+    collapsed: true
+  - id: runtime
+    name: "{A2!} Runtime агента"
+    description: Загрузка в контекст, cron, heartbeat
+    collapsed: true
+  - id: indexing
+    name: "{A2!} Индексирование"
+    description: Поиск и индексы workspace
+    collapsed: true
+  - id: taxonomy
+    name: "{A2!} Таксономия"
+    description: Справочники из awn-databases/taxonomies/
+    collapsed: true
+  - id: physical-location
+    name: "{A2!} Физическая локация"
+    description: Где находится объект — место, координаты, признак реальной вещи
+    collapsed: true
+  - id: system
+    name: "{A2!} Системные"
+    description: Заполняется автоматически, только чтение
+    collapsed: true
+
+fields:
+
+  # --- nav: awn-focus / awn-main (awn-slots-flexible — не часть content, только manifest темы) ---
+  awn-main:
+    type: awn.field.boolean
+    title: "{A2!} На главной"
+    description: Показывать в карусели на главной странице
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 1
+
+  awn-focus:
+    type: awn.field.boolean
+    title: "{A2!} В фокусе"
+    description: Показывать в быстром навигаторе (сайдбар, шапка)
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 2
+
+  awn-sort:
+    hidden: true
+
+  awn-runtime-load-always:
+    hidden: true
+
+  awn-runtime-cron:
+    hidden: true
+
+  awn-runtime-cron-schedule:
+    hidden: true
+
+  awn-runtime-heartbeat:
+    hidden: true
+
+  awn-runtime-commands:
+    hidden: true
+
+  # --- physical-location ---
+  awn-location-label:
+    type: awn.field.string
+    title: Локация
+    description: Локация, место, комната, полка, зона — человекочитаемо
+    placeholder: "Гараж / полка 2"
+    placement: aside-body
+    group: physical-location
+    sort: 1
+
+  awn-location-coordinates:
+    type: awn.field.coordinates
+    title: Координаты
+    description: Опционально — GPS или точка на карте
+    placement: aside-body
+    group: physical-location
+    sort: 2
+
+  awn-is-real-world-object:
+    type: awn.field.boolean
+    title: Реальный объект в мире
+    description: Запись описывает физическую вещь в реальном мире, а не абстракцию или идею
+    placement: aside-body
+    group: physical-location
+    sort: 3
+    default: false
+
+  awn-is-real-world-event:
+    type: awn.field.boolean
+    title: Реальное событие в мире
+    description: Запись описывает событие, которое произошло или происходит в реальном мире, а не вымышленное или планируемое
+    placement: aside-body
+    group: physical-location
+    sort: 4
+    default: false
+

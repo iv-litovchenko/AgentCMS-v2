@@ -1,0 +1,14 @@
+name: Скрипты
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Скрипты и автоматизация'
+path: scripts/
+slot-order: 11
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

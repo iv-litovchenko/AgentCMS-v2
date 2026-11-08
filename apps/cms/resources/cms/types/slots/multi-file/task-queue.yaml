@@ -1,0 +1,17 @@
+name: 'Очередь задач'
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: 'Чекпоинты и очередь задач — многофайловая папка с записями и разделами'
+path: task-queue/
+slot-order: 25
+allowed-containers:
+  - awn.page.topic
+  - hubs/channel/channel
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

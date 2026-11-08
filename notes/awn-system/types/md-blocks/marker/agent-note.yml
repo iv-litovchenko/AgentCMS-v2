@@ -1,0 +1,15 @@
+id: awn.block.marker-agent-note
+name: Маркер · Заметка агента
+kind: block
+group: markers
+status: active
+sort: 10
+icon: "◇"
+description: Блок awn-marker-agent-note — пометка агента в тексте конспекта
+template: |
+  ```awn-marker-agent-note
+  awn-create: 2026-10-21
+  ---
+  Текст заметки агента.
+
+  ```

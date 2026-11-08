@@ -1,0 +1,17 @@
+name: 'Из справочника (несколько)'
+extends: fields/_base
+widget: lookup-many
+storage: array
+mdbase: list
+description: 'Несколько значений из CSV-справочника'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - source
+  - allow-custom
+  - allow-add
+group: lookup
+sort: 2
+status: active

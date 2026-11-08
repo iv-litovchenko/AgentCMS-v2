@@ -1,0 +1,14 @@
+name: 'Маркер · Вопрос'
+group: markers
+status: active
+sort: 6
+icon: '?'
+description: 'Блок awn-marker-question в тексте конспекта'
+template: |
+  ```awn-marker-question
+  awn-status: открыто
+  awn-create: 2026-09-27
+  ---
+  Текст вопроса.
+
+  ```

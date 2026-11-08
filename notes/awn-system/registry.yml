@@ -1,0 +1,66 @@
+version: 1
+mode: agent-owned
+agent: 0-ws-test
+description: CMS-модель агента — типы, слоты, поля. Runtime читает awn-system/types/
+
+# domains — источник правды по доменам («какие бывают компоненты»).
+domains:
+  - base
+  - content
+  - annotations
+  - fields
+  - hubs
+  - slots
+  - mixins
+  - database
+  - md-blocks
+  - presets
+  - id: settings
+    label: Настройки
+    kind: type
+    icon: "⚙"
+
+# Четыре независимые области настроек (не merge):
+#   platform — .agent-cms-global/settings/platform.yml (корень проекта)
+#   workspace — .agent-cms/settings/workspace.yml (хранилище)
+#   integrations — .agent-cms/settings/integrations.yml (skills, MCP, плагины)
+#   user — .agent-cms/settings/user.yml (UI пользователя)
+settings:
+  description: >
+    Platform — политика CMS (MCP, лимиты, индексы). Workspace — параметры хранилища.
+    Integrations — контейнеры внешних сервисов (skills, MCP tools, плагины).
+    User — UI/дерево для пользователя. Области не сливаются. MCP policy — .agent-cms-global/settings/platform.yml → awn_policy.
+  schema:
+    platform:
+      type: awn.settings.platform
+      path: awn-system/types/settings/platform.yml
+    workspace:
+      type: awn.settings.workspace
+      path: awn-system/types/settings/workspace.yml
+    integrations:
+      type: awn.settings.integrations
+      path: awn-system/types/settings/integrations.yml
+    user:
+      type: awn.settings.user
+      path: awn-system/types/settings/user.yml
+  values:
+    platform: .agent-cms-global/settings/platform.yml
+    workspace: .agent-cms/settings/workspace.yml
+    integrations: .agent-cms/settings/integrations.yml
+    user: .agent-cms/settings/user.yml
+
+docs:
+  welcome: GLOBAL-SKILL-0-MCP-WELCOME.md
+  map: GLOBAL-SKILL-0-MCP-WELCOME.md
+  base: GLOBAL-SKILL-1-BASE.md
+  response-style: GLOBAL-SKILL-2-RESPONSE-STYLE.md
+  rules: GLOBAL-SKILL-3-RULES.md
+  markdown: GLOBAL-SKILL-4-MARKDOWN.md
+  search: GLOBAL-SKILL-5-SEARCH.md
+  modules: GLOBAL-SKILL-6-MODULES.md
+  viz: GLOBAL-SKILL-7-VIZ-MAPS.md
+  markdown-showcase: GLOBAL-SKILL-4-MARKDOWN.md
+  agents: AGENTS.md
+
+canonical-types: migrated
+migration-date: "2026-07-05"

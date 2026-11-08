@@ -135,7 +135,7 @@ class WorkspaceService
         }
 
         $properties = [
-            'awn-type' => 'awn.hub.topic.ws',
+            'awn-type' => 'hubs/topic/ws',
             'awn-name' => $name,
             'awn-description' => '',
             'cms-location' => $location,
@@ -199,7 +199,7 @@ class WorkspaceService
         $properties['awn-sort'] = $sortOrder;
         $properties['awn-update'] = $this->nowIso();
         if (!isset($properties['awn-type']) || !is_string($properties['awn-type'])) {
-            $properties['awn-type'] = 'awn.hub.topic.ws';
+            $properties['awn-type'] = 'hubs/topic/ws';
         }
 
         if ($avatarFile !== null) {
@@ -326,6 +326,11 @@ class WorkspaceService
             $updatedAt = $createdAt;
         }
 
+        $typeId = 'hubs/topic/ws';
+        if (isset($meta['type_id']) && is_string($meta['type_id']) && $meta['type_id'] !== '') {
+            $typeId = $meta['type_id'];
+        }
+
         return [
             'id' => $slug,
             'slug' => $slug,
@@ -334,6 +339,7 @@ class WorkspaceService
             'location' => $meta['location'],
             'description' => $meta['description'],
             'avatar' => $meta['avatar'],
+            'type_id' => $typeId,
             'sort_order' => $meta['sort_order'],
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
@@ -365,6 +371,28 @@ class WorkspaceService
     private function manifestPath(string $slug): string
     {
         return $this->workspacePath($slug) . '/manifest.md';
+    }
+
+    /**
+     * @return array{properties: array<string, mixed>, body: string, manifest_file: string}|null
+     */
+    public function readRootNodeManifest(string $slug): ?array
+    {
+        $base = $this->workspacePath($slug);
+        $candidates = ['manifest.node.md', 'manifest.md'];
+        foreach ($candidates as $file) {
+            $path = $base . '/' . $file;
+            $parsed = $this->manifestReader->parseFile($path);
+            if ($parsed !== null) {
+                return [
+                    'properties' => $parsed['properties'],
+                    'body' => $parsed['body'],
+                    'manifest_file' => $file,
+                ];
+            }
+        }
+
+        return null;
     }
 
     private function storeUploadedAvatar(string $slug, UploadedFile $file): string

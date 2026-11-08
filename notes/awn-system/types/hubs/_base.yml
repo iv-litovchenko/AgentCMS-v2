@@ -1,0 +1,53 @@
+id: awn.hub.base
+name: База hub-узла
+kind: base
+domain: hubs
+status: active
+extends: awn.base
+description: >
+  Общая база hub-карточек workspace. Семьи: topic/ (дерево), channel/, media/,
+  repository/; накопители — hubs/database/ (awn.hub.database.*).
+mixins:
+  - awn.mixin.indexing-container
+
+form:
+  panel-title: "{A2!} Свойства hub"
+
+fields:
+  awn-main:
+    type: awn.field.boolean
+    title: "{A2!} На главной"
+    description: Показывать в карусели на главной странице
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 1
+
+  awn-focus:
+    type: awn.field.boolean
+    title: "{A2!} В фокусе"
+    description: Показывать в быстром навигаторе workspace
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 2
+
+  awn-slots-template:
+    type: awn.field.choice.one
+    title: "{A2!} Шаблон слотов"
+    description: >
+      standard — типовые слоты awn-storage; flexible — весь awn-storage/ (кроме assets/, history/, comments/);
+      minimal — однофайловые слоты (main.md, todo, таблица…); none — только инструкция и todo
+    default: standard
+    placement: aside-body
+    group: nav
+    sort: 3
+    enum:
+      - key: flexible
+        name: Гибкий слот
+      - key: standard
+        name: Стандартные слоты
+      - key: minimal
+        name: Минимум слотов (стандарт)
+      - key: none
+        name: Без слотов (только инструкция)

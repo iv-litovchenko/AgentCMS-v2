@@ -1,0 +1,17 @@
+id: awn.block.mermaid-sequence
+name: Диаграмма последовательности
+kind: block
+group: visualization
+sort: 2
+icon: "↔️"
+description: Взаимодействие участников во времени
+template: |
+  ```mermaid
+  sequenceDiagram
+    participant A as Клиент
+    participant B as Сервер
+    A->>B: Запрос
+    B-->>A: Ответ
+  ```
+
+status: active

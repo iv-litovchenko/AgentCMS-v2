@@ -1,0 +1,86 @@
+id: awn.hub.media
+name: Медиатека (workspace)
+kind: type
+domain: hubs
+status: active
+extends: awn.hub.media.base
+description: >
+  Карточка медиатеки workspace в awn-media/{slug}/ — manifest.md и awn-storage/
+  (files/, assets/). Зависимые и независимые файлы: байты здесь, ссылки из тем — по path.
+  Внутри слотов — awn.content.record, awn.content.category, awn.annotation.sidecar (как media/assets у темы).
+  Разделы — один уровень под files/ или assets/, без вложенных категорий.
+manifest-pattern: "awn-media/{slug}/manifest.md"
+
+storage-slots:
+  - files
+  - assets
+
+form:
+  panel-title: "{A2!} Медиатека"
+  create:
+    title: "Новая медиатека"
+    edit-title: "Медиатека"
+    adopt-title: "Подхватить медиатеку"
+    hint: >
+      Папка awn-media/{slug}/ с manifest.md; при создании — awn-storage/files/ и awn-storage/assets/.
+    bootstrap:
+      slug:
+        title: "Папка (slug)"
+        placeholder: "obshchaya-media"
+        footnote: "kebab-case, одна папка — без /"
+        required: true
+    field-keys:
+      - awn-name
+      - awn-description
+      - awn-media-status
+      - awn-index-exclude-subtree
+
+field-groups:
+  - id: media-library
+    name: "{A2!} Медиатека"
+    description: Название и статус каталога в sidebar
+    collapsed: false
+  - id: indexing
+    name: "{A2!} Индексирование"
+    description: Что попадает в поиск workspace
+    collapsed: true
+
+fields:
+  awn-slots-flexible:
+    hidden: true
+
+  awn-main:
+    hidden: true
+
+  awn-focus:
+    hidden: true
+
+  awn-index-exclude-record:
+    hidden: true
+
+  awn-name:
+    title: Название
+
+  awn-description:
+    title: Описание
+
+  awn-media-status:
+    type: awn.field.choice.one
+    title: Статус
+    description: Отображение в каталоге медиатек workspace
+    placement: aside-body
+    group: media-library
+    sort: 2
+    default: active
+    options:
+      - value: active
+        label: Активная
+      - value: archive
+        label: Архив
+
+  awn-index-exclude-subtree:
+    default: true
+    title: Не индексировать файлы внутри
+    description: >
+      Не индексировать байты и sidecar в awn-storage/files/ и assets/.
+      manifest.md и manifest разделов (category) остаются в индексе.

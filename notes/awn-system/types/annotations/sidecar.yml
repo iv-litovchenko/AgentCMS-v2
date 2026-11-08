@@ -1,0 +1,92 @@
+id: awn.annotation.sidecar
+name: Sidecar
+kind: type
+domain: annotations
+status: active
+extends: awn.annotation.base
+description: Метаданные файла (*.sidecar.md рядом с исходником)
+mixins:
+  - awn.mixin.runtime
+  - awn.mixin.indexing-record
+
+field-groups:
+  - id: ocr
+    name: "{A2!} OCR"
+    description: Текст, извлечённый из изображения или PDF
+    collapsed: false
+
+fields:
+
+  awn-mime:
+    type: awn.field.string
+    title: "{A2!} MIME-тип"
+    placement: aside-body
+    group: content
+    sort: 10
+    locked: true
+
+  awn-size:
+    type: awn.field.number.integer
+    title: "{A2!} Размер (байт)"
+    placement: aside-body
+    group: content
+    sort: 11
+    locked: true
+
+  awn-ocr-source:
+    type: awn.field.string
+    title: "{A2!} Исходный файл"
+    placement: aside-body
+    group: ocr
+    sort: 20
+    locked: true
+
+  awn-ocr-engine:
+    type: awn.field.string
+    title: "{A2!} OCR-движок"
+    placement: aside-body
+    group: ocr
+    sort: 21
+    locked: true
+
+  awn-ocr-at:
+    type: awn.field.date.datetime
+    title: "{A2!} OCR выполнен"
+    placement: aside-body
+    group: ocr
+    sort: 22
+    locked: true
+
+  awn-ocr-extracted:
+    type: awn.field.boolean
+    title: "{A2!} Текст извлечён"
+    placement: aside-body
+    group: ocr
+    sort: 23
+    locked: true
+
+  awn-ocr-preprocess:
+    type: awn.field.string
+    title: "{A2!} Предобработка"
+    placement: aside-body
+    group: ocr
+    sort: 24
+    locked: true
+
+  awn-ocr-psm:
+    type: awn.field.string
+    title: "{A2!} PSM режим"
+    description: Page segmentation mode Tesseract
+    placement: aside-body
+    group: ocr
+    sort: 25
+    locked: true
+
+  awn-ocr-text:
+    type: awn.field.text
+    title: "{A2!} OCR-текст"
+    description: Текст, извлечённый из файла (дублируется в body при первом создании)
+    placement: aside-body
+    group: ocr
+    sort: 26
+    locked: true

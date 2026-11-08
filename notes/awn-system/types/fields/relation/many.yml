@@ -1,0 +1,14 @@
+id: awn.field.relation.many
+name: Связи (несколько)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: relation
+storage: array
+mdbase: list
+items: awn.field.relation.one
+description: Несколько отношений с другими нодами в CMS
+settings: [hint, required, locked, default, targets, scope]
+group: structure
+sort: 6
+status: active

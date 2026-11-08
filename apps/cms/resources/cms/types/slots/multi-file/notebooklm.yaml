@@ -1,0 +1,14 @@
+name: NotebookLM
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Материалы для NotebookLM — любые файлы (PDF, аудио, markdown и др.)'
+path: notebooklm/
+slot-order: 14
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

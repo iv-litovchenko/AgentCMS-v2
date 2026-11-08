@@ -1,0 +1,16 @@
+name: Карты
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: |
+  Атлас топика (слот atlas) — произвольные markdown и viz-файлы в папке atlas/. Roadmap по этапам (## + статус), mindmap, scene3d и другие *.viz.md.
+path: atlas/
+slot-order: 16
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*.md'
+  - '*.viz.md'

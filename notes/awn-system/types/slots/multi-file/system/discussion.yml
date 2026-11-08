@@ -1,0 +1,18 @@
+id: awn.slot.discussion
+name: Дискуссия
+kind: slot
+domain: slots
+status: active
+extends: awn.slot
+slot-category: communication
+storage-driver: external
+description: Дискуссия по теме — discussion/ (сообщения awn.content.discussion)
+path: discussion/
+slot-order: 93
+slot-tier: system
+allowed-content:
+  - awn.content.discussion
+  - awn.content.record
+  - awn.annotation.sidecar
+accept-files:
+  - ".md"

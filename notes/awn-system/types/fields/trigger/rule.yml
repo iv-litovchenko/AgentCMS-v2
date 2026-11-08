@@ -1,0 +1,53 @@
+id: awn.field.trigger.rule
+name: Правило триггера
+kind: field
+domain: fields
+extends: awn.field.object
+status: draft
+description: >
+  Крючок workspace: событие → условие (опционально) → действие.
+  Примеры действий: webhook, notify_user, run_script, вызов MCP-tool.
+  Runtime-исполнитель — позже; тип зарезервирован под редактор правил.
+widget: json
+storage: object
+mdbase: object
+settings: [hint, required, locked]
+group: automation
+sort: 1
+properties:
+  id:
+    type: awn.field.string.slug
+    title: ID правила
+  title:
+    type: awn.field.string
+    title: Название
+  enabled:
+    type: awn.field.boolean
+    title: Включено
+    default: true
+  event:
+    type: awn.field.choice.one
+    title: Событие
+    description: Что отслеживать в workspace
+    enum:
+      - file.saved
+      - page.created
+      - index.pipeline.done
+      - workspace.cron
+      - agent.session.end
+  filter:
+    type: awn.field.string
+    title: Условие
+    description: "Опционально: путь, тип записи, тег (позже — выражение)"
+  action:
+    type: awn.field.choice.one
+    title: Действие
+    enum:
+      - webhook.post
+      - notify.user
+      - run.script
+      - mcp.tool
+  target:
+    type: awn.field.string
+    title: Куда / что вызвать
+    description: URL webhook, id скрипта, имя MCP-tool и т.д.

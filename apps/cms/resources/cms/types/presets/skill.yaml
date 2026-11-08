@@ -1,0 +1,34 @@
+name: 'Cursor Skill — SKILL.md'
+status: active
+extends: presets/_base
+target-file: SKILL.md
+hint-title: 'Cursor Skill — инструкция для агента'
+hint-text: 'Служебный <code>SKILL.md</code> workspace: краткий скилл для Cursor/агента — как работать с этим Agent CMS через MCP. Frontmatter <code>name</code> и <code>description</code> — только в режиме «Исходник»; в визуальном редакторе меняется только основной текст.'
+sort: 3
+body: |
+  ---
+  name: agent-cms
+  description: Работа с Agent CMS через MCP. Используй при задачах в workspace агента.
+  ---
+
+  # Agent CMS
+
+  ## Старт
+  1. MCP `get_session_context`
+  2. MCP `get_mcp_docs` — справка по инструментам
+  3. `get_menu` — навигация по контенту
+
+  ## Зоны workspace
+  - `awn-system/` — модель CMS
+  - `awn-container/` — контент
+  - `awn-agent-kit/` — runtime агента
+
+  ## MCP (часто)
+  | Задача | Tool |
+  | ------ | ---- |
+  | Меню | `get_menu` |
+  | Страница | `read_topic_properties` / `write_topic_properties` |
+  | Память/контент | `create_slot_record` / `read_slot_record` |
+  | Уведомление | `notify_user` |
+
+  Подробнее — `AGENTS.md`.

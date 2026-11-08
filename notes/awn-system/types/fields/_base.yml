@@ -1,0 +1,56 @@
+id: awn.field.base
+name: База поля
+kind: base
+domain: fields
+status: active
+extends: awn.entity
+description: Базовые мета-свойства любого поля
+kind-ui:
+  for: field
+  label: Поле
+  badge: { background: "#fefce8", border: "#fde047", text: "#854d0e" }
+properties:
+  type:
+    title: Тип данных
+    description: ID типа поля (awn.field.string, awn.field.string.url, awn.field.text…)
+    required: true
+  name:
+    title: Название
+    description: Подпись поля в форме (человекочитаемое)
+    required: true
+  description:
+    title: Описание
+    description: Развёрнутое пояснение для схемы и документации
+    type: awn.field.text
+  hint:
+    title: Подсказка
+    description: Краткая подсказка в UI (placeholder, title)
+    type: awn.field.string
+  required:
+    type: awn.field.boolean
+    title: Обязательное
+    default: false
+  locked:
+    type: awn.field.boolean
+    title: Заблокированное
+    description: Только чтение в форме
+    default: false
+  format:
+    title: Формат
+    description: Пример или шаблон заполнения (YYYY-MM-DD, 0.0.1)
+    type: awn.field.string
+  default:
+    title: По умолчанию
+    description: Значение при создании
+    type: awn.field.string
+  widget:
+    title: Виджет
+    description: Переопределить виджет по умолчанию для этого типа
+    type: awn.field.string
+  enum:
+    title: Варианты
+    description: Список key/name для awn.field.choice.one и awn.field.choice.many
+  items:
+    title: Тип элементов
+    description: Тип элементов для awn.field.array (awn.field.string, awn.field.file.one…)
+    type: awn.field.string

@@ -1,0 +1,10 @@
+name: Разделитель
+group: structure
+sort: 3
+icon: ➖
+description: 'Горизонтальная линия'
+template: |+
+
+  ---
+
+status: active

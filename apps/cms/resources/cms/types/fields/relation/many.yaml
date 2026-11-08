@@ -1,0 +1,17 @@
+name: 'Связи (несколько)'
+extends: fields/_base
+widget: relation
+storage: array
+mdbase: list
+items: fields/relation/one
+description: 'Несколько отношений с другими нодами в CMS'
+settings:
+  - hint
+  - required
+  - locked
+  - default
+  - targets
+  - scope
+group: structure
+sort: 6
+status: active

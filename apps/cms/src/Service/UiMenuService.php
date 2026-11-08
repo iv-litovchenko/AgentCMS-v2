@@ -24,6 +24,8 @@ class UiMenuService
 
     private StarterToggleService $starterToggleService;
 
+    private WorkspaceService $workspaceService;
+
     /** @var array<string, mixed>|null */
     private ?array $configCache = null;
 
@@ -32,6 +34,7 @@ class UiMenuService
         UrlGeneratorInterface $urlGenerator,
         RequestStack $requestStack,
         StarterToggleService $starterToggleService,
+        WorkspaceService $workspaceService,
         string $publicBaseDomain,
         string $publicHttpPort,
         string $publicHttpsPort,
@@ -41,6 +44,7 @@ class UiMenuService
         $this->urlGenerator = $urlGenerator;
         $this->requestStack = $requestStack;
         $this->starterToggleService = $starterToggleService;
+        $this->workspaceService = $workspaceService;
         $this->publicBaseDomain = $publicBaseDomain;
         $this->publicHttpPort = $publicHttpPort;
         $this->publicHttpsPort = $publicHttpsPort;
@@ -115,6 +119,70 @@ class UiMenuService
         }
 
         return $items;
+    }
+
+    public function getHeaderSearchUrl(): string
+    {
+        $slug = $this->resolveWorkspaceSlugForHeaderSearch();
+        if ($slug === '') {
+            return $this->urlGenerator->generate('workspace_index');
+        }
+
+        return $this->urlGenerator->generate('workspace_module_show', [
+            'slug' => $slug,
+            'module' => 'search',
+        ]);
+    }
+
+    public function isHeaderSearchAvailable(): bool
+    {
+        return $this->resolveWorkspaceSlugForHeaderSearch() !== '';
+    }
+
+    private function resolveWorkspaceSlugForHeaderSearch(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request !== null) {
+            $route = $request->attributes->get('_route');
+            $slug = $request->attributes->get('slug');
+            if (is_string($route) && is_string($slug) && $slug !== '') {
+                if ($route === 'workspace_show' || $route === 'workspace_module_show') {
+                    return $slug;
+                }
+            }
+        }
+
+        $storages = $this->workspaceService->listForDisplay();
+        if (count($storages) === 0) {
+            return '';
+        }
+
+        $first = $storages[0];
+        if (!isset($first['slug']) || !is_string($first['slug'])) {
+            return '';
+        }
+
+        return $first['slug'];
+    }
+
+    public function isHeaderSearchActive(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request === null) {
+            return false;
+        }
+
+        $route = $request->attributes->get('_route');
+        if ($route !== 'workspace_module_show') {
+            return false;
+        }
+
+        $module = $request->attributes->get('module');
+        if (!is_string($module)) {
+            return false;
+        }
+
+        return $module === 'search';
     }
 
     /**

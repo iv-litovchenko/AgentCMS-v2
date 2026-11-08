@@ -1,0 +1,14 @@
+id: awn.field.file.many
+name: Файлы (несколько)
+kind: field
+domain: fields
+extends: awn.field.base
+widget: file
+storage: array
+mdbase: list
+items: awn.field.file.one
+description: Список путей к файлам в storage
+settings: [hint, required, locked, default, accept, upload, scope]
+group: media
+sort: 3
+status: active

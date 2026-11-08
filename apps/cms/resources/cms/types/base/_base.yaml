@@ -1,0 +1,9 @@
+name: 'Сущность CMS'
+status: active
+description: 'Корневой тип platform — от него наследуют pages, content, fields, md-blocks'
+kind-ui:
+  label: Сущность
+  badge:
+    background: '#f5f3ff'
+    border: '#c4b5fd'
+    text: '#5b21b6'
