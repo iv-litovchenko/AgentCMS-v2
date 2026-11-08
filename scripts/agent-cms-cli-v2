@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
-# Agent CMS — обёртка над docker compose (после scripts/install.sh).
+# Agent CMS — CLI v2 (после scripts/install.sh).
 set -euo pipefail
 
+CLI_VERSION="0.1.0"
 CONFIG="${HOME}/.config/agent-cms-v2/env"
+MAINTENANCE_FILE="var/cli/maintenance-mode"
+MAINTENANCE_INC="var/cli/maintenance-check.inc"
+MAINTENANCE_INC_OFF="# maintenance off — agent-cms-cli-v2 maintenance on|off"
+MAINTENANCE_INC_ON='set $skip_maint 0;
+if ($request_uri = /health) { set $skip_maint 1; }
+if ($request_uri = /503-maintenance.html) { set $skip_maint 1; }
+if ($skip_maint = 0) { return 503; }'
 
 load_config() {
     if [ ! -f "${CONFIG}" ]; then
@@ -38,34 +46,209 @@ compose_args() {
     echo "${files}"
 }
 
-cmd_start() {
+compose_exec() {
     load_config
     cd "${AGENT_CMS_ROOT}"
     # shellcheck disable=SC2046
-    docker compose $(compose_args) up -d --build "$@"
+    docker compose $(compose_args) "$@"
 }
 
-cmd_stop() {
+read_env_var() {
+    local key="$1"
+    local default="${2:-}"
+    local file="${AGENT_CMS_ROOT}/.env"
+    local line
+  if [ ! -f "${file}" ]; then
+    echo "${default}"
+    return 0
+  fi
+    line="$(grep -E "^${key}=" "${file}" 2>/dev/null | tail -1 || true)"
+    if [ -z "${line}" ]; then
+        echo "${default}"
+        return 0
+    fi
+    echo "${line#*=}" | tr -d '"' | tr -d "'"
+}
+
+public_urls() {
+    local domain
+    local http_port
+    local https_port
+    domain="$(read_env_var PUBLIC_BASE_DOMAIN localhost)"
+    http_port="$(read_env_var PUBLIC_HTTP_PORT 8080)"
+    https_port="$(read_env_var PUBLIC_HTTPS_PORT 8443)"
+    echo "http://${domain}:${http_port}/"
+    echo "https://${domain}:${https_port}/"
+}
+
+cmd_urls() {
     load_config
-    cd "${AGENT_CMS_ROOT}"
-    # shellcheck disable=SC2046
-    docker compose $(compose_args) down "$@"
+    public_urls
+}
+
+cmd_version() {
+    echo "agent-cms-cli-v2 ${CLI_VERSION}"
+}
+
+cmd_doctor() {
+    load_config
+    echo "agent-cms-cli-v2 ${CLI_VERSION}"
+    echo "AGENT_CMS_ROOT=${AGENT_CMS_ROOT}"
+    if command -v docker >/dev/null 2>&1; then
+        docker version --format 'Docker: {{.Server.Version}}' 2>/dev/null || echo "Docker: клиент есть, демон недоступен"
+    else
+        echo "Docker: не найден в PATH"
+    fi
+    if docker compose version >/dev/null 2>&1; then
+        docker compose version
+    else
+        echo "Docker Compose: не найден"
+    fi
+    if [ -f "${AGENT_CMS_ROOT}/docker-compose.yml" ]; then
+        echo "compose: OK"
+    else
+        echo "compose: нет docker-compose.yml"
+    fi
+    local http_port
+    http_port="$(read_env_var PUBLIC_HTTP_PORT 8080)"
+    if command -v curl >/dev/null 2>&1; then
+        local code
+        code="$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:${http_port}/" 2>/dev/null || echo "000")"
+        echo "HTTP localhost:${http_port} → ${code}"
+    fi
+}
+
+cmd_paths() {
+    load_config
+    echo "HOME=${HOME}"
+    echo "CONFIG=${CONFIG}"
+    echo "AGENT_CMS_ROOT=${AGENT_CMS_ROOT}"
+    echo "CLI=$(command -v agent-cms-cli-v2 2>/dev/null || echo '?')"
+    echo "Public URL:"
+    public_urls | sed 's/^/  /'
+    echo "Bind-mount (workspace):"
+    echo "  ${AGENT_CMS_ROOT}/workspaces → /var/www/workspaces (cms)"
 }
 
 cmd_status() {
     load_config
+    local http_port
+    http_port="$(read_env_var PUBLIC_HTTP_PORT 8080)"
+    if command -v curl >/dev/null 2>&1; then
+        local code
+        code="$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:${http_port}/" 2>/dev/null || echo "000")"
+        if [ "${code}" = "000" ]; then
+            echo "HTTP: нет ответа (стек выключен?)"
+        else
+            echo "HTTP: ${code}"
+        fi
+    fi
+    compose_exec ps
+}
+
+maintenance_read() {
+    load_config
+    local f="${AGENT_CMS_ROOT}/${MAINTENANCE_FILE}"
+    if [ -f "${f}" ] && [ "$(cat "${f}" 2>/dev/null)" = "1" ]; then
+        echo "on"
+    else
+        echo "off"
+    fi
+}
+
+reload_proxy() {
     cd "${AGENT_CMS_ROOT}"
-    echo "ROOT=${AGENT_CMS_ROOT}"
-    echo "PLATFORM=${AGENT_CMS_PLATFORM:-?}"
     # shellcheck disable=SC2046
-    docker compose $(compose_args) ps
+    if docker compose $(compose_args) exec -T proxy nginx -s reload 2>/dev/null; then
+        echo "nginx: reload"
+    else
+        echo "nginx: перезапустите proxy (agent-cms-cli-v2 restart proxy)" >&2
+    fi
+}
+
+write_maintenance_inc() {
+    local on="$1"
+    local inc="${AGENT_CMS_ROOT}/${MAINTENANCE_INC}"
+    if [ "${on}" = "1" ]; then
+        printf '%s\n' "${MAINTENANCE_INC_ON}" >"${inc}"
+    else
+        printf '%s\n' "${MAINTENANCE_INC_OFF}" >"${inc}"
+    fi
+}
+
+cmd_maintenance() {
+    local sub="${1:-status}"
+    load_config
+    local f="${AGENT_CMS_ROOT}/${MAINTENANCE_FILE}"
+    mkdir -p "$(dirname "${f}")"
+    if [ "${sub}" = "status" ]; then
+        echo "$(maintenance_read)"
+    elif [ "${sub}" = "on" ]; then
+        echo "1" >"${f}"
+        write_maintenance_inc 1
+        reload_proxy
+        echo "maintenance: on (503 → 503-maintenance.html)"
+    elif [ "${sub}" = "off" ]; then
+        echo "0" >"${f}"
+        write_maintenance_inc 0
+        reload_proxy
+        echo "maintenance: off"
+    else
+        echo "usage: maintenance status | on | off" >&2
+        exit 1
+    fi
+}
+
+cmd_start() {
+    compose_exec up -d --build "$@"
+    echo ""
+    public_urls | while read -r url; do
+        echo "→ ${url}"
+    done
+}
+
+cmd_stop() {
+    compose_exec stop "$@"
+}
+
+cmd_restart() {
+    compose_exec restart "$@"
+}
+
+cmd_down() {
+    compose_exec down "$@"
+}
+
+cmd_ps() {
+    compose_exec ps "$@"
 }
 
 cmd_logs() {
-    load_config
-    cd "${AGENT_CMS_ROOT}"
-    # shellcheck disable=SC2046
-    docker compose $(compose_args) logs -f --tail=100 "$@"
+    local sub="${1:-}"
+    if [ "${sub}" = "snap" ]; then
+        shift || true
+        cmd_logs_snap "$@"
+        return 0
+    fi
+    compose_exec logs -f --tail=100 "$@"
+}
+
+cmd_logs_snap() {
+    local tail_n="200"
+    if [ "${1:-}" = "--tail" ] && [ -n "${2:-}" ]; then
+        tail_n="$2"
+    fi
+    local services="proxy cms mcp api"
+    local svc
+    for svc in ${services}; do
+        echo "========== ${svc} (last ${tail_n}) =========="
+        compose_exec logs --tail="${tail_n}" "${svc}" 2>/dev/null || echo "(нет сервиса ${svc})"
+        echo ""
+    done
+}
+
+cmd_rebuild() {
+    compose_exec up -d --build "$@"
 }
 
 cmd_update() {
@@ -73,15 +256,99 @@ cmd_update() {
     cd "${AGENT_CMS_ROOT}"
     if [ -d .git ]; then
         git pull --ff-only
+    else
+        echo "Не git-репозиторий — пропуск pull"
     fi
-    echo "Обновление образов…"
-    # shellcheck disable=SC2046
-    docker compose $(compose_args) build
+}
+
+cmd_backup_zzz() {
+    load_config
+    echo "WIP: backup workspaces → .backups/workspaces-*.tar.gz"
+    if [ -n "${1:-}" ]; then
+        echo "  целевой архив: $1"
+    fi
+    exit 2
+}
+
+cmd_restore_zzz() {
+    echo "WIP: restore workspaces из архива (--force для перезаписи)"
+    exit 2
+}
+
+cmd_env_show() {
+    load_config
+    local reveal_key=""
+    if [ "${1:-}" = "--reveal" ] && [ -n "${2:-}" ]; then
+        reveal_key="$2"
+    fi
+    local example="${AGENT_CMS_ROOT}/.env.example"
+    local envfile="${AGENT_CMS_ROOT}/.env"
+    if [ ! -f "${example}" ]; then
+        echo "Нет .env.example" >&2
+        exit 1
+    fi
+    while IFS= read -r line; do
+        if [ -z "${line}" ]; then
+            continue
+        fi
+        case "${line}" in
+            \#*) continue ;;
+        esac
+        local key="${line%%=*}"
+        key="$(echo "${key}" | tr -d ' ')"
+        if [ -z "${key}" ]; then
+            continue
+        fi
+        local val=""
+        if [ -f "${envfile}" ]; then
+            val="$(grep -E "^${key}=" "${envfile}" 2>/dev/null | tail -1 | sed "s/^${key}=//" | tr -d '"' | tr -d "'" || true)"
+        fi
+        local mask=0
+        if echo "${key}" | grep -qiE 'PASS|SECRET|TOKEN|KEY'; then
+            mask=1
+        fi
+        if [ -n "${reveal_key}" ] && [ "${reveal_key}" = "${key}" ]; then
+            echo "${key}=${val}"
+        elif [ "${mask}" = "1" ] && [ -n "${val}" ]; then
+            echo "${key}=***"
+        else
+            echo "${key}=${val}"
+        fi
+    done <"${example}"
+}
+
+cmd_env_set() {
+    load_config
+    local pair="${1:-}"
+    if [ -z "${pair}" ] || ! echo "${pair}" | grep -q '='; then
+        echo "usage: env set KEY=VALUE" >&2
+        exit 1
+    fi
+    local key="${pair%%=*}"
+    local value="${pair#*=}"
+    local example="${AGENT_CMS_ROOT}/.env.example"
+    if ! grep -qE "^${key}=" "${example}" 2>/dev/null; then
+        echo "Ключ не в whitelist (.env.example): ${key}" >&2
+        exit 1
+    fi
+    local envfile="${AGENT_CMS_ROOT}/.env"
+    if [ ! -f "${envfile}" ]; then
+        cp "${example}" "${envfile}"
+    fi
+    if grep -qE "^${key}=" "${envfile}" 2>/dev/null; then
+        if sed --version >/dev/null 2>&1; then
+            sed -i "s|^${key}=.*|${key}=${value}|" "${envfile}"
+        else
+            sed -i '' "s|^${key}=.*|${key}=${value}|" "${envfile}"
+        fi
+    else
+        echo "${key}=${value}" >>"${envfile}"
+    fi
+    echo "OK: ${key}"
 }
 
 cmd_compose() {
     load_config
-    cd "${AGENT_CMS_ROOT}"
     echo "cd ${AGENT_CMS_ROOT} && docker compose $(compose_args) $*"
 }
 
@@ -89,13 +356,27 @@ usage() {
     cat <<'EOF'
 agent-cms-cli-v2 — Agent CMS
 
-  start [--]          поднять stack (docker compose up -d --build)
-  stop [--]           остановить
-  status              ps + путь установки
-  logs [service]      логи (follow)
-  update              git pull + compose build
-  compose [args…]     показать команду compose
-  help                эта справка
+  version
+  doctor                 Docker, compose, каталог, HTTP-порт
+  paths                  HOME, CLI, URL, workspace mount
+  urls                   HTTP и HTTPS ссылки из .env
+  status                 HTTP ping + compose ps
+
+  maintenance status | on | off
+
+  start | stop | restart | down | ps
+  logs [service]           поток (-f)
+  logs snap [--tail N]     снимок для чата
+
+  backup_zzz | restore_zzz   WIP
+  rebuild                  up -d --build
+  update                   git pull --ff-only
+
+  env show [--reveal KEY]
+  env set KEY=VALUE
+
+  compose [args…]          показать команду compose
+  help
 EOF
 }
 
@@ -106,16 +387,49 @@ main() {
         exit 0
     fi
     shift || true
-    if [ "${cmd}" = "start" ]; then
+    if [ "${cmd}" = "version" ]; then
+        cmd_version
+    elif [ "${cmd}" = "doctor" ]; then
+        cmd_doctor
+    elif [ "${cmd}" = "paths" ]; then
+        cmd_paths
+    elif [ "${cmd}" = "urls" ]; then
+        cmd_urls
+    elif [ "${cmd}" = "status" ]; then
+        cmd_status
+    elif [ "${cmd}" = "maintenance" ]; then
+        cmd_maintenance "$@"
+    elif [ "${cmd}" = "start" ]; then
         cmd_start "$@"
     elif [ "${cmd}" = "stop" ]; then
         cmd_stop "$@"
-    elif [ "${cmd}" = "status" ]; then
-        cmd_status "$@"
+    elif [ "${cmd}" = "restart" ]; then
+        cmd_restart "$@"
+    elif [ "${cmd}" = "down" ]; then
+        cmd_down "$@"
+    elif [ "${cmd}" = "ps" ]; then
+        cmd_ps "$@"
     elif [ "${cmd}" = "logs" ]; then
         cmd_logs "$@"
+    elif [ "${cmd}" = "rebuild" ]; then
+        cmd_rebuild "$@"
     elif [ "${cmd}" = "update" ]; then
         cmd_update
+    elif [ "${cmd}" = "backup_zzz" ]; then
+        cmd_backup_zzz "$@"
+    elif [ "${cmd}" = "restore_zzz" ]; then
+        cmd_restore_zzz "$@"
+    elif [ "${cmd}" = "env" ]; then
+        local sub="${1:-}"
+        shift || true
+        if [ "${sub}" = "show" ]; then
+            cmd_env_show "$@"
+        elif [ "${sub}" = "set" ]; then
+            cmd_env_set "$@"
+        else
+            echo "usage: env show | env set KEY=VALUE" >&2
+            exit 1
+        fi
     elif [ "${cmd}" = "compose" ]; then
         cmd_compose "$@"
     else

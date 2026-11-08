@@ -4,6 +4,7 @@
 
 - **Источник правды** — файлы workspace, БД для метаданных и ускорения.
 - **Модульность** — расширения (Composer-пакеты), сервисы в Docker, настройки без правок ядра.
+
 Репозиторий: полный rewrite преемника Agent CMS; разработка и документация — в приложении «Документация» в CMS.
 
 ## Рекомендуемые требования
@@ -53,3 +54,36 @@ agent-cms-cli-v2 start
 | **Windows (WSL2)** | Репозиторий — `/home/<you>/agent-cms-v2`<br>CLI — `/home/<you>/.local/bin/agent-cms-cli-v2`<br>Конфиг CLI — `/home/<you>/.config/agent-cms-v2/env` |
 
 **Адреса по умолчанию:** http://localhost:8080/ · https://localhost:8443/
+
+## CLI `agent-cms-cli-v2`
+
+```bash
+agent-cms-cli-v2 version                          # версия CLI
+agent-cms-cli-v2 doctor                           # Docker, compose, каталог, HTTP-порт
+agent-cms-cli-v2 paths                            # пути: HOME, CLI, URL, workspaces mount
+agent-cms-cli-v2 urls                             # HTTP и HTTPS ссылки из .env
+agent-cms-cli-v2 status                           # HTTP ping + docker compose ps
+
+agent-cms-cli-v2 maintenance status               # on | off
+agent-cms-cli-v2 maintenance on                   # 503, заглушка maintenance
+agent-cms-cli-v2 maintenance off                  # обычная работа
+
+agent-cms-cli-v2 start                            # up -d --build, URL в терминал
+agent-cms-cli-v2 stop                             # compose stop
+agent-cms-cli-v2 restart                          # compose restart
+agent-cms-cli-v2 down                             # compose down
+agent-cms-cli-v2 ps                               # compose ps
+agent-cms-cli-v2 rebuild                          # up -d --build (образы)
+
+agent-cms-cli-v2 logs                             # логи потоком (-f)
+agent-cms-cli-v2 logs snap                        # снимок ~200 строк (proxy, cms, mcp, api)
+agent-cms-cli-v2 logs snap --tail 400             # снимок, другой хвост
+
+agent-cms-cli-v2 backup_zzz                       # WIP: архив workspaces
+agent-cms-cli-v2 restore_zzz                      # WIP: восстановление из архива
+
+agent-cms-cli-v2 update                           # git pull --ff-only
+agent-cms-cli-v2 env show                         # ключи .env (секреты ***)
+agent-cms-cli-v2 env show --reveal KEY            # один ключ без маски
+agent-cms-cli-v2 env set KEY=VALUE                # запись в .env (whitelist .env.example)
+```

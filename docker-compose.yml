@@ -19,6 +19,7 @@ services:
       dockerfile: docker/proxy/Dockerfile
     volumes:
       - ./apps/cms/public:/var/www/cms/public:ro
+      - ./var/cli:/etc/agent-cms/cli:ro
     ports:
       - "8080:80"
       - "8443:443"
@@ -48,8 +49,10 @@ services:
       PUBLIC_HTTPS_PORT: ${PUBLIC_HTTPS_PORT:-8443}
       PUBLIC_PREFERRED_SCHEME: ${PUBLIC_PREFERRED_SCHEME:-https}
       REDIRECT_HTTP_TO_HTTPS: ${REDIRECT_HTTP_TO_HTTPS:-1}
+      MAINTENANCE_MODE_FILE: /var/www/agent-cms-var-cli/maintenance-mode
     volumes:
       - ./workspaces:/var/www/workspaces
+      - ./var/cli:/var/www/agent-cms-var-cli:ro
     depends_on:
       db:
         condition: service_started

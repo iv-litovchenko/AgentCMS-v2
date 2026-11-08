@@ -17,6 +17,8 @@ parameters:
     app.connector_registry: '%kernel.project_dir%/resources/cms/connector/tokens.registry.yaml'
     app.connector_tokens_file: '%kernel.project_dir%/var/connector/tokens.yaml'
     app.project_root: '%kernel.project_dir%/../..'
+    app.maintenance_mode_file: '%env(default:app_maintenance_mode_file_default:MAINTENANCE_MODE_FILE)%'
+    app_maintenance_mode_file_default: '%app.project_root%/var/cli/maintenance-mode'
     app.cms_log_file: '%kernel.logs_dir%/cms.log'
     app.starter_log_max_lines: 80
     app.starter_log_max_bytes: 65536
@@ -40,6 +42,10 @@ services:
 
     App\:
         resource: '../src/'
+
+    App\EventSubscriber\MaintenanceModeSubscriber:
+        arguments:
+            $maintenanceModeFile: '%app.maintenance_mode_file%'
 
     App\Service\WorkspaceService:
         arguments:
