@@ -42,8 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/iv-litovchenko/AgentCMS-v2/main/scr
 # из клона
 # bash scripts/install.sh
 
-export PATH="$HOME/.local/bin:$PATH"
-agent-cms-cli-v2 start
+agent-cms-cli-v2 start    # PATH дописывает install.sh в ~/.zshrc / ~/.profile
 ```
 
 | ОС | Пути |

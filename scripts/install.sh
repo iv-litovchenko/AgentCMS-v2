@@ -162,16 +162,22 @@ PROFILE_EOF
     fi
 
     path_line='export PATH="${HOME}/.local/bin:${PATH}"'
-    for rc in "${HOME}/.profile" "${HOME}/.zshrc" "${HOME}/.bashrc"; do
-        if [ -f "${rc}" ] || [ "${rc}" = "${HOME}/.profile" ]; then
-            if [ ! -f "${rc}" ]; then
+    local rc_files="${HOME}/.profile ${HOME}/.zshrc ${HOME}/.bashrc"
+    if [ "$(uname -s)" = "Darwin" ]; then
+        rc_files="${rc_files} ${HOME}/.zprofile"
+    fi
+    for rc in ${rc_files}; do
+        if [ ! -f "${rc}" ]; then
+            if [ "${rc}" = "${HOME}/.profile" ] || [ "${rc}" = "${HOME}/.zshrc" ]; then
                 touch "${rc}"
+            else
+                continue
             fi
-            if ! grep -q '.local/bin' "${rc}" 2>/dev/null; then
-                echo "" >>"${rc}"
-                echo "# Agent CMS CLI" >>"${rc}"
-                echo "${path_line}" >>"${rc}"
-            fi
+        fi
+        if ! grep -q '.local/bin' "${rc}" 2>/dev/null; then
+            echo "" >>"${rc}"
+            echo "# Agent CMS CLI" >>"${rc}"
+            echo "${path_line}" >>"${rc}"
         fi
     done
 
@@ -188,7 +194,8 @@ print_next_steps() {
   Платформа: ${platform}
   Конфиг:   ~/.config/agent-cms-v2/env
 
-Откройте новый терминал или: export PATH="\${HOME}/.local/bin:\${PATH}"
+PATH дописан в shell-конфиг (~/.zshrc / ~/.profile). В этом окне: source ~/.zshrc
+или откройте новый терминал.
 
   agent-cms-cli-v2 status
   agent-cms-cli-v2 start   # нужен Docker Desktop / Engine
