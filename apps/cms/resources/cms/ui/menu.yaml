@@ -21,6 +21,10 @@ apps:
           slug: mcp
         - label: SKILLS
           slug: skills
+        - label: Макеты
+          slug: layouts
+        - label: Типография
+          slug: typography
     - label: Коннектор
       name: connector
       hide_apps_nav: true
@@ -35,12 +39,6 @@ apps:
       hide_apps_nav: true
     - label: Командер
       name: commander
-      hide_apps_nav: true
-    - label: Макеты
-      name: layouts
-      hide_apps_nav: true
-    - label: Типография
-      name: typography
       hide_apps_nav: true
     - label: Symfony AI
       name: symfony_ai

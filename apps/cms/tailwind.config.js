@@ -3,6 +3,7 @@ module.exports = {
   content: [
     './templates/**/*.html.twig',
     '../packages/**/templates/**/*.html.twig',
+    './node_modules/tw-elements/js/**/*.js',
   ],
   theme: {
     extend: {
@@ -11,5 +12,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tw-elements/plugin.cjs')],
 };

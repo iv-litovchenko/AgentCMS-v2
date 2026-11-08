@@ -6,6 +6,7 @@
     "watch": "tailwindcss -i ./assets/styles/app.css -o ./public/build/app.css --watch"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "tw-elements": "^2.0.0"
   }
 }

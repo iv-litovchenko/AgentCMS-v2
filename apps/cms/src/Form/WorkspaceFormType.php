@@ -7,7 +7,6 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,14 +23,14 @@ class WorkspaceFormType extends AbstractType
                 'label' => 'Название',
                 'constraints' => [new NotBlank()],
             ])
-            ->add('folder', TextType::class, [
-                'label' => 'Папка',
-                'help' => 'Относительный путь, например storage/app/workspaces/demo-main',
+            ->add('slug', TextType::class, [
+                'label' => 'Ключ (папка в workspaces/)',
+                'help' => 'Каталог workspaces/{ключ}/ с manifest.md. URL: /workspaces/demo-main.',
                 'constraints' => [
                     new NotBlank(),
                     new Regex([
-                        'pattern' => '/^(?!.*\.\.).+$/',
-                        'message' => 'Путь не должен содержать «..».',
+                        'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                        'message' => 'Только a-z, 0-9 и дефис (например demo-main).',
                     ]),
                 ],
             ])
@@ -47,11 +46,6 @@ class WorkspaceFormType extends AbstractType
                 'required' => false,
                 'empty_data' => '0',
                 'attr' => ['min' => 0, 'step' => 1],
-            ])
-            ->add('description', TextareaType::class, [
-                'label' => 'Описание',
-                'required' => false,
-                'attr' => ['rows' => 4],
             ])
             ->add('avatarUpload', FileType::class, [
                 'label' => 'Аватар',

@@ -18,9 +18,10 @@
                         size: is_compact ? 'h-7 w-7' : 'h-9 w-9'
                     } %}
                     <div class="min-w-0 flex-1">
-                        <p class="truncate font-medium text-zinc-900 hover:text-blue-600 hover:underline">
-                            {{ storage.name }}{% if storage.description|default('') != '' %} <span class="font-normal text-zinc-500">({{ storage.description }})</span>{% endif %}
-                        </p>
+                        <p class="truncate font-medium text-zinc-900 hover:text-blue-600 hover:underline">{{ storage.name }}</p>
+                        {% if storage.description|default('') != '' %}
+                            <p class="truncate text-xs text-zinc-600">{{ storage.description }}</p>
+                        {% endif %}
                         <p class="truncate text-xs text-zinc-500">
                             <span class="font-mono text-zinc-400">{{ storage.id }}</span>
                             <span class="text-zinc-300" aria-hidden="true"> · </span>

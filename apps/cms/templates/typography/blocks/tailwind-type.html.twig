@@ -1,0 +1,195 @@
+<div class="divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+    <section id="tw-font-family" class="scroll-mt-24 pb-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">font-family</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-sans', sample: 'Sans — system-ui' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-serif', sample: 'Serif — Georgia' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-mono', sample: 'Mono — ui-monospace' } %}
+    </section>
+
+    <section id="tw-font-size" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">font-size (text-*)</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-xs' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-base' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-2xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-3xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-4xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-5xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-6xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-7xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-8xl' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-9xl' } %}
+    </section>
+
+    <section id="tw-font-weight" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">font-weight (font-*)</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-thin text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-extralight text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-light text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-normal text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-medium text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-semibold text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-bold text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-extrabold text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'font-black text-lg' } %}
+    </section>
+
+    <section id="tw-smoothing" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">font-smoothing</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'antialiased text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'subpixel-antialiased text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'italic text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'not-italic text-lg', sample: 'not-italic' } %}
+    </section>
+
+    <section id="tw-tracking" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">letter-spacing (tracking-*)</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-tighter text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-tight text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-normal text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-wide text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-wider text-lg' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'tracking-widest text-lg' } %}
+    </section>
+
+    <section id="tw-leading" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">line-height (leading-*)</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-3', sample: 'leading-3 · две строки', extra_class: '' } %}
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">leading-relaxed</code>
+            <p class="max-w-md text-base leading-relaxed text-zinc-900">Длинный текст с leading-relaxed — удобно для абзацев документации и описаний полей.</p>
+        </div>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-none', sample: 'leading-none' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-tight', sample: 'leading-tight' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-snug', sample: 'leading-snug' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-normal', sample: 'leading-normal' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-sm leading-loose', sample: 'leading-loose' } %}
+    </section>
+
+    <section id="tw-align" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">text-align</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-left text-base', sample: 'text-left', extra_class: 'text-zinc-900 w-full' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-center text-base', sample: 'text-center', extra_class: 'text-zinc-900 w-full' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-right text-base', sample: 'text-right', extra_class: 'text-zinc-900 w-full' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-justify text-base', sample: 'text-justify — выравнивание по ширине для узкой колонки с достаточным числом слов.', extra_class: 'text-zinc-900 max-w-xs' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-start text-base', sample: 'text-start', extra_class: 'text-zinc-900 w-full' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-end text-base', sample: 'text-end', extra_class: 'text-zinc-900 w-full' } %}
+    </section>
+
+    <section id="tw-color" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">text-color (text-*)</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-zinc-400', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-zinc-500', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-zinc-700', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-zinc-900', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-primary', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-red-600', extra_class: '' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'text-emerald-600', extra_class: '' } %}
+    </section>
+
+    <section id="tw-decoration" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">text-decoration</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'underline' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'line-through' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'overline' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'no-underline underline', sample: 'no-underline' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'underline decoration-dashed' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'underline decoration-wavy' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'underline decoration-2 underline-offset-4' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'underline decoration-primary text-primary', extra_class: '' } %}
+    </section>
+
+    <section id="tw-transform" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">text-transform</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'uppercase' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'lowercase', sample: 'LowerCase' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'capitalize', sample: 'capitalize text' } %}
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'normal-case uppercase', sample: 'normal-case' } %}
+    </section>
+
+    <section id="tw-overflow" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">overflow / line-clamp</h2>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">truncate</code>
+            <p class="max-w-[12rem] truncate text-base text-zinc-900">Очень длинная строка обрезается с многоточием</p>
+        </div>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">line-clamp-2</code>
+            <p class="line-clamp-2 max-w-md text-base text-zinc-900">line-clamp-2 ограничивает высоту блока двумя строками. Третья и следующие скрываются.</p>
+        </div>
+        <div class="grid gap-1 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">line-clamp-3</code>
+            <p class="line-clamp-3 max-w-md text-base text-zinc-900">line-clamp-3 — превью карточки или списка. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+    </section>
+
+    <section id="tw-wrap" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">text-wrap / whitespace / break</h2>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">text-nowrap</code>
+            <p class="text-nowrap text-base text-zinc-900">text-nowrap — строка без переноса</p>
+        </div>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">text-balance</code>
+            <p class="max-w-sm text-balance text-2xl font-medium text-zinc-900">text-balance на коротком заголовке</p>
+        </div>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">text-pretty</code>
+            <p class="max-w-sm text-pretty text-base text-zinc-900">text-pretty сглаживает переносы в абзаце документации.</p>
+        </div>
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">whitespace-pre-wrap font-mono text-sm</code>
+            <pre class="whitespace-pre-wrap font-mono text-sm text-zinc-900">line one
+line two</pre>
+        </div>
+        <div class="grid gap-1 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">break-all max-w-[8rem]</code>
+            <p class="max-w-[8rem] break-all text-base text-zinc-900">Supercalifragilisticexpialidocious</p>
+        </div>
+    </section>
+
+    <section id="tw-list" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">list-style</h2>
+        <ul class="mb-4 list-inside list-disc text-base text-zinc-700">
+            <li>list-disc list-inside</li>
+        </ul>
+        <ul class="mb-4 list-outside list-disc pl-5 text-base text-zinc-700">
+            <li>list-disc list-outside</li>
+        </ul>
+        <ol class="mb-4 list-decimal pl-5 text-base text-zinc-700">
+            <li>list-decimal</li>
+        </ol>
+        <ul class="list-none text-base text-zinc-700">
+            <li>list-none</li>
+        </ul>
+    </section>
+
+    <section id="tw-misc" class="scroll-mt-24 py-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">indent · numeric · vertical-align</h2>
+        {% include 'typography/_tw_row.html.twig' with { tw_class: 'indent-8 text-base', sample: 'text-indent (indent-8) для первой строки абзаца.' } %}
+        <div class="grid gap-1 border-b border-zinc-100 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">tabular-nums</code>
+            <p class="font-mono text-base tabular-nums text-zinc-900">1111 / 9999 / 0042</p>
+        </div>
+        <div class="grid gap-1 py-2.5 sm:grid-cols-[11rem_1fr] sm:items-center sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">align-*</code>
+            <p class="text-base text-zinc-900">
+                Text
+                <span class="inline-block h-8 w-8 align-top bg-zinc-200"></span>
+                <span class="align-top text-sm text-zinc-500">align-top</span>
+                <span class="inline-block h-8 w-8 align-middle bg-zinc-200"></span>
+                <span class="align-middle text-sm text-zinc-500">align-middle</span>
+            </p>
+        </div>
+    </section>
+
+    <section id="tw-hyphens" class="scroll-mt-24 pt-10">
+        <h2 class="mb-4 text-xs font-medium uppercase tracking-wide text-zinc-500">hyphens</h2>
+        <div class="grid gap-1 py-2.5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+            <code class="font-mono text-xs text-zinc-400">hyphens-auto max-w-[10rem]</code>
+            <p lang="en" class="max-w-[10rem] hyphens-auto text-base text-zinc-900">internationalization</p>
+        </div>
+    </section>
+</div>

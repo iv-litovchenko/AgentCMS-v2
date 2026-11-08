@@ -3,33 +3,38 @@
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Yaml\Yaml;
 
 class WorkspaceService
 {
     private string $workspacesDir;
 
-    public function __construct(string $workspacesDir)
+    private WorkspaceManifestReader $manifestReader;
+
+    public function __construct(string $workspacesDir, WorkspaceManifestReader $manifestReader)
     {
-        $this->workspacesDir = $workspacesDir;
+        $this->workspacesDir = rtrim($workspacesDir, '/');
+        $this->manifestReader = $manifestReader;
     }
 
     /**
-     * @return list<array{id: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}>
+     * @return list<array{id: string, slug: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}>
      */
     public function list(): array
     {
         $this->ensureDirectory();
 
         $items = [];
-        $pattern = $this->workspacesDir . '/*.yaml';
-        $files = glob($pattern);
-        if ($files === false) {
+        $entries = scandir($this->workspacesDir);
+        if ($entries === false) {
             return [];
         }
 
-        foreach ($files as $filePath) {
-            $workspace = $this->readFile($filePath);
+        foreach ($entries as $entry) {
+            if (!$this->isWorkspaceDirName($entry)) {
+                continue;
+            }
+
+            $workspace = $this->readWorkspaceDir($entry);
             if ($workspace !== null) {
                 $items[] = $workspace;
             }
@@ -58,7 +63,7 @@ class WorkspaceService
         $storages = [];
         foreach ($this->list() as $workspace) {
             $storages[] = [
-                'id' => $workspace['id'],
+                'id' => $workspace['slug'],
                 'slug' => $workspace['slug'],
                 'name' => $workspace['name'],
                 'description' => $workspace['description'],
@@ -73,24 +78,15 @@ class WorkspaceService
     }
 
     /**
-     * @return array{id: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
+     * @return array{id: string, slug: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
      */
     public function findById(string $id): ?array
     {
-        if (!$this->isValidId($id)) {
-            return null;
-        }
-
-        $path = $this->filePathForId($id);
-        if (!is_file($path)) {
-            return null;
-        }
-
-        return $this->readFile($path);
+        return $this->findBySlug($id);
     }
 
     /**
-     * @return array{id: string, name: string, slug: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
+     * @return array{id: string, slug: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
      */
     public function findBySlug(string $slug): ?array
     {
@@ -98,103 +94,153 @@ class WorkspaceService
             return null;
         }
 
-        foreach ($this->list() as $workspace) {
-            if ($workspace['slug'] === $slug) {
-                return $workspace;
-            }
+        if (!is_dir($this->workspacePath($slug))) {
+            return null;
         }
 
-        return null;
+        return $this->readWorkspaceDir($slug);
     }
 
     /**
-     * @param array{name: string, folder: string, location: string, description?: string, sort_order?: int} $input
-     *
-     * @return array{id: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}
+     * @param array{name: string, slug: string, location: string, sort_order?: int} $input
      */
     public function create(array $input, ?UploadedFile $avatarFile = null): array
     {
         $this->ensureDirectory();
 
+        $name = trim($input['name']);
+        $slug = strtolower(trim($input['slug']));
+        if (!$this->isValidSlug($slug)) {
+            throw new \InvalidArgumentException('Ключ папки: латиница, цифры и дефис (например demo-main).');
+        }
+        if (is_dir($this->workspacePath($slug))) {
+            throw new \InvalidArgumentException('Папка «' . $slug . '» уже существует в workspaces/.');
+        }
+
+        $location = $input['location'];
+        if ($location !== 'local' && $location !== 'server') {
+            $location = 'local';
+        }
+
+        $sortOrder = $this->normalizeSortOrder($input['sort_order'] ?? 0);
         $now = $this->nowIso();
-        $id = $this->generateId();
 
         $avatar = '';
         if ($avatarFile !== null) {
-            $avatar = $this->storeUploadedAvatar($id, $avatarFile);
+            $avatar = $this->storeUploadedAvatar($slug, $avatarFile);
         }
 
-        $name = trim($input['name']);
-        $slug = $this->ensureUniqueSlug($this->slugify($name), null);
+        if (!mkdir($this->workspacePath($slug), 0775, true) && !is_dir($this->workspacePath($slug))) {
+            throw new \RuntimeException('Не удалось создать каталог workspace.');
+        }
 
-        $workspace = [
-            'id' => $id,
-            'name' => $name,
-            'slug' => $slug,
-            'folder' => trim($input['folder']),
-            'location' => $input['location'],
-            'description' => trim($input['description'] ?? ''),
-            'avatar' => $avatar,
-            'sort_order' => $this->normalizeSortOrder($input['sort_order'] ?? 0),
-            'created_at' => $now,
-            'updated_at' => $now,
+        $properties = [
+            'awn-type' => 'awn.hub.topic.ws',
+            'awn-name' => $name,
+            'awn-description' => '',
+            'cms-location' => $location,
+            'awn-sort' => $sortOrder,
+            'awn-create' => $now,
+            'awn-update' => $now,
         ];
+        if ($avatar !== '') {
+            $properties['cms-avatar'] = $avatar;
+        }
 
-        $this->writeWorkspace($workspace);
+        $manifestPath = $this->manifestPath($slug);
+        $this->writeFileAtomic($manifestPath, $this->manifestReader->buildFileContent($properties, "\n"));
+
+        $workspace = $this->readWorkspaceDir($slug);
+        if ($workspace === null) {
+            throw new \RuntimeException('Workspace создан, но manifest не прочитан.');
+        }
 
         return $workspace;
     }
 
     /**
-     * @param array{name: string, folder: string, location: string, description?: string, sort_order?: int} $input
+     * @param array{name: string, slug: string, location: string, sort_order?: int} $input
      *
-     * @return array{id: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
+     * @return array{id: string, slug: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
      */
     public function update(string $id, array $input, ?UploadedFile $avatarFile = null): ?array
     {
-        $existing = $this->findById($id);
+        $existing = $this->findBySlug($id);
         if ($existing === null) {
             return null;
         }
 
-        $existing['name'] = trim($input['name']);
-        $existing['slug'] = $this->ensureUniqueSlug($this->slugify($existing['name']), $id);
-        $existing['folder'] = trim($input['folder']);
-        $existing['location'] = $input['location'];
-        $existing['description'] = trim($input['description'] ?? '');
-        $existing['sort_order'] = $this->normalizeSortOrder($input['sort_order'] ?? $existing['sort_order']);
-        $existing['updated_at'] = $this->nowIso();
+        $name = trim($input['name']);
+        $newSlug = strtolower(trim($input['slug']));
+        if (!$this->isValidSlug($newSlug)) {
+            throw new \InvalidArgumentException('Ключ папки: латиница, цифры и дефис.');
+        }
+
+        $location = $input['location'];
+        if ($location !== 'local' && $location !== 'server') {
+            $location = 'local';
+        }
+
+        $sortOrder = $this->normalizeSortOrder($input['sort_order'] ?? $existing['sort_order']);
+
+        if ($newSlug !== $existing['slug'] && is_dir($this->workspacePath($newSlug))) {
+            throw new \InvalidArgumentException('Папка «' . $newSlug . '» уже занята.');
+        }
+
+        $manifestPath = $this->manifestPath($existing['slug']);
+        $parts = $this->manifestReader->parseFile($manifestPath);
+        if ($parts === null) {
+            throw new \RuntimeException('manifest.md не найден или повреждён.');
+        }
+
+        $properties = $parts['properties'];
+        $properties['awn-name'] = $name;
+        $properties['cms-location'] = $location;
+        $properties['awn-sort'] = $sortOrder;
+        $properties['awn-update'] = $this->nowIso();
+        if (!isset($properties['awn-type']) || !is_string($properties['awn-type'])) {
+            $properties['awn-type'] = 'awn.hub.topic.ws';
+        }
 
         if ($avatarFile !== null) {
             $previousAvatar = $existing['avatar'];
-            $existing['avatar'] = $this->storeUploadedAvatar($id, $avatarFile);
-            if ($previousAvatar !== '') {
+            $newAvatar = $this->storeUploadedAvatar($newSlug, $avatarFile);
+            $properties['cms-avatar'] = $newAvatar;
+            if ($previousAvatar !== '' && $previousAvatar !== $newAvatar) {
                 $this->removeAvatarFile($previousAvatar);
             }
         }
 
-        $this->writeWorkspace($existing);
+        $this->writeFileAtomic($manifestPath, $this->manifestReader->buildFileContent($properties, $parts['body']));
 
-        return $existing;
+        if ($newSlug !== $existing['slug']) {
+            $oldPath = $this->workspacePath($existing['slug']);
+            $newPath = $this->workspacePath($newSlug);
+            if (!rename($oldPath, $newPath)) {
+                throw new \RuntimeException('Не удалось переименовать папку workspace.');
+            }
+        }
+
+        return $this->readWorkspaceDir($newSlug);
     }
 
     public function delete(string $id): bool
     {
-        if (!$this->isValidId($id)) {
+        if (!$this->isValidSlug($id)) {
             return false;
         }
 
-        $path = $this->filePathForId($id);
-        if (!is_file($path)) {
+        $dir = $this->workspacePath($id);
+        if (!is_dir($dir)) {
             return false;
         }
 
-        $workspace = $this->readFile($path);
+        $workspace = $this->readWorkspaceDir($id);
         if ($workspace !== null && $workspace['avatar'] !== '') {
             $this->removeAvatarFile($workspace['avatar']);
         }
 
-        return unlink($path);
+        return $this->removeDirectory($dir);
     }
 
     public function resolveAvatarPath(string $filename): ?string
@@ -246,7 +292,82 @@ class WorkspaceService
         return mb_strtoupper($first . $second);
     }
 
-    private function storeUploadedAvatar(string $workspaceId, UploadedFile $file): string
+    /**
+     * @return array{id: string, slug: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string}|null
+     */
+    private function readWorkspaceDir(string $slug): ?array
+    {
+        if (!$this->isValidSlug($slug)) {
+            return null;
+        }
+
+        $manifestPath = $this->manifestPath($slug);
+        if (!is_file($manifestPath)) {
+            return null;
+        }
+
+        $meta = $this->manifestReader->readWorkspaceMeta($manifestPath);
+        if ($meta === null) {
+            return null;
+        }
+
+        $name = $meta['name'];
+        if ($name === '') {
+            $name = $slug;
+        }
+
+        $createdAt = $meta['created_at'];
+        if ($createdAt === '') {
+            $createdAt = $this->nowIso();
+        }
+
+        $updatedAt = $meta['updated_at'];
+        if ($updatedAt === '') {
+            $updatedAt = $createdAt;
+        }
+
+        return [
+            'id' => $slug,
+            'slug' => $slug,
+            'name' => $name,
+            'folder' => 'workspaces/' . $slug,
+            'location' => $meta['location'],
+            'description' => $meta['description'],
+            'avatar' => $meta['avatar'],
+            'sort_order' => $meta['sort_order'],
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
+        ];
+    }
+
+    private function isWorkspaceDirName(string $name): bool
+    {
+        if ($name === '.' || $name === '..') {
+            return false;
+        }
+
+        if ($name === 'avatars') {
+            return false;
+        }
+
+        if (str_starts_with($name, '.')) {
+            return false;
+        }
+
+        return $this->isValidSlug($name);
+    }
+
+    private function workspacePath(string $slug): string
+    {
+        return $this->workspacesDir . '/' . $slug;
+    }
+
+    private function manifestPath(string $slug): string
+    {
+        return $this->workspacePath($slug) . '/manifest.md';
+    }
+
+    private function storeUploadedAvatar(string $slug, UploadedFile $file): string
     {
         $this->ensureAvatarsDirectory();
 
@@ -264,10 +385,11 @@ class WorkspaceService
             $extension = 'jpg';
         }
 
-        do {
-            $filename = $workspaceId . '-' . bin2hex(random_bytes(8)) . '.' . $extension;
-            $targetPath = $this->avatarsDir() . '/' . $filename;
-        } while (is_file($targetPath));
+        $filename = $slug . '-' . bin2hex(random_bytes(6)) . '.' . $extension;
+        $targetPath = $this->avatarsDir() . '/' . $filename;
+        if (is_file($targetPath)) {
+            throw new \RuntimeException('Конфликт имени аватара.');
+        }
 
         $file->move($this->avatarsDir(), $filename);
 
@@ -306,194 +428,9 @@ class WorkspaceService
         }
     }
 
-    private function filePathForId(string $id): string
-    {
-        return $this->workspacesDir . '/' . $id . '.yaml';
-    }
-
-    private function isValidId(string $id): bool
-    {
-        return (bool) preg_match('/^[a-zA-Z0-9_-]+$/', $id);
-    }
-
-    private function generateId(): string
-    {
-        do {
-            $id = bin2hex(random_bytes(8));
-            $path = $this->filePathForId($id);
-        } while (is_file($path));
-
-        return $id;
-    }
-
-    private function nowIso(): string
-    {
-        return (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format(\DateTimeInterface::ATOM);
-    }
-
-    /**
-     * @return array{id: string, name: string, folder: string, location: string, description: string, avatar: string, created_at: string, updated_at: string}|null
-     */
-    private function readFile(string $filePath): ?array
-    {
-        $content = file_get_contents($filePath);
-        if ($content === false) {
-            return null;
-        }
-
-        try {
-            $parsed = Yaml::parse($content);
-        } catch (\Exception $exception) {
-            return null;
-        }
-
-        if (!is_array($parsed)) {
-            return null;
-        }
-
-        return $this->normalizeRecord($parsed, basename($filePath, '.yaml'));
-    }
-
-    /**
-     * @param array<string, mixed> $parsed
-     *
-     * @return array{id: string, name: string, folder: string, location: string, description: string, avatar: string, created_at: string, updated_at: string}|null
-     */
-    private function normalizeRecord(array $parsed, string $fallbackId): ?array
-    {
-        $id = $parsed['id'] ?? $fallbackId;
-        if (!is_string($id) || !$this->isValidId($id)) {
-            return null;
-        }
-
-        $name = $parsed['name'] ?? '';
-        $folder = $parsed['folder'] ?? '';
-        $location = $parsed['location'] ?? '';
-        if (!is_string($name) || !is_string($folder) || !is_string($location)) {
-            return null;
-        }
-
-        if ($location !== 'local' && $location !== 'server') {
-            return null;
-        }
-
-        $description = $parsed['description'] ?? '';
-        if (!is_string($description)) {
-            $description = '';
-        }
-
-        $avatar = $parsed['avatar'] ?? '';
-        if (!is_string($avatar)) {
-            $avatar = '';
-        }
-        if ($avatar !== '' && !$this->isValidAvatarFilename($avatar)) {
-            $avatar = '';
-        }
-
-        $sortOrder = $this->normalizeSortOrder($parsed['sort_order'] ?? 0);
-
-        $slug = $parsed['slug'] ?? '';
-        if (!is_string($slug) || !$this->isValidSlug($slug)) {
-            $slug = $this->slugify($name);
-        }
-
-        $createdAt = $parsed['created_at'] ?? '';
-        $updatedAt = $parsed['updated_at'] ?? '';
-        if (!is_string($createdAt)) {
-            $createdAt = $this->nowIso();
-        }
-        if (!is_string($updatedAt)) {
-            $updatedAt = $createdAt;
-        }
-
-        return [
-            'id' => $id,
-            'name' => $name,
-            'slug' => $slug,
-            'folder' => $folder,
-            'location' => $location,
-            'description' => $description,
-            'avatar' => $avatar,
-            'sort_order' => $sortOrder,
-            'created_at' => $createdAt,
-            'updated_at' => $updatedAt,
-        ];
-    }
-
-    private function slugify(string $name): string
-    {
-        $text = $this->transliterate($name);
-        $text = mb_strtolower($text, 'UTF-8');
-        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-        if ($text === null) {
-            $text = '';
-        }
-        $text = trim($text, '-');
-        if ($text === '') {
-            $text = 'workspace';
-        }
-
-        return $text;
-    }
-
-    private function ensureUniqueSlug(string $baseSlug, ?string $excludeId): string
-    {
-        $slug = $baseSlug;
-        $suffix = 2;
-        while ($this->slugExists($slug, $excludeId)) {
-            $slug = $baseSlug . '-' . (string) $suffix;
-            $suffix = $suffix + 1;
-        }
-
-        return $slug;
-    }
-
-    private function slugExists(string $slug, ?string $excludeId): bool
-    {
-        foreach ($this->list() as $workspace) {
-            if ($excludeId !== null && $workspace['id'] === $excludeId) {
-                continue;
-            }
-            if ($workspace['slug'] === $slug) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private function isValidSlug(string $slug): bool
     {
         return (bool) preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug);
-    }
-
-    private function transliterate(string $text): string
-    {
-        $map = [
-            'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'e',
-            'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l', 'м' => 'm',
-            'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u',
-            'ф' => 'f', 'х' => 'h', 'ц' => 'ts', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch',
-            'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
-            'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D', 'Е' => 'E', 'Ё' => 'E',
-            'Ж' => 'Zh', 'З' => 'Z', 'И' => 'I', 'Й' => 'Y', 'К' => 'K', 'Л' => 'L', 'М' => 'M',
-            'Н' => 'N', 'О' => 'O', 'П' => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T', 'У' => 'U',
-            'Ф' => 'F', 'Х' => 'H', 'Ц' => 'Ts', 'Ч' => 'Ch', 'Ш' => 'Sh', 'Щ' => 'Sch',
-            'Ъ' => '', 'Ы' => 'Y', 'Ь' => '', 'Э' => 'E', 'Ю' => 'Yu', 'Я' => 'Ya',
-        ];
-
-        $length = mb_strlen($text, 'UTF-8');
-        $result = '';
-        for ($i = 0; $i < $length; $i = $i + 1) {
-            $char = mb_substr($text, $i, 1, 'UTF-8');
-            if (isset($map[$char])) {
-                $result = $result . $map[$char];
-                continue;
-            }
-            $result = $result . $char;
-        }
-
-        return $result;
     }
 
     private function normalizeSortOrder(mixed $value): int
@@ -509,37 +446,33 @@ class WorkspaceService
         return 0;
     }
 
-    /**
-     * @param array{id: string, name: string, folder: string, location: string, description: string, avatar: string, sort_order: int, created_at: string, updated_at: string} $workspace
-     */
-    private function writeWorkspace(array $workspace): void
+    private function nowIso(): string
     {
-        $this->ensureDirectory();
+        return (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format(\DateTimeInterface::ATOM);
+    }
 
-        $id = $workspace['id'];
-        if (!$this->isValidId($id)) {
-            throw new \InvalidArgumentException('Invalid workspace id.');
+    private function writeFileAtomic(string $path, string $content): void
+    {
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
         }
 
-        $path = $this->filePathForId($id);
         $tmpPath = $path . '.tmp.' . getmypid() . '.' . bin2hex(random_bytes(4));
-
-        $yaml = Yaml::dump($workspace, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
-
         $handle = fopen($tmpPath, 'cb');
         if ($handle === false) {
-            throw new \RuntimeException('Cannot open temp workspace file.');
+            throw new \RuntimeException('Cannot open temp manifest file.');
         }
 
         try {
             if (!flock($handle, LOCK_EX)) {
-                throw new \RuntimeException('Cannot lock workspace file.');
+                throw new \RuntimeException('Cannot lock manifest file.');
             }
 
             ftruncate($handle, 0);
-            $written = fwrite($handle, $yaml);
+            $written = fwrite($handle, $content);
             if ($written === false) {
-                throw new \RuntimeException('Cannot write workspace file.');
+                throw new \RuntimeException('Cannot write manifest file.');
             }
 
             fflush($handle);
@@ -550,7 +483,45 @@ class WorkspaceService
 
         if (!rename($tmpPath, $path)) {
             @unlink($tmpPath);
-            throw new \RuntimeException('Cannot save workspace file.');
+            throw new \RuntimeException('Cannot save manifest file.');
         }
+    }
+
+    private function removeDirectory(string $dir): bool
+    {
+        $realDir = realpath($dir);
+        $realRoot = realpath($this->workspacesDir);
+        if ($realDir === false || $realRoot === false) {
+            return false;
+        }
+
+        if (!str_starts_with($realDir, $realRoot . DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        $entries = scandir($realDir);
+        if ($entries === false) {
+            return false;
+        }
+
+        foreach ($entries as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            $path = $realDir . DIRECTORY_SEPARATOR . $entry;
+            if (is_dir($path)) {
+                if (!$this->removeDirectory($path)) {
+                    return false;
+                }
+                continue;
+            }
+
+            if (!unlink($path)) {
+                return false;
+            }
+        }
+
+        return rmdir($realDir);
     }
 }

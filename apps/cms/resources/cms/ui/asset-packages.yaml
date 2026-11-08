@@ -17,6 +17,13 @@ items:
     scripts:
       - src: https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js
     form_theme: form/themes/flowbite_layout.html.twig
+  - id: tw_elements
+    label: TW Elements
+    core: false
+    default_enabled: false
+    description: Компоненты Tailwind (tw-elements.com), JS для ripple и интерактива
+    scripts:
+      - src: https://cdn.jsdelivr.net/npm/tw-elements@2.0.0/js/tw-elements.umd.min.js
   - id: fancybox
     label: Fancybox
     core: false

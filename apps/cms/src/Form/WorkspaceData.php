@@ -8,11 +8,9 @@ class WorkspaceData
 {
     public string $name = '';
 
-    public string $folder = '';
+    public string $slug = '';
 
     public string $location = 'local';
-
-    public string $description = '';
 
     public int $sortOrder = 0;
 

@@ -54,13 +54,21 @@ class WorkspaceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->workspaceService->create([
-                'name' => $data->name,
-                'folder' => $data->folder,
-                'location' => $data->location,
-                'description' => $data->description,
-                'sort_order' => $data->sortOrder,
-            ], $data->avatarUpload);
+            try {
+                $this->workspaceService->create([
+                    'name' => $data->name,
+                    'slug' => $data->slug,
+                    'location' => $data->location,
+                    'sort_order' => $data->sortOrder,
+                ], $data->avatarUpload);
+            } catch (\InvalidArgumentException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+
+                return $this->render('workspace/form.html.twig', [
+                    'form' => $form->createView(),
+                    'page_title' => 'Новое хранилище',
+                ]);
+            }
 
             $this->addFlash('success', 'Хранилище создано.');
 
@@ -73,7 +81,7 @@ class WorkspaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'workspace_edit', requirements: ['id' => '[a-zA-Z0-9_-]+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'workspace_edit', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET', 'POST'])]
     public function edit(string $id, Request $request): Response
     {
         $workspace = $this->workspaceService->findById($id);
@@ -83,9 +91,8 @@ class WorkspaceController extends AbstractController
 
         $data = new WorkspaceData();
         $data->name = $workspace['name'];
-        $data->folder = $workspace['folder'];
+        $data->slug = $workspace['slug'];
         $data->location = $workspace['location'];
-        $data->description = $workspace['description'];
         $data->sortOrder = $workspace['sort_order'];
 
         $form = $this->createForm(WorkspaceFormType::class, $data, [
@@ -94,13 +101,22 @@ class WorkspaceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $updated = $this->workspaceService->update($id, [
-                'name' => $data->name,
-                'folder' => $data->folder,
-                'location' => $data->location,
-                'description' => $data->description,
-                'sort_order' => $data->sortOrder,
-            ], $data->avatarUpload);
+            try {
+                $updated = $this->workspaceService->update($id, [
+                    'name' => $data->name,
+                    'slug' => $data->slug,
+                    'location' => $data->location,
+                    'sort_order' => $data->sortOrder,
+                ], $data->avatarUpload);
+            } catch (\InvalidArgumentException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+
+                return $this->render('workspace/form.html.twig', [
+                    'form' => $form->createView(),
+                    'page_title' => 'Редактирование: ' . $workspace['name'],
+                    'current_avatar' => $workspace['avatar'],
+                ]);
+            }
 
             if ($updated === null) {
                 throw $this->createNotFoundException('Хранилище не найдено.');
@@ -108,7 +124,7 @@ class WorkspaceController extends AbstractController
 
             $this->addFlash('success', 'Хранилище обновлено.');
 
-            return $this->redirectToRoute('workspace_index');
+            return $this->redirectToRoute('workspace_show', ['slug' => $updated['slug']]);
         }
 
         return $this->render('workspace/form.html.twig', [
@@ -118,7 +134,7 @@ class WorkspaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'workspace_delete', requirements: ['id' => '[a-zA-Z0-9_-]+'], methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'workspace_delete', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'])]
     public function delete(string $id, Request $request): Response
     {
         $token = $request->request->getString('_token');

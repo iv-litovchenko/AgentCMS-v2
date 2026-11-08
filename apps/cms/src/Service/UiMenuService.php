@@ -135,6 +135,7 @@ class UiMenuService
 
         $currentRoute = $this->getCurrentRoute();
         $currentAppName = $this->getCurrentAppName();
+        $currentSection = $this->getCurrentAppSection();
         $items = [];
         foreach ($rawItems as $rawItem) {
             if (!is_array($rawItem)) {
@@ -162,7 +163,7 @@ class UiMenuService
                     $routeParams = [];
                 }
                 $url = $this->urlGenerator->generate($customRoute, $routeParams);
-                $active = $this->isAppMenuItemActive($rawItem, $currentRoute, $currentAppName, $this->getCurrentAppSection());
+                $active = $this->isAppMenuItemActive($rawItem, $currentRoute, $currentAppName, $currentSection);
                 if ($name === '') {
                     $name = 'menu-' . (string) count($items);
                 }
@@ -193,6 +194,9 @@ class UiMenuService
                 if ($currentRoute === 'app_show' || $currentRoute === 'app_section') {
                     $active = true;
                 }
+            }
+            if ($name === 'documentation' && $currentAppName === 'documentation' && $currentSection !== '') {
+                $active = true;
             }
 
             $items[] = [
@@ -245,7 +249,7 @@ class UiMenuService
     /**
      * @return list<array{label: string, slug: string, url: string, active: bool}>
      */
-    public function getAppSections(string $appName): array
+    public function getAppSections(string $appName, ?string $activeSectionOverride = null): array
     {
         if (!$this->isValidAppName($appName)) {
             return [];
@@ -287,7 +291,11 @@ class UiMenuService
             ]);
 
             $active = false;
-            if ($currentRoute === 'app_section' && $currentAppName === $appName && $currentSection === $slug) {
+            if ($activeSectionOverride !== null) {
+                if ($slug === $activeSectionOverride) {
+                    $active = true;
+                }
+            } elseif ($currentAppName === $appName && $currentSection === $slug) {
                 $active = true;
             }
 

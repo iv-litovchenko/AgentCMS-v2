@@ -57,12 +57,9 @@ class AppController extends AbstractController
     public function section(string $name, string $section, Request $request): Response
     {
         if ($name === 'documentation' && $section === 'typography') {
-            $params = ['name' => 'typography'];
-            if ($request->query->getBoolean('compact')) {
-                $params['compact'] = 1;
-            }
-
-            return $this->redirectToRoute('app_show', $params, Response::HTTP_MOVED_PERMANENTLY);
+            return $this->forward('App\Controller\TypographyController::renderPage', [
+                'request' => $request,
+            ]);
         }
 
         if ($name === 'connector') {
@@ -118,9 +115,19 @@ class AppController extends AbstractController
         }
 
         if ($name === 'typography') {
-            return $this->forward('App\Controller\TypographyController::renderPage', [
-                'request' => $request,
-            ]);
+            $params = ['name' => 'documentation', 'section' => 'typography'];
+            if ($request->query->getBoolean('compact')) {
+                $params['compact'] = 1;
+            }
+
+            return $this->redirectToRoute('app_section', $params, Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        if ($name === 'layouts') {
+            return $this->redirectToRoute('app_section', [
+                'name' => 'documentation',
+                'section' => 'layouts',
+            ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
         if ($name === 'symfony_ai') {
