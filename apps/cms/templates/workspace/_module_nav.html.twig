@@ -1,20 +1,62 @@
-<ul class="mb-3 space-y-0.5 border-t border-b border-zinc-100 pt-3 pb-3 text-sm">
+{# workspace_modules, workspace, active_module_slug #}
+{% if workspace_modules|default([])|length > 0 %}
+    {% set onModule = active_module_slug|default('') != '' %}
+    {% set moduleZoneFilter = 'модули' %}
     {% for module in workspace_modules %}
-        <li>
-            {% if module.slug == active_module_slug %}
-                <span class="flex items-center gap-2 rounded-md bg-zinc-100 px-2.5 py-1.5 font-medium text-zinc-900">
-                    <span class="h-1.5 w-1.5 rounded-full {% if module.active %}bg-emerald-500{% else %}bg-zinc-300{% endif %}"></span>
-                    {{ module.label }}
-                </span>
-            {% elseif module.active %}
-                <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: module.slug}) }}" class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-zinc-700 hover:bg-zinc-50">
-                    {{ module.label }}
-                </a>
-            {% else %}
-                <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: module.slug}) }}" class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-zinc-400 hover:bg-zinc-50 hover:text-zinc-600">
-                    {{ module.label }}
-                </a>
-            {% endif %}
-        </li>
+        {% set moduleZoneFilter = moduleZoneFilter ~ ' ' ~ module.label %}
     {% endfor %}
-</ul>
+    <li role="treeitem" class="hub-tree-zone hub-tree-modules" data-hub-tree-zone data-filter-text="{{ moduleZoneFilter|lower|e('html_attr') }}">
+        <details class="group/tree"{% if onModule %} open{% endif %}>
+            <summary class="flex cursor-pointer list-none items-center gap-0.5 rounded px-0.5 py-0.5 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden">
+                <span class="inline-flex shrink-0 rounded p-0.5 text-zinc-400" aria-hidden="true">
+                    <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform duration-150 group-open/tree:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+                </span>
+                <span class="flex min-w-0 flex-1 items-center gap-1 rounded px-1 py-0.5 font-medium {% if onModule %}bg-zinc-100 text-zinc-900{% else %}text-zinc-800{% endif %}">
+                    {% include 'workspace/_hub_tree_icon.html.twig' with {
+                        icon: 'template',
+                        icon_class: 'text-indigo-500',
+                    } %}
+                    <span class="truncate">Модули</span>
+                </span>
+            </summary>
+            <ul class="ml-3 mt-0.5 space-y-0.5 border-l border-zinc-200 pl-2" role="group">
+                {% for module in workspace_modules %}
+                    {% set moduleIcon = 'file' %}
+                    {% if module.slug == 'journal' %}
+                        {% set moduleIcon = 'book' %}
+                    {% elseif module.slug == 'dependencies' %}
+                        {% set moduleIcon = 'map' %}
+                    {% elseif module.slug == 'settings' %}
+                        {% set moduleIcon = 'section' %}
+                    {% elseif module.slug == 'trash' %}
+                        {% set moduleIcon = 'archive' %}
+                    {% elseif module.slug == 'about' %}
+                        {% set moduleIcon = 'check' %}
+                    {% endif %}
+                    {% set onModuleItem = active_module_slug|default('') == module.slug %}
+                    {% set itemFilter = (module.label ~ ' ' ~ module.slug)|lower %}
+                    <li role="treeitem" class="hub-tree-node" data-hub-tree-node data-filter-text="{{ itemFilter|e('html_attr') }}">
+                        {% if onModuleItem %}
+                            <span class="flex items-center gap-1 rounded bg-zinc-100 px-1 py-0.5 font-medium text-zinc-900">
+                                {% include 'workspace/_hub_tree_icon.html.twig' with {
+                                    icon: moduleIcon,
+                                    icon_class: module.active ? 'text-emerald-600' : 'text-zinc-400',
+                                } %}
+                                <span class="truncate">{{ module.label }}</span>
+                            </span>
+                        {% else %}
+                            <a href="{{ path('workspace_module_show', {slug: workspace.slug, module: module.slug}) }}"
+                               class="flex items-center gap-1 rounded px-1 py-0.5 {% if module.active %}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{% else %}text-zinc-400 hover:bg-zinc-50 hover:text-zinc-600{% endif %}">
+                                {% include 'workspace/_hub_tree_icon.html.twig' with {
+                                    icon: moduleIcon,
+                                    icon_class: module.active ? 'text-zinc-500' : 'text-zinc-300',
+                                } %}
+                                <span class="truncate">{{ module.label }}</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+    </li>
+{% endif %}

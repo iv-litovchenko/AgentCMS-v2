@@ -10,6 +10,8 @@
 
 {% block body %}
     {% include 'partials/header.html.twig' %}
-    {% block main %}{% endblock %}
+    <main class="flex min-h-0 flex-1 flex-col">
+        {% block main %}{% endblock %}
+    </main>
     {% include 'partials/footer.html.twig' %}
 {% endblock %}

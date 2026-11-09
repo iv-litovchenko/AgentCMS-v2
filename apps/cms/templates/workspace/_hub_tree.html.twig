@@ -19,7 +19,7 @@
     </a>
 </div>
 
-<nav class="text-xs leading-snug" id="hub-tree-nav" aria-label="Хабы">
+<nav class="text-xs leading-snug" id="hub-tree-nav" aria-label="Дерево хранилища">
     <ul class="space-y-0.5" role="tree">
         {% for group in hub_tree %}
             {% set onFamily = active_hub_family_page|default(false) and active_hub_family|default('') == group.family %}
@@ -62,6 +62,11 @@
                 </details>
             </li>
         {% endfor %}
+        {% include 'workspace/_module_nav.html.twig' with {
+            workspace_modules: workspace_modules|default([]),
+            workspace: workspace,
+            active_module_slug: active_module_slug|default(''),
+        } %}
     </ul>
 </nav>
 
