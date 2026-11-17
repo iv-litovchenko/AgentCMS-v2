@@ -176,6 +176,108 @@ write_maintenance_inc() {
     fi
 }
 
+https_cert_dir() {
+    echo "${AGENT_CMS_ROOT}/.dev-certs"
+}
+
+https_certs_present() {
+    local d
+    d="$(https_cert_dir)"
+    if [ -f "${d}/cert.pem" ] && [ -f "${d}/key.pem" ]; then
+        return 0
+    fi
+    return 1
+}
+
+https_override_has_mount() {
+    local f="${AGENT_CMS_ROOT}/docker-compose.override.yml"
+    if [ ! -f "${f}" ]; then
+        return 1
+    fi
+    if grep -q '\.dev-certs' "${f}" 2>/dev/null; then
+        return 0
+    fi
+    return 1
+}
+
+cmd_https() {
+    local sub="${1:-status}"
+    shift || true
+    load_config
+
+    if [ "${sub}" = "status" ]; then
+        local https_port
+        https_port="$(read_env_var PUBLIC_HTTPS_PORT 8443)"
+        if https_certs_present; then
+            echo "certs: OK (.dev-certs/cert.pem)"
+            if [ -f "$(https_cert_dir)/meta.yaml" ]; then
+                grep -E '^generated_at:' "$(https_cert_dir)/meta.yaml" 2>/dev/null | sed 's/^/  /' || true
+            fi
+        else
+            echo "certs: нет — agent-cms-cli-v2 https setup"
+        fi
+        if https_override_has_mount; then
+            echo "override: .dev-certs смонтирован в proxy"
+        else
+            echo "override: нет mount .dev-certs (см. docker-compose.override.example.yml)"
+        fi
+        if command -v mkcert >/dev/null 2>&1; then
+            echo "mkcert: $(mkcert -version 2>/dev/null || echo ok)"
+        else
+            echo "mkcert: не установлен (brew install mkcert)"
+        fi
+        if command -v curl >/dev/null 2>&1; then
+            local code
+            code="$(curl -sk -o /dev/null -w "%{http_code}" "https://localhost:${https_port}/" 2>/dev/null || echo "000")"
+            echo "HTTPS localhost:${https_port} → ${code}"
+        fi
+        return 0
+    fi
+
+    if [ "${sub}" = "setup" ]; then
+        local script="${AGENT_CMS_ROOT}/scripts/tls-dev-setup.sh"
+        if [ ! -x "${script}" ]; then
+            if [ -f "${script}" ]; then
+                chmod +x "${script}"
+            else
+                echo "Нет ${script}" >&2
+                exit 1
+            fi
+        fi
+        bash "${script}"
+        local do_restart=0
+        if [ "${1:-}" = "--restart" ]; then
+            do_restart=1
+        fi
+        if [ "${do_restart}" = "0" ]; then
+            echo ""
+            echo "Дальше: agent-cms-cli-v2 https reload   # перечитать сертификаты в proxy"
+        else
+            compose_exec up -d proxy
+            echo "proxy: пересоздан с новыми сертификатами"
+        fi
+        return 0
+    fi
+
+    if [ "${sub}" = "reload" ]; then
+        if ! https_certs_present; then
+            echo "Сначала: agent-cms-cli-v2 https setup" >&2
+            exit 1
+        fi
+        compose_exec up -d proxy
+        echo "proxy: up (сертификаты из .dev-certs)"
+        public_urls | while read -r url; do
+            case "${url}" in
+                https://*) echo "→ ${url}" ;;
+            esac
+        done
+        return 0
+    fi
+
+    echo "usage: https status | https setup [--restart] | https reload" >&2
+    exit 1
+}
+
 cmd_maintenance() {
     local sub="${1:-status}"
     load_config
@@ -364,6 +466,10 @@ agent-cms-cli-v2 — Agent CMS
 
   maintenance status | on | off
 
+  https status             доверенный https://localhost:8443 (mkcert, .dev-certs)
+  https setup [--restart]  выпустить сертификаты для localhost
+  https reload             proxy с .dev-certs
+
   start | stop | restart | down | ps
   logs [service]           поток (-f)
   logs snap [--tail N]     снимок для чата
@@ -399,6 +505,11 @@ main() {
         cmd_status
     elif [ "${cmd}" = "maintenance" ]; then
         cmd_maintenance "$@"
+    elif [ "${cmd}" = "https" ]; then
+        cmd_https "$@"
+    elif [ "${cmd}" = "tls" ]; then
+        echo "Команда tls переименована в https." >&2
+        cmd_https "$@"
     elif [ "${cmd}" = "start" ]; then
         cmd_start "$@"
     elif [ "${cmd}" = "stop" ]; then

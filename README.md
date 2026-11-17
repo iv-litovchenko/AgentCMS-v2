@@ -52,7 +52,8 @@ agent-cms-cli-v2 start    # PATH дописывает install.sh в ~/.zshrc / ~
 | **Linux VPS** | Репозиторий — `/var/www/agent-cms-v2`<br>CLI и конфиг CLI — у пользователя, под которым запускали `install.sh` (`~/.local/bin/…`, `~/.config/agent-cms-v2/env`) |
 | **Windows (WSL2)** | Репозиторий — `/home/<you>/agent-cms-v2`<br>CLI — `/home/<you>/.local/bin/agent-cms-cli-v2`<br>Конфиг CLI — `/home/<you>/.config/agent-cms-v2/env` |
 
-**Адреса по умолчанию:** http://localhost:8080/ · https://localhost:8443/
+**Адреса по умолчанию:** http://localhost:8080/ · https://localhost:8443/  
+Доверенный HTTPS в браузере (mkcert): `agent-cms-cli-v2 https setup --restart` (см. ниже). В `docker-compose.override.yml` proxy монтирует `.dev-certs/`.
 
 ## CLI `agent-cms-cli-v2`
 
@@ -66,6 +67,11 @@ agent-cms-cli-v2 status                           # HTTP ping + docker compose p
 agent-cms-cli-v2 maintenance status               # on | off
 agent-cms-cli-v2 maintenance on                   # 503, заглушка maintenance
 agent-cms-cli-v2 maintenance off                  # обычная работа
+
+agent-cms-cli-v2 https status                     # mkcert, .dev-certs, ответ :8443
+agent-cms-cli-v2 https setup                      # сертификаты localhost (scripts/tls-dev-setup.sh)
+agent-cms-cli-v2 https setup --restart            # setup + proxy up
+agent-cms-cli-v2 https reload                     # proxy перечитает .dev-certs
 
 agent-cms-cli-v2 start                            # up -d --build, URL в терминал
 agent-cms-cli-v2 stop                             # compose stop
