@@ -79,6 +79,98 @@ class WorkspaceDiskNodeController extends AbstractController
         ], Response::HTTP_MOVED_PERMANENTLY);
     }
 
+    #[Route('/{slug}/{nodePath}', name: 'workspace_disk_file_view', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~view'], methods: ['GET'], priority: 4)]
+    public function viewFile(string $slug, string $nodePath): Response
+    {
+        $workspace = $this->workspaceService->findBySlug($slug);
+        if ($workspace === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $fileDiskPath = $this->stripViewSuffix($nodePath);
+        $this->assertDiskPathAllowed($fileDiskPath);
+
+        $absolutePath = $this->workspaceNodeScanner->resolveDiskNodeAbsolutePath($workspace['slug'], $fileDiskPath);
+        if ($absolutePath === null || !is_file($absolutePath)) {
+            throw $this->createNotFoundException('Файл не найден.');
+        }
+
+        $diskNode = $this->workspaceNodeScanner->readDiskNode($workspace['slug'], $fileDiskPath);
+        if ($diskNode === null) {
+            throw $this->createNotFoundException('Файл не найден.');
+        }
+
+        $workspace['initials'] = $this->workspaceService->initialsFromName($workspace['name']);
+
+        $editMode = $this->workspaceDiskNodeEditService->resolveEditMode($diskNode);
+        $rawText = '';
+        if ($editMode === WorkspaceDiskNodeEditService::MODE_TEXT) {
+            $content = file_get_contents($absolutePath);
+            if (is_string($content)) {
+                $rawText = $content;
+            }
+        }
+
+        $split = $this->splitNodeAndRelativeFilePath($fileDiskPath);
+        $parentDiskPath = $split['node_disk_path'];
+        $fileLabel = basename($fileDiskPath);
+        if ($fileLabel === '') {
+            $fileLabel = $fileDiskPath;
+        }
+
+        $hubFamily = $this->workspaceViewAssembler->resolveHubFamilyForDiskPath($parentDiskPath, $workspace['slug']);
+        $parentTypeId = '';
+        $parentLabel = $parentDiskPath;
+        if ($parentDiskPath === '') {
+            $parentLabel = 'Корень';
+        }
+        $parentNode = $this->workspaceNodeScanner->readDiskNode($workspace['slug'], $parentDiskPath);
+        if ($parentNode !== null) {
+            $parentTypeId = $this->acmsManifestPropertyBridge->stringProperty($parentNode['properties'], 'acms-type');
+            $parentLabel = $this->resolveNodeLabel($parentDiskPath, $parentNode['properties']);
+        }
+
+        $crumbs = $this->workspaceBreadcrumbBuilder->buildForDiskNode(
+            $workspace,
+            $parentDiskPath,
+            $parentLabel,
+            $hubFamily,
+            $parentTypeId
+        );
+        $crumbs[] = [
+            'label' => $fileLabel,
+            'route' => '',
+            'route_params' => [],
+            'current' => true,
+        ];
+
+        $body = $diskNode['body'];
+        if (!is_string($body)) {
+            $body = '';
+        }
+
+        return $this->render('workspace/disk_file_view.html.twig', array_merge(
+            $this->workspaceViewAssembler->buildViewContext($workspace),
+            [
+                'disk_file' => $diskNode,
+                'disk_file_path' => $fileDiskPath,
+                'disk_file_label' => $fileLabel,
+                'disk_file_body' => $body,
+                'disk_file_raw' => $rawText,
+                'disk_file_edit_mode' => $editMode,
+                'disk_node_parent_path' => $parentDiskPath,
+                'disk_node_parent_label' => $parentLabel,
+                'active_disk_node_path' => $parentDiskPath,
+                'active_hub_path' => '',
+                'active_hub_family' => $hubFamily,
+                'active_hub_family_page' => false,
+                'active_module_slug' => '',
+                'workspace_breadcrumbs' => $crumbs,
+                'workspace_toolbar' => $this->workspaceBreadcrumbBuilder->buildToolbarForDiskNode($workspace, $parentDiskPath),
+            ]
+        ));
+    }
+
     #[Route('/{slug}/{nodePath}', name: 'workspace_disk_node_edit', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~edit'], methods: ['GET', 'POST'], priority: 4)]
     public function edit(string $slug, string $nodePath, Request $request): Response
     {
@@ -335,6 +427,9 @@ class WorkspaceDiskNodeController extends AbstractController
 
         $nodePath = trim(str_replace('\\', '/', $nodePath), '/');
         if (str_ends_with($nodePath, '~edit')) {
+            throw $this->createNotFoundException('Узел не найден.');
+        }
+        if (str_ends_with($nodePath, '~view')) {
             throw $this->createNotFoundException('Узел не найден.');
         }
         $this->assertDiskPathAllowed($nodePath);
@@ -625,6 +720,17 @@ class WorkspaceDiskNodeController extends AbstractController
         $suffix = '~edit';
         if (!str_ends_with($nodePath, $suffix)) {
             throw $this->createNotFoundException('Узел не найден.');
+        }
+
+        $diskPath = substr($nodePath, 0, -strlen($suffix));
+        return trim(str_replace('\\', '/', $diskPath), '/');
+    }
+
+    private function stripViewSuffix(string $nodePath): string
+    {
+        $suffix = '~view';
+        if (!str_ends_with($nodePath, $suffix)) {
+            throw $this->createNotFoundException('Файл не найден.');
         }
 
         $diskPath = substr($nodePath, 0, -strlen($suffix));

@@ -90,6 +90,10 @@
         </div>
         <div class="flex shrink-0 items-center gap-2">
             {% if slot.file_exists|default(false) %}
+                <a href="{{ path('workspace_disk_file_view', {slug: workspace.slug, nodePath: slot.file_disk_path ~ '~view'}) }}"
+                   class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">
+                    Просмотр
+                </a>
                 <a href="{{ path('workspace_disk_node_edit', {slug: workspace.slug, nodePath: slot.file_disk_path ~ '~edit'}) }}"
                    class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
                     Редактировать
