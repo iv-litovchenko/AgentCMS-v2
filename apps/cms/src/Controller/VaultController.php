@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/vaults')]
 class VaultController extends AbstractController
 {
     private VaultService $vaultService;
@@ -67,7 +66,7 @@ class VaultController extends AbstractController
         $this->vaultBreadcrumbBuilder = $vaultBreadcrumbBuilder;
     }
 
-    #[Route('', name: 'vault_index', methods: ['GET'])]
+    #[Route('/storages', name: 'vault_index', methods: ['GET'], priority: 15)]
     public function index(): Response
     {
         return $this->render('vault/index.html.twig', [
@@ -75,7 +74,7 @@ class VaultController extends AbstractController
         ]);
     }
 
-    #[Route('/avatars/{filename}', name: 'vault_avatar', requirements: ['filename' => '[a-zA-Z0-9._-]+'], methods: ['GET'], priority: 10)]
+    #[Route('/avatars/{filename}', name: 'vault_avatar', requirements: ['filename' => '[a-zA-Z0-9._-]+'], methods: ['GET'], priority: 20)]
     public function avatar(string $filename): Response
     {
         $path = $this->vaultService->resolveAvatarPath($filename);
@@ -90,7 +89,7 @@ class VaultController extends AbstractController
         return $response;
     }
 
-    #[Route('/new', name: 'vault_new', methods: ['GET', 'POST'])]
+    #[Route('/storages/new', name: 'vault_new', methods: ['GET', 'POST'], priority: 15)]
     public function create(Request $request): Response
     {
         $data = new VaultData();
@@ -127,7 +126,7 @@ class VaultController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'vault_edit', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET', 'POST'])]
+    #[Route('/storages/{id}/edit', name: 'vault_edit', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET', 'POST'], priority: 15)]
     public function edit(string $id, Request $request): Response
     {
         $vault = $this->vaultService->findById($id);
@@ -180,7 +179,8 @@ class VaultController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'vault_delete', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'])]
+    #[Route('/storages/{id}/delete', name: 'vault_delete', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 15)]
+    #[Route('/vaults/{id}/delete', name: 'vault_delete_legacy', requirements: ['id' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 25)]
     public function delete(string $id, Request $request): Response
     {
         $token = $request->request->getString('_token');
@@ -600,6 +600,29 @@ class VaultController extends AbstractController
                 'vault_toolbar' => ['reveal_enabled' => false, 'reveal_relative_path' => ''],
             ]
         ));
+    }
+
+    #[Route('/vaults', name: 'vault_legacy_index', methods: ['GET'], priority: 25)]
+    public function legacyVaultsIndex(): Response
+    {
+        return $this->redirectToRoute('vault_index', [], Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    #[Route('/vaults/new', name: 'vault_legacy_new', methods: ['GET', 'POST'], priority: 25)]
+    public function legacyVaultsNew(): Response
+    {
+        return $this->redirectToRoute('vault_new', [], Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    #[Route('/vaults/{path}', name: 'vault_legacy_path', requirements: ['path' => '.+'], priority: 25)]
+    public function legacyVaultsPath(string $path): Response
+    {
+        if (preg_match('#^[a-z0-9]+(?:-[a-z0-9]+)*/edit$#', $path)) {
+            $id = preg_replace('#/edit$#', '', $path);
+            return $this->redirectToRoute('vault_edit', ['id' => $id], Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        return $this->redirect('/' . $path, Response::HTTP_MOVED_PERMANENTLY);
     }
 
     private function resolveHubUrlSegmentFromRequest(Request $request): string
