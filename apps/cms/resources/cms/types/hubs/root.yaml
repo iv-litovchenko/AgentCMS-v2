@@ -7,4 +7,4 @@ tree-ui:
   icon: root
   icon-class: text-emerald-600
 extends: hubs/_base
-description: 'Корень workspace — AGENTS.md, SKILL.md, manifest.node.md и др. (см. node-disk-manifests.yaml)'
+description: 'Корень workspace — AGENTS.md, SKILL.md, manifest.section.md и др. (см. node-disk-manifests.yaml)'

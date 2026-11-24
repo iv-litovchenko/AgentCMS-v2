@@ -40,7 +40,7 @@ class NodeDiskManifestRegistry
 
     public function diskPathForRelativeFile(string $relativeToWorkspace, string $filename): string
     {
-        if ($filename === 'manifest.node.md') {
+        if ($filename === 'manifest.section.md') {
             $dir = dirname($relativeToWorkspace);
             if ($dir === '.' || $dir === '') {
                 return '';
@@ -53,7 +53,7 @@ class NodeDiskManifestRegistry
             return $relativeToWorkspace;
         }
 
-        $stripped = preg_replace('/\.node\.md$/', '', $relativeToWorkspace);
+        $stripped = preg_replace('/\.section\.md$/', '', $relativeToWorkspace);
         if (is_string($stripped)) {
             return $stripped;
         }
@@ -109,9 +109,9 @@ class NodeDiskManifestRegistry
         }
 
         $config = $this->loadConfig();
-        $suffixes = $config['suffixes'] ?? ['.node.md'];
+        $suffixes = $config['suffixes'] ?? ['.section.md'];
         if (!is_array($suffixes)) {
-            $this->suffixesCache = ['.node.md'];
+            $this->suffixesCache = ['.section.md'];
 
             return $this->suffixesCache;
         }
@@ -123,7 +123,7 @@ class NodeDiskManifestRegistry
             }
         }
         if (count($result) === 0) {
-            $result = ['.node.md'];
+            $result = ['.section.md'];
         }
 
         $this->suffixesCache = $result;

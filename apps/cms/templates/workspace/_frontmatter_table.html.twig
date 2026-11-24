@@ -1,0 +1,16 @@
+{# frontmatter_properties, hide_acms_type, hide_acms_name #}
+{% if frontmatter_properties|default([])|length > 0 %}
+    <div class="{{ wrapper_class|default('mt-3 border-t border-zinc-100 pt-3') }}">
+        <div class="overflow-x-auto rounded-md border border-zinc-200">
+            <table class="w-full min-w-[16rem] border-collapse text-sm">
+                <tbody class="divide-y divide-zinc-100 bg-white">
+                    {% include 'workspace/_frontmatter_dl.html.twig' with {
+                        frontmatter_properties: frontmatter_properties,
+                        hide_acms_type: hide_acms_type|default(false),
+                        hide_acms_name: hide_acms_name|default(false),
+                    } %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

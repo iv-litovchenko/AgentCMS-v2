@@ -203,7 +203,7 @@ class WorkspaceNodeCreator
             'acms-update' => $now,
         ];
 
-        $manifestPath = $nodeDir . '/manifest.node.md';
+        $manifestPath = $nodeDir . '/manifest.section.md';
         $this->workspaceService->writeFileAtomicPublic($manifestPath, $this->manifestReader->buildFileContent($properties, "\n"));
 
         $diskPath = $this->relativeDiskPath($base, $nodeDir);

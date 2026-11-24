@@ -1,0 +1,12 @@
+name: Скрипт
+status: active
+default: true
+hub: script
+extends: sections/_base
+tree-ui:
+  icon: terminal
+  icon-class: text-emerald-600
+view:
+  screen:
+    template: workspace/hubs/script_script.html.twig
+description: 'Скрипт — manifest и слоты (заготовка)'

@@ -1,0 +1,12 @@
+name: Команда
+status: active
+default: true
+hub: command
+extends: sections/_base
+tree-ui:
+  icon: queue
+  icon-class: text-emerald-600
+view:
+  screen:
+    template: workspace/hubs/command_command.html.twig
+description: 'Команда — manifest и слоты (заготовка)'

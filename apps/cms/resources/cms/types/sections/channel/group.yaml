@@ -1,0 +1,19 @@
+name: Группа
+status: active
+hub: channel
+tree-ui:
+  icon: group
+  icon-class: text-amber-500
+extends: sections/_base
+description: 'manifest.section.md + подпапки каналов, без собственного ingress'
+storage-slots:
+  - todo
+  - state
+  - archive
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#e0e7ff'
+    border: '#a5b4fc'
+    text: '#4338ca'

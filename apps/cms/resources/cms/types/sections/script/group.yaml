@@ -1,0 +1,19 @@
+name: Группа
+status: active
+hub: script
+extends: sections/_base
+tree-ui:
+  icon: group
+  icon-class: text-amber-500
+description: 'Группа скриптов'
+storage-slots:
+  - todo
+  - state
+  - archive
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#ede9fe'
+    border: '#c4b5fd'
+    text: '#5b21b6'

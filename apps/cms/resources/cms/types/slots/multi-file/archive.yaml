@@ -1,0 +1,15 @@
+name: Архив
+status: active
+extends: slots/_base
+slot-category: files
+storage-driver: external
+description: 'Архив секции — папка archive/'
+path: archive/
+slot-order: 17
+allowed-containers: []
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

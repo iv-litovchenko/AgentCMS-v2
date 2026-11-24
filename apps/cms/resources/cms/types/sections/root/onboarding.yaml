@@ -1,0 +1,7 @@
+name: ONBOARDING
+status: active
+hub: root
+extends: sections/root/_file
+manifest-pattern: ONBOARDING.md
+create-preset: presets/onboarding
+sort: 60

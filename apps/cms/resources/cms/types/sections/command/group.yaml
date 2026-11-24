@@ -1,0 +1,19 @@
+name: Группа
+status: active
+hub: command
+extends: sections/_base
+tree-ui:
+  icon: group
+  icon-class: text-amber-500
+description: 'Группа команд'
+storage-slots:
+  - todo
+  - state
+  - archive
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#e0f2fe'
+    border: '#7dd3fc'
+    text: '#0369a1'

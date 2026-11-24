@@ -358,7 +358,7 @@ class WorkspaceService
             $updatedAt = $createdAt;
         }
 
-        $typeId = 'nodes/root/ws';
+        $typeId = 'sections/root/ws';
         if (isset($meta['type_id']) && is_string($meta['type_id']) && $meta['type_id'] !== '') {
             $typeId = $meta['type_id'];
         }
@@ -421,7 +421,7 @@ class WorkspaceService
     public function readRootNodeManifest(string $slug): ?array
     {
         $base = $this->workspacePath($slug);
-        $candidates = ['manifest.node.md', 'manifest.md'];
+        $candidates = ['manifest.section.md', 'manifest.md'];
         foreach ($candidates as $file) {
             $path = $base . '/' . $file;
             $parsed = $this->manifestReader->parseFile($path);

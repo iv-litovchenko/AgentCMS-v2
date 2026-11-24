@@ -25,7 +25,7 @@
                         {% else %}
                             <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: diskPath != '' ? diskPath : '_'}) }}"
                                class="flex min-w-0 flex-1 items-center gap-1 rounded px-0.5 py-0.5 text-zinc-600 hover:text-zinc-900"
-                               title="{{ diskPath != '' ? diskPath ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}"
+                               title="{{ diskPath != '' ? diskPath ~ '/' : '' }}{{ item.manifest_file|default('manifest.section.md') }}"
                                onclick="event.stopPropagation()">
                                 {% include 'workspace/_hub_tree_icon.html.twig' with {
                                     icon: item.tree_icon|default('folder'),
@@ -51,7 +51,7 @@
                 {% else %}
                     <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: diskPath != '' ? diskPath : '_'}) }}"
                        class="flex items-center gap-1 rounded px-1 py-0.5 text-zinc-600 hover:bg-zinc-50"
-                       title="{{ diskPath != '' ? diskPath ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
+                       title="{{ diskPath != '' ? diskPath ~ '/' : '' }}{{ item.manifest_file|default('manifest.section.md') }}">
                         {% include 'workspace/_hub_tree_icon.html.twig' with {
                             icon: item.tree_icon|default('folder'),
                             icon_class: item.tree_icon_class|default('text-zinc-400'),

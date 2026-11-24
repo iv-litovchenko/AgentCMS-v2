@@ -64,7 +64,7 @@ class TypeViewResolver
      */
     public function resolveSchemaNodeView(string $hubPath, string $workspaceSlug = ''): array
     {
-        $typeId = 'nodes/' . trim(str_replace('\\', '/', $hubPath), '/');
+        $typeId = 'sections/' . trim(str_replace('\\', '/', $hubPath), '/');
         $action = '';
         $template = '';
 
@@ -136,11 +136,11 @@ class TypeViewResolver
 
     private function conventionalDiskTemplate(string $typeId): string
     {
-        if (!str_starts_with($typeId, 'nodes/')) {
+        if (!str_starts_with($typeId, 'sections/')) {
             return '';
         }
 
-        $relative = substr($typeId, strlen('nodes/'));
+        $relative = substr($typeId, strlen('sections/'));
         if ($relative === '' || str_contains($relative, '..')) {
             return '';
         }
@@ -155,16 +155,16 @@ class TypeViewResolver
             return '';
         }
 
-        return 'workspace/schema_nodes/' . $hubPath . '.html.twig';
+        return 'workspace/schema_sections/' . $hubPath . '.html.twig';
     }
 
     private function conventionalFamilyTemplate(string $typeId): string
     {
-        if (!str_starts_with($typeId, 'nodes/')) {
+        if (!str_starts_with($typeId, 'sections/')) {
             return '';
         }
 
-        $relative = substr($typeId, strlen('nodes/'));
+        $relative = substr($typeId, strlen('sections/'));
         if ($relative === '' || str_contains($relative, '..')) {
             return '';
         }

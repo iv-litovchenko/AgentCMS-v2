@@ -6,8 +6,7 @@ storage-driver: internal
 description: 'Список задач топика — todo.md'
 path: todo.md
 slot-order: 15
-allowed-containers:
-  - awn.page.topic
+allowed-containers: []
 allowed-content:
   - content/record
   - content/category

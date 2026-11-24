@@ -187,10 +187,10 @@ class TypeSchemaRegistry
         }
 
         foreach ($ids as $id) {
-            if (!str_starts_with($id, 'nodes/')) {
+            if (!str_starts_with($id, 'sections/')) {
                 continue;
             }
-            if ($id === 'nodes/_base' || str_ends_with($id, '/_base')) {
+            if ($id === 'sections/_base' || str_ends_with($id, '/_base')) {
                 continue;
             }
 
@@ -289,7 +289,7 @@ class TypeSchemaRegistry
     }
 
     /**
-     * Служебные .md в корне workspace (AGENTS.md и т.д.) — типы nodes/root/* с manifest-pattern.
+     * Служебные .md в корне workspace (AGENTS.md и т.д.) — типы sections/root/* с manifest-pattern.
      *
      * @return list<array{file: string, preset: string, label: string, type_id: string, sort: int}>
      */
@@ -297,10 +297,10 @@ class TypeSchemaRegistry
     {
         $result = [];
         foreach ($this->listResolvedTypeIds($workspaceSlug) as $id) {
-            if (!str_starts_with($id, 'nodes/root/')) {
+            if (!str_starts_with($id, 'sections/root/')) {
                 continue;
             }
-            if ($id === 'nodes/root/_file' || $id === 'nodes/root/ws' || $id === 'nodes/root/root') {
+            if ($id === 'sections/root/_file' || $id === 'sections/root/ws' || $id === 'sections/root/root') {
                 continue;
             }
 
@@ -316,7 +316,7 @@ class TypeSchemaRegistry
             if (isset($def['manifest-pattern']) && is_string($def['manifest-pattern'])) {
                 $pattern = trim($def['manifest-pattern']);
             }
-            if ($pattern === '' || $pattern === 'manifest.node.md' || str_contains($pattern, '/')) {
+            if ($pattern === '' || $pattern === 'manifest.section.md' || str_contains($pattern, '/')) {
                 continue;
             }
 
@@ -367,10 +367,10 @@ class TypeSchemaRegistry
         $fallback = '';
         $ids = $this->listResolvedTypeIds($workspaceSlug);
         foreach ($ids as $id) {
-            if (!str_starts_with($id, 'nodes/')) {
+            if (!str_starts_with($id, 'sections/')) {
                 continue;
             }
-            if ($id === 'nodes/_base' || str_ends_with($id, '/_base')) {
+            if ($id === 'sections/_base' || str_ends_with($id, '/_base')) {
                 continue;
             }
 
@@ -542,11 +542,11 @@ class TypeSchemaRegistry
 
         $ui = $this->resolveHubTreeUi($def);
         $icon = 'folder';
-        $iconClass = 'text-zinc-400';
-        if (isset($ui['icon']) && is_string($ui['icon'])) {
+        if (isset($ui['icon']) && is_string($ui['icon']) && $ui['icon'] !== '') {
             $icon = $ui['icon'];
         }
-        if (isset($ui['icon_class']) && is_string($ui['icon_class'])) {
+        $iconClass = 'text-zinc-400';
+        if (isset($ui['icon_class']) && is_string($ui['icon_class']) && $ui['icon_class'] !== '') {
             $iconClass = $ui['icon_class'];
         }
 
@@ -808,6 +808,12 @@ class TypeSchemaRegistry
         } elseif ($folder === 'todo' || $folder === 'todo-single') {
             $icon = 'check';
             $iconClass = 'text-lime-600';
+        } elseif ($folder === 'state') {
+            $icon = 'queue';
+            $iconClass = 'text-sky-600';
+        } elseif ($folder === 'archive') {
+            $icon = 'archive';
+            $iconClass = 'text-zinc-500';
         } elseif ($folder === 'atlas') {
             $icon = 'map';
             $iconClass = 'text-cyan-600';
@@ -1084,20 +1090,20 @@ class TypeSchemaRegistry
             return '';
         }
 
-        if (str_starts_with($canonicalId, 'nodes/root/')) {
-            $leaf = substr($canonicalId, strlen('nodes/root/'));
+        if (str_starts_with($canonicalId, 'sections/root/')) {
+            $leaf = substr($canonicalId, strlen('sections/root/'));
 
             return 'acms.root.' . $leaf;
         }
 
-        if (str_starts_with($canonicalId, 'nodes/')) {
-            $rest = substr($canonicalId, strlen('nodes/'));
+        if (str_starts_with($canonicalId, 'sections/')) {
+            $rest = substr($canonicalId, strlen('sections/'));
             $parts = explode('/', $rest);
             if (count($parts) >= 2 && $parts[count($parts) - 1] === $parts[count($parts) - 2]) {
                 array_pop($parts);
             }
 
-            return 'acms.node.' . implode('.', $parts);
+            return 'acms.section.' . implode('.', $parts);
         }
 
         if (str_starts_with($canonicalId, 'hubs/')) {
@@ -1122,7 +1128,7 @@ class TypeSchemaRegistry
                 return '';
             }
 
-            return 'nodes/root/' . $leaf;
+            return 'sections/root/' . $leaf;
         }
 
         if (str_starts_with($publicId, 'acms.hub.')) {
@@ -1134,17 +1140,17 @@ class TypeSchemaRegistry
             return 'hubs/' . str_replace('.', '/', $rest);
         }
 
-        if (str_starts_with($publicId, 'acms.node.')) {
-            $rest = substr($publicId, strlen('acms.node.'));
-            if ($rest === '') {
+        if (str_starts_with($publicId, 'acms.section.')) {
+            $sectionRest = substr($publicId, strlen('acms.section.'));
+            if ($sectionRest === '') {
                 return '';
             }
-            $parts = explode('.', $rest);
+            $parts = explode('.', $sectionRest);
             if (count($parts) === 1) {
-                return 'nodes/' . $parts[0] . '/' . $parts[0];
+                return 'sections/' . $parts[0] . '/' . $parts[0];
             }
 
-            return 'nodes/' . implode('/', $parts);
+            return 'sections/' . implode('/', $parts);
         }
 
         $stripped = substr($publicId, strlen('acms.'));
@@ -1303,8 +1309,8 @@ class TypeSchemaRegistry
         if ($root === 'hubs') {
             return 'hub';
         }
-        if ($root === 'nodes') {
-            return 'node';
+        if ($root === 'sections') {
+            return 'section';
         }
         if ($root === 'slots') {
             return 'slot';

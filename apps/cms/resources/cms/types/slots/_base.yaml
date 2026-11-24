@@ -82,5 +82,5 @@ properties:
       Тип страницы-контейнера (awn.page.* / awn.hub.*): тема, медиатека, канал. Пустой список — везде, где слот есть в политике контейнера.
     enum:
       - awn.page.topic
-      - nodes/media/media
-      - nodes/channel/channel
+      - sections/media/media
+      - sections/channel/channel

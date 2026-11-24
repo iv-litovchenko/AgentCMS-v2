@@ -1,8 +1,8 @@
-name: 'Зона media'
+name: 'Зона медиатеки'
 status: active
 folder: acms-media
 tree-ui:
-  label: Медиатека
+  label: Медиатеки
   sort: 40
   icon: image
   icon-class: text-emerald-600

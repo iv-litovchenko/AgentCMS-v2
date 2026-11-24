@@ -3,7 +3,7 @@
 {% macro hub_tile_link(workspace, item) %}
     <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: item.disk_path != '' ? item.disk_path : '_'}) }}"
        class="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-2 text-sm hover:border-zinc-300 hover:bg-white"
-       title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
+       title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.section.md') }}">
         {% include 'workspace/_hub_tree_icon.html.twig' with {
             icon: item.tree_icon|default('folder'),
             icon_class: item.tree_icon_class|default('text-zinc-400'),
@@ -44,12 +44,12 @@
 {% else %}
     {% set known_type_ids = [] %}
     {% for type_item in hub_group.type_items|default([]) %}
-        {% set known_type_ids = known_type_ids|merge(['nodes/' ~ type_item.hub_path]) %}
+        {% set known_type_ids = known_type_ids|merge(['sections/' ~ type_item.hub_path]) %}
     {% endfor %}
     {% set other_items = hub_group.items|filter(item => item.type_id|default('') == '' or item.type_id|default('') not in known_type_ids) %}
 
     {% for type_item in hub_group.type_items|default([]) %}
-        {% set type_id = 'nodes/' ~ type_item.hub_path %}
+        {% set type_id = 'sections/' ~ type_item.hub_path %}
         {% set typed_items = hub_group.items|filter(item => item.type_id|default('') == type_id) %}
         {% if typed_items|length > 0 %}
             {% include type_item.family_view_template|default('workspace/hubs/family/_type_section.html.twig') with {

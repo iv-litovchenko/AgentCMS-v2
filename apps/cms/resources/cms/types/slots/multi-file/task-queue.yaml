@@ -8,7 +8,7 @@ path: task-queue/
 slot-order: 25
 allowed-containers:
   - awn.page.topic
-  - nodes/channel/channel
+  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category

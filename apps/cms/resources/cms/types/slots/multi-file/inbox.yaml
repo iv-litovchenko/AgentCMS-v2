@@ -8,7 +8,7 @@ path: inbox/
 slot-order: 4
 allowed-containers:
   - awn.page.topic
-  - nodes/channel/channel
+  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category

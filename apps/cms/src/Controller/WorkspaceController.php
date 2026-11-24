@@ -460,7 +460,7 @@ class WorkspaceController extends AbstractController
         }
 
         $node = trim(str_replace('\\', '/', $node), '/');
-        $typeId = 'nodes/' . $node;
+        $typeId = 'sections/' . $node;
         $hubType = $this->typeSchemaRegistry->resolveType($typeId, $workspace['slug']);
         if ($hubType === null) {
             throw $this->createNotFoundException('Тип node не найден.');
@@ -620,7 +620,7 @@ class WorkspaceController extends AbstractController
                 }
             } elseif (count($typeItems) > 0) {
                 $canCreate = true;
-                $hint = 'Узел с manifest.node.md';
+                $hint = 'Секция с manifest.section.md';
             }
 
             if (!$canCreate) {
@@ -692,7 +692,7 @@ class WorkspaceController extends AbstractController
                             if (isset($typeItem['id']) && is_string($typeItem['id']) && $typeItem['id'] !== '') {
                                 $candidate = $typeItem['id'];
                             } elseif (isset($typeItem['hub_path']) && is_string($typeItem['hub_path']) && $typeItem['hub_path'] !== '') {
-                                $candidate = 'nodes/' . $typeItem['hub_path'];
+                                $candidate = 'sections/' . $typeItem['hub_path'];
                             }
                             if ($candidate === $requestedType) {
                                 $defaultNodeTypeId = $candidate;

@@ -1,0 +1,20 @@
+name: Группа
+status: active
+sort: 10
+hub: database
+tree-ui:
+  icon: group
+  icon-class: text-amber-500
+extends: sections/database/_base
+description: 'manifest + подпапки-накопители, без собственных записей'
+storage-slots:
+  - todo
+  - state
+  - archive
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#ecfdf5'
+    border: '#a7f3d0'
+    text: '#047857'

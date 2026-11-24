@@ -602,7 +602,7 @@ class WorkspaceNodeScanner
         $candidates = [];
 
         if ($diskPath === '') {
-            $candidates[] = $base . '/manifest.node.md';
+            $candidates[] = $base . '/manifest.section.md';
             foreach ($this->nodeDiskManifestRegistry->fixed() as $fixed) {
                 $candidates[] = $base . '/' . $fixed;
             }
@@ -615,8 +615,8 @@ class WorkspaceNodeScanner
             $candidates[] = $directFile;
         }
 
-        $candidates[] = $base . '/' . $diskPath . '/manifest.node.md';
-        $candidates[] = $base . '/' . $diskPath . '.node.md';
+        $candidates[] = $base . '/' . $diskPath . '/manifest.section.md';
+        $candidates[] = $base . '/' . $diskPath . '.section.md';
 
         $basename = basename($diskPath);
         if ($this->nodeDiskManifestRegistry->isNodeManifestFilename($basename)) {
@@ -648,7 +648,7 @@ class WorkspaceNodeScanner
             }
         }
 
-        return 'nodes/root/_file';
+        return 'sections/root/_file';
     }
 
     private function resolveInstanceName(?array $parsed, string $diskPath, string $filename): string
@@ -678,7 +678,7 @@ class WorkspaceNodeScanner
             }
         }
 
-        if ($filename === 'manifest.node.md') {
+        if ($filename === 'manifest.section.md') {
             return 'manifest';
         }
 
@@ -686,7 +686,7 @@ class WorkspaceNodeScanner
             return preg_replace('/\.md$/', '', $filename) ?? $filename;
         }
 
-        return preg_replace('/\.node\.md$/', '', $filename) ?? $filename;
+        return preg_replace('/\.section\.md$/', '', $filename) ?? $filename;
     }
 
     private function relativePath(string $base, string $fullPath): ?string

@@ -2,4 +2,4 @@ name: 'База зоны hub'
 status: active
 extends: base/base
 description: |
-  Зона workspace: папка на диске (folder), подпись и иконка в дереве (tree-ui). Типы узлов — в nodes/, поле hub.
+  Зона workspace: папка на диске (folder), подпись и иконка в дереве (tree-ui). Типы секций — в sections/, поле hub.

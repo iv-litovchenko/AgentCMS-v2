@@ -1,0 +1,10 @@
+name: 'Зона command'
+status: active
+folder: acms-commands
+tree-ui:
+  label: Команды
+  sort: 55
+  icon: queue
+  icon-class: text-emerald-600
+extends: hubs/_base
+description: 'Команды и сценарии запуска в acms-commands/'

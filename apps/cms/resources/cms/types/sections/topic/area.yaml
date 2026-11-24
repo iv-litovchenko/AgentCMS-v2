@@ -1,0 +1,18 @@
+name: Область
+status: active
+hub: topic
+extends: sections/_base
+tree-ui:
+  icon: folder
+  icon-class: text-amber-500
+view:
+  screen:
+    template: workspace/hubs/_default.html.twig
+  disk:
+    template: workspace/disk_nodes/topic/area.html.twig
+    action: showDiskNodeTopicArea
+description: 'Область контента — папка-раздел в awn-container (не служебная секция корня)'
+storage-slots:
+  - todo
+  - state
+  - archive

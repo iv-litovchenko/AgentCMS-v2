@@ -1,12 +1,12 @@
 {# type_item, typed_items, workspace, hub_family, hub_url_zone #}
-{% set section_type_id = type_item.hub_path|default('') != '' ? 'nodes/' ~ type_item.hub_path : '' %}
+{% set section_type_id = type_item.hub_path|default('') != '' ? 'sections/' ~ type_item.hub_path : '' %}
 <section class="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm">
     <ul class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
         {% for item in typed_items %}
             <li>
                 <a href="{{ path('workspace_disk_node_show', {slug: workspace.slug, nodePath: item.disk_path != '' ? item.disk_path : '_'}) }}"
                    class="flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50/50 px-2.5 py-2 text-sm hover:border-zinc-300 hover:bg-white"
-                   title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.node.md') }}">
+                   title="{{ item.disk_path != '' ? item.disk_path ~ '/' : '' }}{{ item.manifest_file|default('manifest.section.md') }}">
                     {% include 'workspace/_hub_tree_icon.html.twig' with {
                         icon: item.tree_icon|default('folder'),
                         icon_class: item.tree_icon_class|default('text-zinc-400'),

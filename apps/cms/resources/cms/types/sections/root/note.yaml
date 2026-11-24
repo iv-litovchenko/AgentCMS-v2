@@ -1,0 +1,7 @@
+name: NOTE
+status: active
+hub: root
+extends: sections/root/_file
+manifest-pattern: NOTE.md
+create-preset: presets/note
+sort: 50

@@ -1,0 +1,56 @@
+name: 'База секции'
+status: active
+manifest-pattern: manifest.section.md
+extends: base/base
+description: 'Секция workspace — manifest.section.md в папке зоны hub'
+storage-slots:
+  - todo
+  - state
+  - archive
+# view: экраны по типу — disk (экземпляр на диске), screen (карточка типа), family (секция на странице зоны)
+#   disk: { template, action? }  action — метод WorkspaceDiskNodeController
+#   screen: { template, action? }
+#   family: { template }
+mixins:
+  - mixins/indexing-container
+form:
+  panel-title: '{A2!} Свойства секции'
+fields:
+  awn-main:
+    type: fields/boolean
+    title: '{A2!} На главной'
+    description: 'Показывать в карусели на главной странице'
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 1
+  awn-focus:
+    type: fields/boolean
+    title: '{A2!} В фокусе'
+    description: 'Показывать в быстром навигаторе workspace'
+    default: false
+    placement: aside-body
+    group: nav
+    sort: 2
+  awn-slots-template:
+    type: fields/choice/one
+    title: '{A2!} Шаблон слотов'
+    description: |
+      standard — типовые слоты 0-storage; flexible — весь 0-storage/ (кроме assets/, history/, comments/); minimal — однофайловые слоты (main.md, todo, таблица…); none — только инструкция и todo
+    default: standard
+    placement: aside-body
+    group: nav
+    sort: 3
+    enum:
+      -
+        key: flexible
+        name: 'Гибкий слот'
+      -
+        key: standard
+        name: 'Стандартные слоты'
+      -
+        key: minimal
+        name: 'Минимум слотов (стандарт)'
+      -
+        key: none
+        name: 'Без слотов (только инструкция)'

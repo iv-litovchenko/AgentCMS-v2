@@ -1,0 +1,10 @@
+name: 'Зона script'
+status: active
+folder: acms-scripts
+tree-ui:
+  label: Скрипты
+  sort: 60
+  icon: terminal
+  icon-class: text-emerald-600
+extends: hubs/_base
+description: 'Скрипты workspace в acms-scripts/'

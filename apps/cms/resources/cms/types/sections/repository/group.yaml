@@ -1,0 +1,18 @@
+name: Группа
+status: active
+hub: repository
+tree-ui:
+  icon: group
+  icon-class: text-amber-500
+extends: sections/_base
+description: 'manifest.section.md + подпапки репозиториев, без собственного клона'
+storage-slots:
+  - todo
+  - state
+kind-ui:
+  for: group
+  label: Группа
+  badge:
+    background: '#ffedd5'
+    border: '#fdba74'
+    text: '#c2410c'

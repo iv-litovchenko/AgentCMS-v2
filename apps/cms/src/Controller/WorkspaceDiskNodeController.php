@@ -11,8 +11,10 @@ use App\Service\WorkspaceNodeCreator;
 use App\Service\WorkspaceNodeScanner;
 use App\Service\WorkspaceNodeStorage;
 use App\Service\WorkspaceService;
+use App\Service\WorkspaceSlotFolderWriter;
 use App\Service\WorkspaceViewAssembler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,6 +40,8 @@ class WorkspaceDiskNodeController extends AbstractController
 
     private WorkspaceNodeCreator $workspaceNodeCreator;
 
+    private WorkspaceSlotFolderWriter $workspaceSlotFolderWriter;
+
     public function __construct(
         WorkspaceService $workspaceService,
         WorkspaceNodeScanner $workspaceNodeScanner,
@@ -47,7 +51,8 @@ class WorkspaceDiskNodeController extends AbstractController
         TypeSchemaRegistry $typeSchemaRegistry,
         AcmsManifestPropertyBridge $acmsManifestPropertyBridge,
         WorkspaceDiskNodeEditService $workspaceDiskNodeEditService,
-        WorkspaceNodeCreator $workspaceNodeCreator
+        WorkspaceNodeCreator $workspaceNodeCreator,
+        WorkspaceSlotFolderWriter $workspaceSlotFolderWriter
     ) {
         $this->workspaceService = $workspaceService;
         $this->workspaceNodeScanner = $workspaceNodeScanner;
@@ -58,6 +63,7 @@ class WorkspaceDiskNodeController extends AbstractController
         $this->acmsManifestPropertyBridge = $acmsManifestPropertyBridge;
         $this->workspaceDiskNodeEditService = $workspaceDiskNodeEditService;
         $this->workspaceNodeCreator = $workspaceNodeCreator;
+        $this->workspaceSlotFolderWriter = $workspaceSlotFolderWriter;
     }
 
     /** @var list<string> */
@@ -413,6 +419,101 @@ class WorkspaceDiskNodeController extends AbstractController
         ]);
     }
 
+    #[Route('/{slug}/{nodePath}', name: 'workspace_disk_slot_create_category', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~slot-create-category'], methods: ['POST'], priority: 4)]
+    public function createSlotCategory(string $slug, string $nodePath, Request $request): Response
+    {
+        return $this->handleSlotFolderMutation($slug, $nodePath, $request, '~slot-create-category', function (
+            string $workspaceSlug,
+            string $folderDiskPath,
+            Request $request
+        ): string {
+            $sectionSlug = $request->request->getString('section_slug');
+            $sectionName = $request->request->getString('section_name');
+            $created = $this->workspaceSlotFolderWriter->createCategory(
+                $workspaceSlug,
+                $folderDiskPath,
+                $sectionSlug,
+                $sectionName
+            );
+
+            return $created['disk_path'];
+        }, 'Раздел создан.');
+    }
+
+    #[Route('/{slug}/{nodePath}', name: 'workspace_disk_slot_create_record', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~slot-create-record'], methods: ['POST'], priority: 4)]
+    public function createSlotRecord(string $slug, string $nodePath, Request $request): Response
+    {
+        return $this->handleSlotFolderMutation($slug, $nodePath, $request, '~slot-create-record', function (
+            string $workspaceSlug,
+            string $folderDiskPath,
+            Request $request
+        ): string {
+            $title = $request->request->getString('record_title');
+            $recordSlug = $request->request->getString('record_slug');
+            $this->workspaceSlotFolderWriter->createRecord(
+                $workspaceSlug,
+                $folderDiskPath,
+                $title,
+                $recordSlug
+            );
+
+            return $folderDiskPath;
+        }, 'Запись создана.');
+    }
+
+    #[Route('/{slug}/{nodePath}', name: 'workspace_disk_slot_upload', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~slot-upload'], methods: ['POST'], priority: 4)]
+    public function uploadSlotFiles(string $slug, string $nodePath, Request $request): Response
+    {
+        $workspace = $this->workspaceService->findBySlug($slug);
+        if ($workspace === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $folderDiskPath = $this->stripActionSuffix($nodePath, '~slot-upload');
+        $this->assertDiskPathAllowed($folderDiskPath);
+
+        $csrfId = $this->slotFolderCsrfId($folderDiskPath);
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid($csrfId, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        $uploaded = [];
+        $bag = $request->files->all();
+        if (isset($bag['upload_files']) && is_array($bag['upload_files'])) {
+            foreach ($bag['upload_files'] as $item) {
+                if ($item instanceof UploadedFile) {
+                    $uploaded[] = $item;
+                }
+            }
+        }
+
+        try {
+            $result = $this->workspaceSlotFolderWriter->uploadFiles($workspace['slug'], $folderDiskPath, $uploaded);
+        } catch (\InvalidArgumentException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('workspace_disk_node_show', [
+                'slug' => $slug,
+                'nodePath' => $folderDiskPath,
+            ]);
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('workspace_disk_node_show', [
+                'slug' => $slug,
+                'nodePath' => $folderDiskPath,
+            ]);
+        }
+
+        $this->addFlash('success', 'Загружено файлов: ' . (string) $result['count'] . '.');
+
+        return $this->redirectToRoute('workspace_disk_node_show', [
+            'slug' => $slug,
+            'nodePath' => $folderDiskPath,
+        ]);
+    }
+
     #[Route('/{slug}/{nodePath}', name: 'workspace_disk_node_show', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.*'], methods: ['GET'], priority: 3)]
     public function show(string $slug, string $nodePath): Response
     {
@@ -604,6 +705,12 @@ class WorkspaceDiskNodeController extends AbstractController
             $parentDiskPath = $folderListing['parent_disk_path'];
         }
 
+        $slotActionsEnabled = $this->workspaceSlotFolderWriter->isStorageFolderDiskPath($folderDiskPath);
+        $slotFolderCsrfId = '';
+        if ($slotActionsEnabled) {
+            $slotFolderCsrfId = $this->slotFolderCsrfId($folderDiskPath);
+        }
+
         return $this->render('workspace/disk_folder.html.twig', array_merge(
             $this->workspaceViewAssembler->buildViewContext($workspace),
             [
@@ -611,6 +718,8 @@ class WorkspaceDiskNodeController extends AbstractController
                 'disk_folder_label' => $folderLabel,
                 'disk_folder_parent_path' => $parentDiskPath,
                 'disk_folder_entries' => $entries,
+                'disk_folder_slot_actions' => $slotActionsEnabled,
+                'disk_folder_slot_csrf_id' => $slotFolderCsrfId,
                 'disk_node_path' => $nodeDiskPath,
                 'active_disk_node_path' => $folderDiskPath,
                 'active_hub_path' => '',
@@ -757,6 +866,73 @@ class WorkspaceDiskNodeController extends AbstractController
 
         $diskPath = substr($nodePath, 0, -strlen($suffix));
         return trim(str_replace('\\', '/', $diskPath), '/');
+    }
+
+    private function stripActionSuffix(string $nodePath, string $suffix): string
+    {
+        if (!str_ends_with($nodePath, $suffix)) {
+            throw $this->createNotFoundException('Папка не найдена.');
+        }
+
+        $diskPath = substr($nodePath, 0, -strlen($suffix));
+
+        return trim(str_replace('\\', '/', $diskPath), '/');
+    }
+
+    private function slotFolderCsrfId(string $folderDiskPath): string
+    {
+        return 'disk_folder_slot_' . md5($folderDiskPath);
+    }
+
+    /**
+     * @param callable(string, string, Request): string $mutate
+     */
+    private function handleSlotFolderMutation(
+        string $slug,
+        string $nodePath,
+        Request $request,
+        string $suffix,
+        callable $mutate,
+        string $successMessage
+    ): Response {
+        $workspace = $this->workspaceService->findBySlug($slug);
+        if ($workspace === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $folderDiskPath = $this->stripActionSuffix($nodePath, $suffix);
+        $this->assertDiskPathAllowed($folderDiskPath);
+
+        $csrfId = $this->slotFolderCsrfId($folderDiskPath);
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid($csrfId, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        try {
+            $redirectPath = $mutate($workspace['slug'], $folderDiskPath, $request);
+        } catch (\InvalidArgumentException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('workspace_disk_node_show', [
+                'slug' => $slug,
+                'nodePath' => $folderDiskPath,
+            ]);
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('workspace_disk_node_show', [
+                'slug' => $slug,
+                'nodePath' => $folderDiskPath,
+            ]);
+        }
+
+        $this->addFlash('success', $successMessage);
+
+        return $this->redirectToRoute('workspace_disk_node_show', [
+            'slug' => $slug,
+            'nodePath' => $redirectPath,
+        ]);
     }
 
     /**

@@ -1,5 +1,7 @@
 # Типы
 
+Папочные сущности hub — каталог **`sections/`**. Манифест экземпляра: **`manifest.section.md`** (или `*.section.md` для корневых md-типов).
+
 **Id = путь к файлу** (`viz/architecture.yaml` → `viz/architecture`). В YAML: без `id`, `kind`, `domain`; при необходимости только `status: active`. `kind` для UI — из пути в реестре. Dot-id — `aliases.yaml`.
 
 Слои merge (снизу вверх, верх побеждает):

@@ -39,7 +39,10 @@ class WorkspaceDiskNodeEditService
         if (isset($diskNode['manifest_file']) && is_string($diskNode['manifest_file'])) {
             $file = $diskNode['manifest_file'];
         }
-        if ($file === 'manifest.node.md' || str_ends_with($file, '.node.md')) {
+        if ($file === 'manifest.section.md') {
+            return self::MODE_NODE_MANIFEST;
+        }
+        if (str_ends_with($file, '.section.md')) {
             return self::MODE_NODE_MANIFEST;
         }
         if (str_ends_with($file, '.md')) {

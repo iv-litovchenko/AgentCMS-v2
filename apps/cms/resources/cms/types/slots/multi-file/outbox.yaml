@@ -8,7 +8,7 @@ description: |
 path: outbox/
 slot-order: 5
 allowed-containers:
-  - nodes/channel/channel
+  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category
