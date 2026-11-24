@@ -3,3 +3,4 @@ status: active
 extends: base/base
 description: |
   Зона workspace: папка на диске (folder), подпись и иконка в дереве (tree-ui). Типы секций — в sections/, поле hub.
+  section-children: true — дочерние секции в дереве и плитки на странице зоны; false — только папка, список файлов на странице семьи.

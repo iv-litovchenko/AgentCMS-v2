@@ -256,11 +256,39 @@ class TypeSchemaRegistry
             $result[$index]['items'] = $group['items'];
             if (isset($group['type_items']) && is_array($group['type_items'])) {
                 $typeItems = $group['type_items'];
-                usort($typeItems, function (array $a, array $b): int {
+                usort($typeItems, function (array $a, array $b) use ($workspaceSlug): int {
+                    $idA = '';
+                    $idB = '';
+                    if (isset($a['id']) && is_string($a['id'])) {
+                        $idA = $a['id'];
+                    }
+                    if (isset($b['id']) && is_string($b['id'])) {
+                        $idB = $b['id'];
+                    }
+
+                    $containerA = $this->sectionAllowsSectionChildren($idA, $workspaceSlug);
+                    $containerB = $this->sectionAllowsSectionChildren($idB, $workspaceSlug);
+                    if ($containerA !== $containerB) {
+                        if ($containerA) {
+                            return -1;
+                        }
+
+                        return 1;
+                    }
+
                     $sortA = $a['sort'] ?? 100;
                     $sortB = $b['sort'] ?? 100;
                     if ($sortA === $sortB) {
-                        return strcmp($a['hub_path'], $b['hub_path']);
+                        $pathA = '';
+                        $pathB = '';
+                        if (isset($a['hub_path']) && is_string($a['hub_path'])) {
+                            $pathA = $a['hub_path'];
+                        }
+                        if (isset($b['hub_path']) && is_string($b['hub_path'])) {
+                            $pathB = $b['hub_path'];
+                        }
+
+                        return strcmp($pathA, $pathB);
                     }
                     if ($sortA < $sortB) {
                         return -1;
@@ -457,6 +485,8 @@ class TypeSchemaRegistry
             'tree_sort' => $treeUi['sort'],
             'tree_icon' => $treeUi['icon'],
             'tree_icon_class' => $treeUi['icon_class'],
+            'tree_section_children' => $treeUi['section_children'],
+            'zone_folder_only' => !$treeUi['section_children'],
             'items' => [],
             'type_items' => [],
         ];
@@ -488,6 +518,109 @@ class TypeSchemaRegistry
         }
 
         return $family;
+    }
+
+    public function resolveManifestBodyLabel(string $typeId, string $workspaceSlug = ''): string
+    {
+        $typeId = trim($typeId);
+        if ($typeId === '') {
+            return '';
+        }
+
+        $canonicalId = $this->normalizeTypeId($typeId);
+        if ($canonicalId === '') {
+            return '';
+        }
+
+        $def = $this->resolveType($canonicalId, $workspaceSlug);
+        if ($def === null) {
+            return '';
+        }
+
+        if (array_key_exists('manifest-body-label', $def) && is_string($def['manifest-body-label'])) {
+            return trim($def['manifest-body-label']);
+        }
+
+        if ($this->isRootDiskMarkdownManifestType($canonicalId)) {
+            return '';
+        }
+
+        return 'Бриф, контекст, инструкция и договоренности с агентом';
+    }
+
+    /**
+     * Служебные .md в корне workspace (AGENTS.md и т.д.) — без подписи «бриф» у тела.
+     */
+    public function isRootDiskMarkdownManifestType(string $typeId): bool
+    {
+        $typeId = trim($typeId);
+        if ($typeId === '') {
+            return false;
+        }
+
+        $canonicalId = $this->normalizeTypeId($typeId);
+        if ($canonicalId === '') {
+            return false;
+        }
+
+        if (!str_starts_with($canonicalId, 'sections/root/')) {
+            return false;
+        }
+
+        if ($canonicalId === 'sections/root/_file'
+            || $canonicalId === 'sections/root/ws'
+            || $canonicalId === 'sections/root/root') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function sectionAllowsSectionChildren(string $typeId, string $workspaceSlug = ''): bool
+    {
+        $typeId = trim($typeId);
+        if ($typeId === '') {
+            return false;
+        }
+
+        $def = $this->resolveType($typeId, $workspaceSlug);
+        if ($def === null) {
+            return false;
+        }
+
+        if (isset($def['allows-section-children'])) {
+            $raw = $def['allows-section-children'];
+            if ($raw === true) {
+                return true;
+            }
+            if ($raw === false) {
+                return false;
+            }
+        }
+
+        $kindFor = $this->typeKindUiFor($def);
+        if ($kindFor === 'group' || $kindFor === 'area') {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hubAllowsSectionChildren(string $family, string $workspaceSlug = ''): bool
+    {
+        $family = trim($family);
+        if ($family === '') {
+            return true;
+        }
+
+        $hubZone = $this->resolveType('hubs/' . $family, $workspaceSlug);
+        if (!is_array($hubZone)) {
+            return true;
+        }
+
+        $treeUi = $this->resolveHubTreeUi($hubZone);
+
+        return $treeUi['section_children'];
     }
 
     public function hubFamilyForUrlSegment(string $segment, string $workspaceSlug = ''): ?string
@@ -814,9 +947,6 @@ class TypeSchemaRegistry
         } elseif ($folder === 'archive') {
             $icon = 'archive';
             $iconClass = 'text-zinc-500';
-        } elseif ($folder === 'atlas') {
-            $icon = 'map';
-            $iconClass = 'text-cyan-600';
         } elseif ($folder === 'files') {
             $icon = 'folder';
             $iconClass = 'text-amber-500';
@@ -887,7 +1017,7 @@ class TypeSchemaRegistry
     /**
      * @param array<string, mixed>|null $familyBase
      *
-     * @return array{label: string, sort: int, icon: string, icon_class: string}
+     * @return array{label: string, sort: int, icon: string, icon_class: string, section_children: bool}
      */
     private function resolveHubTreeUi(?array $familyBase): array
     {
@@ -895,6 +1025,7 @@ class TypeSchemaRegistry
         $sort = 100;
         $icon = 'folder';
         $iconClass = 'text-amber-500';
+        $sectionChildren = true;
 
         if ($familyBase === null) {
             return [
@@ -902,7 +1033,19 @@ class TypeSchemaRegistry
                 'sort' => $sort,
                 'icon' => $icon,
                 'icon_class' => $iconClass,
+                'section_children' => $sectionChildren,
             ];
+        }
+
+        if (isset($familyBase['section-children'])) {
+            $raw = $familyBase['section-children'];
+            if ($raw === false) {
+                $sectionChildren = false;
+            } elseif ($raw === 0) {
+                $sectionChildren = false;
+            } elseif (is_string($raw) && ($raw === 'false' || $raw === '0')) {
+                $sectionChildren = false;
+            }
         }
 
         $treeUi = $familyBase['tree-ui'] ?? null;
@@ -932,6 +1075,7 @@ class TypeSchemaRegistry
             'sort' => $sort,
             'icon' => $icon,
             'icon_class' => $iconClass,
+            'section_children' => $sectionChildren,
         ];
     }
 

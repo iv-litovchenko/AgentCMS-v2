@@ -23,8 +23,21 @@
     <ul class="space-y-0.5" role="tree">
         {% for group in hub_tree %}
             {% set onFamily = active_hub_family_page|default(false) and active_hub_family|default('') == group.family %}
+            {% set zoneFolderOnly = group.zone_folder_only|default(false) %}
             {% set zoneFilter = (group.label ~ ' ' ~ group.family ~ ' ' ~ group.folder|default('') ~ ' ' ~ group.url_segment|default(''))|lower %}
             <li role="treeitem" class="hub-tree-zone" data-hub-tree-zone data-filter-text="{{ zoneFilter|e('html_attr') }}">
+                {% if zoneFolderOnly %}
+                    <a href="{{ path('workspace_hub_family_show', {slug: workspace.slug, zone: group.url_segment|default(group.family), family: group.family}) }}"
+                       class="flex items-center gap-1 rounded px-1 py-0.5 font-medium {% if onFamily %}bg-zinc-100 text-zinc-900 hover:bg-zinc-100{% else %}text-zinc-800 hover:bg-zinc-50{% endif %}"
+                       {% if group.folder|default('') != '' %}title="{{ group.folder }}"{% endif %}
+                       {% if onFamily %}aria-current="page"{% endif %}>
+                        {% include 'workspace/_hub_tree_icon.html.twig' with {
+                            icon: group.tree_icon|default('folder'),
+                            icon_class: group.tree_icon_class|default('text-amber-500'),
+                        } %}
+                        <span class="truncate">{{ group.label }}</span>
+                    </a>
+                {% else %}
                 <details class="group/tree" open>
                     <summary class="flex cursor-pointer list-none items-center gap-0.5 rounded px-0.5 py-0.5 hover:bg-zinc-50 [&::-webkit-details-marker]:hidden">
                         <span class="inline-flex shrink-0 rounded p-0.5 text-zinc-400" aria-hidden="true">
@@ -60,6 +73,7 @@
                         } %}
                     </ul>
                 </details>
+                {% endif %}
             </li>
         {% endfor %}
         {% include 'workspace/_module_nav.html.twig' with {

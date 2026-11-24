@@ -38,6 +38,14 @@ class WorkspaceNodeScanner
     public function attachDiskNodesToHubTree(array $groups, string $workspaceSlug): array
     {
         foreach ($groups as $index => $group) {
+            $sectionChildren = true;
+            if (isset($group['tree_section_children']) && $group['tree_section_children'] === false) {
+                $sectionChildren = false;
+            }
+            if (!$sectionChildren) {
+                $groups[$index]['items'] = [];
+                continue;
+            }
             $folder = '';
             if (isset($group['folder']) && is_string($group['folder'])) {
                 $folder = $group['folder'];
@@ -106,16 +114,11 @@ class WorkspaceNodeScanner
         }
 
         usort($rootPaths, function (string $a, string $b) use ($nodes): int {
-            $nameA = '';
-            $nameB = '';
-            if (isset($nodes[$a]['name']) && is_string($nodes[$a]['name'])) {
-                $nameA = $nodes[$a]['name'];
-            }
-            if (isset($nodes[$b]['name']) && is_string($nodes[$b]['name'])) {
-                $nameB = $nodes[$b]['name'];
+            if (!isset($nodes[$a]) || !isset($nodes[$b])) {
+                return 0;
             }
 
-            return strcmp($nameA, $nameB);
+            return $this->compareHubTreeDiskItems($nodes[$a], $nodes[$b]);
         });
 
         $result = [];
@@ -151,16 +154,7 @@ class WorkspaceNodeScanner
         }
 
         usort($children, function (array $a, array $b): int {
-            $nameA = '';
-            $nameB = '';
-            if (isset($a['name']) && is_string($a['name'])) {
-                $nameA = $a['name'];
-            }
-            if (isset($b['name']) && is_string($b['name'])) {
-                $nameB = $b['name'];
-            }
-
-            return strcmp($nameA, $nameB);
+            return $this->compareHubTreeDiskItems($a, $b);
         });
 
         unset($node['children']);
@@ -208,6 +202,7 @@ class WorkspaceNodeScanner
         $finder->files()->in($scanRoot)->sortByName();
         if ($isWorkspaceRoot) {
             $finder->depth('== 0');
+            $finder->ignoreDotFiles(false);
         }
 
         $items = [];
@@ -247,7 +242,15 @@ class WorkspaceNodeScanner
                 $typeId = $this->resolveRootMarkdownFileTypeId($filename, $workspaceSlug);
             }
 
+            if ($isWorkspaceRoot && $name === $filename && $typeId !== '') {
+                $typeDef = $this->typeSchemaRegistry->resolveType($typeId, $workspaceSlug);
+                if (is_array($typeDef) && isset($typeDef['name']) && is_string($typeDef['name']) && trim($typeDef['name']) !== '') {
+                    $name = trim($typeDef['name']);
+                }
+            }
+
             $treeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $workspaceSlug);
+            $allowsChildren = $this->typeSchemaRegistry->sectionAllowsSectionChildren($typeId, $workspaceSlug);
 
             $items[] = [
                 'disk_path' => $diskPath,
@@ -257,14 +260,97 @@ class WorkspaceNodeScanner
                 'type_id' => $typeId,
                 'tree_icon' => $treeUi['icon'],
                 'tree_icon_class' => $treeUi['icon_class'],
+                'allows_section_children' => $allowsChildren,
             ];
         }
 
         usort($items, function (array $a, array $b): int {
-            return strcmp($a['name'], $b['name']);
+            return $this->compareHubTreeDiskItems($a, $b);
         });
 
         return $items;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $items
+     * @param string $hubFolder
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function filterItemsToHubZoneRoots(array $items, string $hubFolder): array
+    {
+        $hubFolder = trim(str_replace('\\', '/', $hubFolder), '/');
+        $filtered = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $diskPath = '';
+            if (isset($item['disk_path']) && is_string($item['disk_path'])) {
+                $diskPath = trim(str_replace('\\', '/', $item['disk_path']), '/');
+            }
+            if ($diskPath === '') {
+                continue;
+            }
+
+            $relative = $diskPath;
+            if ($hubFolder !== '' && $hubFolder !== '.') {
+                $prefix = $hubFolder . '/';
+                if (!str_starts_with($diskPath, $prefix)) {
+                    continue;
+                }
+                $relative = substr($diskPath, strlen($prefix));
+            }
+
+            if ($relative === '') {
+                continue;
+            }
+            if (str_contains($relative, '/')) {
+                continue;
+            }
+
+            $filtered[] = $item;
+        }
+
+        usort($filtered, function (array $a, array $b): int {
+            return $this->compareHubTreeDiskItems($a, $b);
+        });
+
+        return $filtered;
+    }
+
+    /**
+     * @param array<string, mixed> $a
+     * @param array<string, mixed> $b
+     */
+    public function compareHubTreeDiskItems(array $a, array $b): int
+    {
+        $containerA = false;
+        if (isset($a['allows_section_children']) && $a['allows_section_children'] === true) {
+            $containerA = true;
+        }
+        $containerB = false;
+        if (isset($b['allows_section_children']) && $b['allows_section_children'] === true) {
+            $containerB = true;
+        }
+        if ($containerA !== $containerB) {
+            if ($containerA) {
+                return -1;
+            }
+
+            return 1;
+        }
+
+        $nameA = '';
+        $nameB = '';
+        if (isset($a['name']) && is_string($a['name'])) {
+            $nameA = $a['name'];
+        }
+        if (isset($b['name']) && is_string($b['name'])) {
+            $nameB = $b['name'];
+        }
+
+        return strcmp($nameA, $nameB);
     }
 
     /**
@@ -629,6 +715,38 @@ class WorkspaceNodeScanner
     /**
      * @param array{properties: array<string, mixed>, body: string}|null $parsed
      */
+    public function resolveRootCreatableFileTypeId(string $filename, string $workspaceSlug): string
+    {
+        return $this->resolveRootMarkdownFileTypeId($filename, $workspaceSlug);
+    }
+
+    /**
+     * @return array<string, true>
+     */
+    public function mapExistingRootCreatableFiles(string $workspaceSlug): array
+    {
+        $result = [];
+        $base = $this->workspaceService->getWorkspaceDirectory($workspaceSlug);
+        if ($base === null) {
+            return $result;
+        }
+
+        foreach ($this->nodeDiskManifestRegistry->listRootCreatableFiles($workspaceSlug) as $entry) {
+            if (!isset($entry['file']) || !is_string($entry['file'])) {
+                continue;
+            }
+            $file = trim($entry['file']);
+            if ($file === '') {
+                continue;
+            }
+            if (is_file($base . '/' . $file)) {
+                $result[$file] = true;
+            }
+        }
+
+        return $result;
+    }
+
     private function resolveRootMarkdownFileTypeId(string $filename, string $workspaceSlug): string
     {
         $filename = trim($filename);

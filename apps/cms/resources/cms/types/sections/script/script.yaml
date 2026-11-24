@@ -10,3 +10,6 @@ view:
   screen:
     template: workspace/hubs/script_script.html.twig
 description: 'Скрипт — manifest и слоты (заготовка)'
+storage-slots:
+  - todo
+  - state

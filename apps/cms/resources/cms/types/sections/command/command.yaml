@@ -10,3 +10,6 @@ view:
   screen:
     template: workspace/hubs/command_command.html.twig
 description: 'Команда — manifest и слоты (заготовка)'
+storage-slots:
+  - todo
+  - state

@@ -12,7 +12,7 @@ view:
     template: workspace/disk_nodes/topic/area.html.twig
     action: showDiskNodeTopicArea
 description: 'Область контента — папка-раздел в awn-container (не служебная секция корня)'
+allows-section-children: true
 storage-slots:
   - todo
   - state
-  - archive

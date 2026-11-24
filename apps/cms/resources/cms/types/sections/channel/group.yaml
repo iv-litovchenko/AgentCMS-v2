@@ -6,10 +6,10 @@ tree-ui:
   icon-class: text-amber-500
 extends: sections/_base
 description: 'manifest.section.md + подпапки каналов, без собственного ingress'
+allows-section-children: true
 storage-slots:
   - todo
   - state
-  - archive
 kind-ui:
   for: group
   label: Группа

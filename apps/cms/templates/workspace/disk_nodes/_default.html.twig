@@ -22,9 +22,20 @@
         hide_acms_type: disk_node_type_id|default('') != '',
         hide_acms_name: true,
     } %}
-    {% if disk_node.body|default('')|trim != '' %}
+    {% set manifest_body = disk_node.body|default('')|trim %}
+    {% set manifest_body_label = disk_node_manifest_body_label|default('') %}
+    {% if manifest_body_label != '' or manifest_body != '' %}
         <div class="mt-3 border-t border-zinc-100 pt-3">
-            <pre class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{{ disk_node.body|trim }}</pre>
+            {% if manifest_body_label != '' %}
+                <h2 class="mb-2 text-sm font-medium leading-snug text-zinc-800">{{ manifest_body_label }}</h2>
+            {% endif %}
+            {% if manifest_body != '' %}
+                <div class="rounded-md border border-zinc-100 bg-zinc-50/80 px-3 py-2.5">
+                    <pre class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{{ manifest_body }}</pre>
+                </div>
+            {% else %}
+                <p class="text-sm text-zinc-500">Пока пусто.</p>
+            {% endif %}
         </div>
     {% endif %}
 </section>

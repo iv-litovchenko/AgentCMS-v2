@@ -19,7 +19,12 @@
     {% endif %}
 </header>
 
-{% if hub_family == 'root' and root_creatable_files|default([])|length > 0 %}
+{% if hub_zone_folder_only|default(false) %}
+    {% include 'workspace/hubs/family/_folder_listing.html.twig' with {
+        workspace: workspace,
+        hub_folder_entries: hub_folder_entries|default([]),
+    } %}
+{% elseif hub_family == 'root' and root_creatable_files|default([])|length > 0 %}
     <section class="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm">
         <ul class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
             {% for entry in root_creatable_files %}

@@ -331,6 +331,12 @@ class WorkspaceController extends AbstractController
             throw $this->createNotFoundException('Семья hub не найдена.');
         }
 
+        $family = trim($family);
+        $hubGroup = $this->typeSchemaRegistry->findHubTreeGroupByFamily($family, $workspace['slug']);
+        if ($hubGroup === null) {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
         $canonicalZone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($family, $workspace['slug']);
         if ($canonicalZone !== $zone) {
             return $this->redirectToRoute('workspace_hub_family_show', [
@@ -339,14 +345,33 @@ class WorkspaceController extends AbstractController
             ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $family = trim($family);
-        $hubGroup = $this->typeSchemaRegistry->findHubTreeGroupByFamily($family, $workspace['slug']);
-        if ($hubGroup === null) {
-            throw $this->createNotFoundException('Семья hub не найдена.');
-        }
-
         $hubTree = $this->workspaceNodeScanner->attachDiskNodesToHubTree([$hubGroup], $workspace['slug']);
         $hubGroup = $hubTree[0];
+
+        $hubFolderForList = '';
+        if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
+            $hubFolderForList = trim($hubGroup['folder']);
+        }
+        $familyRootItems = [];
+        if (isset($hubGroup['items']) && is_array($hubGroup['items'])) {
+            $familyRootItems = $this->workspaceNodeScanner->filterItemsToHubZoneRoots($hubGroup['items'], $hubFolderForList);
+        }
+        $hubGroup['items'] = $familyRootItems;
+
+        $hubFolderEntries = [];
+        $hubZoneFolderOnly = !$this->typeSchemaRegistry->hubAllowsSectionChildren($family, $workspace['slug']);
+        if ($hubZoneFolderOnly) {
+            $hubFolder = '';
+            if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
+                $hubFolder = trim($hubGroup['folder']);
+            }
+            if ($hubFolder !== '' && $hubFolder !== '.') {
+                $listing = $this->workspaceNodeScanner->readDiskDirectoryListing($workspace['slug'], $hubFolder);
+                if ($listing !== null && isset($listing['entries']) && is_array($listing['entries'])) {
+                    $hubFolderEntries = $listing['entries'];
+                }
+            }
+        }
 
         $familyBase = $this->typeSchemaRegistry->resolveType('hubs/' . $family, $workspace['slug']);
         $defaultNodeTypeId = $this->typeSchemaRegistry->resolveDefaultNodeTypeIdForHub($family, $workspace['slug']);
@@ -355,13 +380,7 @@ class WorkspaceController extends AbstractController
         $existingRootFiles = [];
         if ($family === 'root') {
             $rootCreatableFiles = $this->nodeDiskManifestRegistry->listRootCreatableFiles($workspace['slug']);
-            foreach ($hubGroup['items'] as $item) {
-                if (isset($item['manifest_file']) && is_string($item['manifest_file'])) {
-                    $existingRootFiles[$item['manifest_file']] = true;
-                } elseif (isset($item['disk_path']) && is_string($item['disk_path']) && str_ends_with($item['disk_path'], '.md')) {
-                    $existingRootFiles[$item['disk_path']] = true;
-                }
-            }
+            $existingRootFiles = $this->workspaceNodeScanner->mapExistingRootCreatableFiles($workspace['slug']);
         }
 
         if (isset($hubGroup['type_items']) && is_array($hubGroup['type_items'])) {
@@ -383,6 +402,8 @@ class WorkspaceController extends AbstractController
             $this->workspaceViewAssembler->buildViewContext($workspace),
             [
                 'hub_group' => $hubGroup,
+                'hub_folder_entries' => $hubFolderEntries,
+                'hub_zone_folder_only' => $hubZoneFolderOnly,
                 'hub_family' => $family,
                 'hub_url_zone' => $canonicalZone,
                 'hub_family_base' => $familyBase,
@@ -541,6 +562,15 @@ class WorkspaceController extends AbstractController
         ];
 
         if ($moduleMeta['slug'] === 'create') {
+            $createFamily = trim($request->query->getString('family'));
+            if ($createFamily !== '' && !$this->typeSchemaRegistry->hubAllowsSectionChildren($createFamily, $workspace['slug'])) {
+                $createZone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($createFamily, $workspace['slug']);
+
+                return $this->redirectToRoute('workspace_hub_family_show', [
+                    'slug' => $slug,
+                    'zone' => $createZone,
+                ]);
+            }
             $extra = array_merge($extra, $this->buildCreateWizardContext($workspace['slug'], $request));
         }
 
@@ -605,6 +635,10 @@ class WorkspaceController extends AbstractController
                 continue;
             }
 
+            if (!$this->typeSchemaRegistry->hubAllowsSectionChildren($family, $workspaceSlug)) {
+                continue;
+            }
+
             $isRoot = $family === 'root';
             $typeItems = [];
             if (isset($group['type_items']) && is_array($group['type_items'])) {
@@ -616,7 +650,7 @@ class WorkspaceController extends AbstractController
             if ($isRoot) {
                 if (count($rootCreatableFiles) > 0) {
                     $canCreate = true;
-                    $hint = 'Корневые markdown-файлы';
+                    $hint = 'Служебные файлы в корне хранилища';
                 }
             } elseif (count($typeItems) > 0) {
                 $canCreate = true;
@@ -676,13 +710,7 @@ class WorkspaceController extends AbstractController
                 if ($selectedFamily === 'root') {
                     $hubTree = $this->workspaceNodeScanner->attachDiskNodesToHubTree([$wizardGroup], $workspaceSlug);
                     $wizardGroup = $hubTree[0];
-                    foreach ($wizardGroup['items'] as $item) {
-                        if (isset($item['manifest_file']) && is_string($item['manifest_file'])) {
-                            $existingRootFiles[$item['manifest_file']] = true;
-                        } elseif (isset($item['disk_path']) && is_string($item['disk_path']) && str_ends_with($item['disk_path'], '.md')) {
-                            $existingRootFiles[$item['disk_path']] = true;
-                        }
-                    }
+                    $existingRootFiles = $this->workspaceNodeScanner->mapExistingRootCreatableFiles($workspaceSlug);
                 } else {
                     $defaultNodeTypeId = $this->typeSchemaRegistry->resolveDefaultNodeTypeIdForHub($selectedFamily, $workspaceSlug);
                     $requestedType = trim($request->query->getString('type'));

@@ -1,0 +1,22 @@
+name: 'Тема — стандарт'
+status: active
+default: true
+sort: 10
+extends: sections/topic/_base
+description: 'Полный набор слотов памяти (как раньше sections/topic/topic)'
+storage-slots:
+  - main
+  - main-md
+  - main-csv
+  - inbox
+  - notes
+  - references
+  - artefacts
+  - assets
+  - media
+  - templates
+  - notebooklm
+  - task-queue
+  - todo
+  - state
+  - archive

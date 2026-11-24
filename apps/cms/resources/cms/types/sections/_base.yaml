@@ -1,8 +1,10 @@
 name: 'База секции'
 status: active
 manifest-pattern: manifest.section.md
+manifest-body-label: 'Бриф, контекст, инструкция и договоренности с агентом'
 extends: base/base
 description: 'Секция workspace — manifest.section.md в папке зоны hub'
+allows-section-children: false
 storage-slots:
   - todo
   - state

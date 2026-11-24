@@ -6,10 +6,10 @@ tree-ui:
   icon: group
   icon-class: text-amber-500
 description: 'Группа скриптов'
+allows-section-children: true
 storage-slots:
   - todo
   - state
-  - archive
 kind-ui:
   for: group
   label: Группа

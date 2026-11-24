@@ -11,8 +11,8 @@ storage-slots:
   - inbox
   - task-queue
   - outbox
-  - files
   - assets
+  - files
   - todo
   - state
   - archive

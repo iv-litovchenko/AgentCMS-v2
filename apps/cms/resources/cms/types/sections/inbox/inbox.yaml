@@ -1,0 +1,16 @@
+name: 'Входящая свалка'
+status: draft
+default: true
+hub: inbox
+extends: sections/_base
+tree-ui:
+  icon: inbox
+  icon-class: text-sky-600
+description: 'Папка входящей свалки — manifest.section.md и слоты'
+storage-slots:
+  - inbox
+  - files
+  - assets
+  - todo
+  - state
+  - archive

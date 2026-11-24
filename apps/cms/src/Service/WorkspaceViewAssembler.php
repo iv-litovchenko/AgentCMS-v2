@@ -43,21 +43,50 @@ class WorkspaceViewAssembler
             }
         }
 
+        $slug = $workspace['slug'];
+
         return [
             'workspace' => $workspace,
             'workspaces' => $this->workspaceService->listForDisplay(),
-            'workspace_modules' => $this->workspaceModuleRegistry->listSidebarModules($workspace['slug']),
-            'hub_tree' => $this->workspaceNodeScanner->attachNestedDiskNodesToHubTree(
-                $this->typeSchemaRegistry->listHubTreeGroups($workspace['slug']),
-                $workspace['slug']
-            ),
+            'workspace_modules' => $this->workspaceModuleRegistry->listSidebarModules($slug),
+            'hub_tree' => $this->buildHubTreeForSidebar($slug),
             'type_label' => $typeLabel,
             'type_kind' => $typeKind,
             'active_hub_path' => '',
             'active_hub_family' => '',
             'active_hub_family_page' => false,
             'active_disk_node_path' => '',
+            'sidebar_root_note_body' => $this->workspaceService->readRootMarkdownBody($slug, 'NOTE.md'),
+            'sidebar_root_todo_body' => $this->workspaceService->readRootMarkdownBody($slug, 'TODO.md'),
         ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function buildHubTreeForSidebar(string $workspaceSlug): array
+    {
+        $groups = $this->workspaceNodeScanner->attachNestedDiskNodesToHubTree(
+            $this->typeSchemaRegistry->listHubTreeGroups($workspaceSlug),
+            $workspaceSlug
+        );
+
+        foreach ($groups as $index => $group) {
+            $family = '';
+            if (isset($group['family']) && is_string($group['family'])) {
+                $family = trim($group['family']);
+            }
+            $folderOnly = false;
+            if ($family !== '') {
+                if (!$this->typeSchemaRegistry->hubAllowsSectionChildren($family, $workspaceSlug)) {
+                    $folderOnly = true;
+                }
+            }
+            $groups[$index]['zone_folder_only'] = $folderOnly;
+            $groups[$index]['tree_section_children'] = !$folderOnly;
+        }
+
+        return $groups;
     }
 
     public function resolveHubFamilyForDiskPath(string $diskPath, string $workspaceSlug): string

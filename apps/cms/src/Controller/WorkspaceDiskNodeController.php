@@ -200,8 +200,17 @@ class WorkspaceDiskNodeController extends AbstractController
 
         $properties = $diskNode['properties'];
         $typeId = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-type');
+        if ($typeId === '' && isset($diskNode['manifest_file']) && is_string($diskNode['manifest_file'])) {
+            $typeId = $this->workspaceNodeScanner->resolveRootCreatableFileTypeId(
+                $diskNode['manifest_file'],
+                $workspace['slug']
+            );
+        }
         $hubFamily = $this->workspaceViewAssembler->resolveHubFamilyForDiskPath($diskPath, $workspace['slug']);
         $nodeLabel = $this->resolveNodeLabel($diskPath, $properties);
+        if ($nodeLabel === $diskPath && isset($diskNode['manifest_file']) && is_string($diskNode['manifest_file'])) {
+            $nodeLabel = $diskNode['manifest_file'];
+        }
 
         $formName = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-name');
         if ($formName === '' && isset($properties['name']) && is_string($properties['name'])) {
@@ -270,6 +279,8 @@ class WorkspaceDiskNodeController extends AbstractController
             'current' => true,
         ];
 
+        $manifestBodyLabel = $this->typeSchemaRegistry->resolveManifestBodyLabel($typeId, $workspace['slug']);
+
         return $this->render('workspace/disk_node_edit.html.twig', array_merge(
             $this->workspaceViewAssembler->buildViewContext($workspace),
             [
@@ -277,6 +288,7 @@ class WorkspaceDiskNodeController extends AbstractController
                 'disk_node_path' => $diskPath,
                 'disk_node_label' => $nodeLabel,
                 'disk_node_type_id' => $this->typeSchemaRegistry->publicTypeId($typeId),
+                'disk_node_manifest_body_label' => $manifestBodyLabel,
                 'disk_node_edit_mode' => $editMode,
                 'disk_node_edit_csrf_id' => $csrfId,
                 'disk_node_form_name' => $formName,
@@ -554,11 +566,21 @@ class WorkspaceDiskNodeController extends AbstractController
         $typeId = '';
         $properties = $diskNode['properties'];
         $typeId = $this->acmsManifestPropertyBridge->stringProperty($properties, 'acms-type');
+        if ($typeId === '' && isset($diskNode['manifest_file']) && is_string($diskNode['manifest_file'])) {
+            $typeId = $this->workspaceNodeScanner->resolveRootCreatableFileTypeId(
+                $diskNode['manifest_file'],
+                $workspace['slug']
+            );
+        }
 
         $hubFamily = $this->workspaceViewAssembler->resolveHubFamilyForDiskPath($nodePath, $workspace['slug']);
         $nodeLabel = $this->resolveNodeLabel($nodePath, $properties);
+        if ($nodeLabel === $nodePath && isset($diskNode['manifest_file']) && is_string($diskNode['manifest_file'])) {
+            $nodeLabel = $diskNode['manifest_file'];
+        }
         $view = $this->typeViewResolver->resolveDiskNodeView($typeId, $workspace['slug']);
         $slotPartition = $this->partitionDiskNodeStorageSlots($workspace['slug'], $nodePath, $typeId);
+        $manifestBodyLabel = $this->typeSchemaRegistry->resolveManifestBodyLabel($typeId, $workspace['slug']);
 
         $context = array_merge(
             $this->workspaceViewAssembler->buildViewContext($workspace),
@@ -568,6 +590,7 @@ class WorkspaceDiskNodeController extends AbstractController
                 'disk_node_path' => $nodePath,
                 'disk_node_label' => $nodeLabel,
                 'disk_node_type_id' => $this->typeSchemaRegistry->publicTypeId($typeId),
+                'disk_node_manifest_body_label' => $manifestBodyLabel,
                 'disk_node_view_template' => $view['template'],
                 'active_disk_node_path' => $nodePath,
                 'active_hub_path' => '',

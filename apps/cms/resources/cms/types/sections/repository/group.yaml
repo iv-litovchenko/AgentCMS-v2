@@ -6,6 +6,7 @@ tree-ui:
   icon-class: text-amber-500
 extends: sections/_base
 description: 'manifest.section.md + подпапки репозиториев, без собственного клона'
+allows-section-children: true
 storage-slots:
   - todo
   - state

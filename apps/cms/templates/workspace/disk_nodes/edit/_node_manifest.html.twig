@@ -16,7 +16,15 @@
                       class="mt-1 w-full max-w-lg rounded-md border border-zinc-200 px-2 py-1.5 text-sm">{{ disk_node_form_description }}</textarea>
         </div>
         <div>
-            <label class="block text-xs font-medium text-zinc-700" for="disk-node-body">Тело (markdown)</label>
+            {% set _body_label = disk_node_manifest_body_label|default('') %}
+            {% if _body_label == '' %}
+                {% set _body_label = 'Бриф, контекст, инструкция и договоренности с агентом' %}
+            {% endif %}
+            {% set _type_pub = disk_node_type_id|default('') %}
+            {% if _type_pub starts with 'acms.root.' and _type_pub != 'acms.root.ws' and _type_pub != 'acms.root.root' %}
+                {% set _body_label = 'Текст' %}
+            {% endif %}
+            <label class="block text-xs font-medium text-zinc-700" for="disk-node-body">{{ _body_label }}</label>
             <textarea id="disk-node-body" name="disk_node_body" rows="8"
                       class="mt-1 w-full font-mono text-xs rounded-md border border-zinc-200 px-2 py-1.5">{{ disk_node_form_body }}</textarea>
         </div>

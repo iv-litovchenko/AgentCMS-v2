@@ -1,0 +1,8 @@
+name: 'Тема — одиночка'
+status: active
+sort: 40
+extends: sections/topic/_base
+description: 'Только todo.md и state.md'
+storage-slots:
+  - todo
+  - state

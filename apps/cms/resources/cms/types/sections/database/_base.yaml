@@ -6,6 +6,11 @@ tree-ui:
   icon: database
   icon-class: text-violet-500
 description: 'Инфоблок в acms-databases/'
+storage-slots:
+  - data
+  - todo
+  - state
+  - archive
 mixins:
   - mixins/indexing-container
 form:

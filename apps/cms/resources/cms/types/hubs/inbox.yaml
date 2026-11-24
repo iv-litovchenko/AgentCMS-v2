@@ -1,0 +1,11 @@
+name: 'Зона inbox'
+status: active
+folder: acms-inbox
+section-children: false
+tree-ui:
+  label: 'Входящяя свалка'
+  sort: 8
+  icon: inbox
+  icon-class: text-sky-600
+extends: hubs/_base
+description: 'Входящая свалка — сырой поток до разбора по каналам и темам'
