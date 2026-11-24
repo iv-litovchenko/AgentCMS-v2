@@ -53,7 +53,7 @@ class AppController extends AbstractController
         $this->connectorService = $connectorService;
     }
 
-    #[Route('/app/{name}/{section}', name: 'app_section', requirements: ['name' => '[a-z0-9_-]+', 'section' => '[a-z0-9_-]+'], methods: ['GET', 'POST'])]
+    #[Route('/app/{name}/{section}', name: 'app_section', requirements: ['name' => '[a-z0-9_-]+', 'section' => '[a-z0-9_-]+'], methods: ['GET', 'POST'], priority: 20)]
     public function section(string $name, string $section, Request $request): Response
     {
         if ($name === 'documentation' && $section === 'typography') {
@@ -98,7 +98,7 @@ class AppController extends AbstractController
         return $this->render($template, $view);
     }
 
-    #[Route('/app/{name}', name: 'app_show', requirements: ['name' => '[a-z0-9_-]+'], methods: ['GET', 'POST'])]
+    #[Route('/app/{name}', name: 'app_show', requirements: ['name' => '[a-z0-9_-]+'], methods: ['GET', 'POST'], priority: 20)]
     public function show(string $name, Request $request): Response
     {
         $app = $this->uiMenuService->findAppByName($name);

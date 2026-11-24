@@ -4,7 +4,7 @@ folder: acms-taxonomies
 tree-ui:
   label: Таксономии
   sort: 9
-  icon: tag
+  icon: table
   icon-class: text-emerald-600
 extends: hubs/_base
 description: 'CSV-справочники в acms-taxonomies/ (отдельно от баз и инфоблоков)'

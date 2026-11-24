@@ -3,12 +3,10 @@ status: active
 sort: 10
 hub: taxonomy
 extends: sections/taxonomy/_base
-description: 'CSV-словарь; ключ в awn-taxonomy — slug папки'
-storage-slots:
-  - data
+description: 'CSV-словарь main.csv; ключ в awn-taxonomy — slug папки'
 tree-ui:
   icon: tag
-  icon-class: text-emerald-600
+  icon-class: text-emerald-500
 kind-ui:
   for: reference
   label: Справочник

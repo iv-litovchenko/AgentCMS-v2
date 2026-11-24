@@ -5,6 +5,6 @@ extends: sections/_base
 tree-ui:
   icon: tag
   icon-class: text-emerald-600
-description: 'Справочник в acms-taxonomies/'
+description: 'Справочник в acms-taxonomies/ — один файл main.csv'
 storage-slots:
-  - data
+  - main-csv

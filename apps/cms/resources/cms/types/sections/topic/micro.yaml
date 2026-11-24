@@ -1,4 +1,4 @@
-name: 'Тема — micro'
+name: 'Тема — микро'
 status: active
 sort: 40
 extends: sections/topic/_base
@@ -7,7 +7,7 @@ storage-slots:
   - todo
   - state
 kind-ui:
-  label: Micro
+  label: Микро
   badge:
     background: '#f4f4f5'
     border: '#d4d4d8'
