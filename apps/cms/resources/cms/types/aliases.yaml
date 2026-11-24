@@ -110,7 +110,6 @@ awn.hub.channel.group: sections/channel/group
 awn.hub.database.collection: sections/database/collection
 awn.hub.database.group: sections/database/group
 awn.hub.database.single: sections/database/single
-awn.hub.database.taxonomy-collection: sections/database/taxonomy-collection
 awn.hub.media: sections/media/media
 awn.hub.media.group: sections/media/group
 awn.hub.repository: sections/repository/repository
@@ -130,12 +129,14 @@ hubs/topic/topic: sections/topic/default
 hubs/topic/default: sections/topic/default
 hubs/topic/minimal: sections/topic/minimal
 hubs/topic/flexible: sections/topic/flexible
-hubs/topic/single: sections/topic/single
+hubs/topic/micro: sections/topic/micro
+hubs/topic/single: sections/topic/micro
 acms.section.topic: sections/topic/default
 acms.section.topic.default: sections/topic/default
 acms.section.topic.minimal: sections/topic/minimal
 acms.section.topic.flexible: sections/topic/flexible
-acms.section.topic.single: sections/topic/single
+acms.section.topic.micro: sections/topic/micro
+acms.section.topic.single: sections/topic/micro
 hubs/channel/channel: sections/channel/channel
 hubs/root/root: sections/root/root
 hubs/database/collection: sections/database/collection
@@ -160,7 +161,6 @@ awn.preset.dependencies: presets/dependencies
 awn.preset.env: presets/env
 awn.preset.gitignore: presets/gitignore
 awn.preset.note: presets/note
-awn.preset.onboarding: presets/onboarding
 awn.preset.readme: presets/readme
 awn.preset.shell-proactive-prompt: presets/shell-proactive-prompt
 awn.preset.shell-stt-prompt: presets/shell-stt-prompt
@@ -185,8 +185,8 @@ awn.slot.flexible: slots/multi-file/flexible
 awn.slot.history: slots/multi-file/system/history
 awn.slot.inbox: slots/multi-file/inbox
 awn.slot.main: slots/multi-file/main
-awn.slot.main-md: slots/single-file/main-md
-awn.slot.main-single: slots/single-file/main-md
+awn.slot.main-md: slots/single-file/main
+awn.slot.main-single: slots/single-file/main
 awn.slot.main-csv: slots/single-file/main-csv
 awn.slot.main-single-csv: slots/single-file/main-csv
 awn.slot.media: slots/multi-file/media

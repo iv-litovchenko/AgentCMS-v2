@@ -6,9 +6,6 @@ storage-driver: external
 description: 'Входящие заметки и черновики'
 path: inbox/
 slot-order: 4
-allowed-containers:
-  - awn.page.topic
-  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category

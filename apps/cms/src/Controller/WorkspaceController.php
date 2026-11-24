@@ -595,6 +595,7 @@ class WorkspaceController extends AbstractController
             [
                 'active_module_slug' => '',
                 'active_hub_path' => '',
+                'workspace_readme_body' => $this->workspaceService->readRootMarkdownBody($workspace['slug'], 'README.md'),
                 'workspace_breadcrumbs' => $this->workspaceBreadcrumbBuilder->buildForWorkspaceOverview($workspace),
                 'workspace_toolbar' => ['reveal_enabled' => false, 'reveal_relative_path' => ''],
             ]

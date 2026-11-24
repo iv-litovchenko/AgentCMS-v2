@@ -1,0 +1,14 @@
+name: 'Тема — micro'
+status: active
+sort: 40
+extends: sections/topic/_base
+description: 'Только todo.md и state.md — служебная лёгкая тема без слотов памяти'
+storage-slots:
+  - todo
+  - state
+kind-ui:
+  label: Micro
+  badge:
+    background: '#f4f4f5'
+    border: '#d4d4d8'
+    text: '#52525b'

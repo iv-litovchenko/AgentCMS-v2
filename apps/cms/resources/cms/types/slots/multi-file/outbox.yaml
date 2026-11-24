@@ -7,8 +7,6 @@ description: |
   Исходящий поток канала (awn.hub.channel) — 0-storage/outbox/. Сообщения и материалы после обработки, готовые к отправке наружу.
 path: outbox/
 slot-order: 5
-allowed-containers:
-  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category

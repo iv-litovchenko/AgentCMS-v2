@@ -6,7 +6,6 @@ storage-driver: internal
 description: 'Снимок состояния темы — state.md'
 path: state.md
 slot-order: 16
-allowed-containers: []
 allowed-content:
   - content/record
   - content/category

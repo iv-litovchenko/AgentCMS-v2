@@ -975,6 +975,14 @@ class TypeSchemaRegistry
      */
     private function resolveStorageSlotTypeDefinition(string $folder, string $workspaceSlug): ?array
     {
+        $singleMainKeys = ['main-md', 'main-single'];
+        if (in_array($folder, $singleMainKeys, true)) {
+            $singleMain = $this->resolveType('slots/single-file/main', $workspaceSlug);
+            if ($singleMain !== null) {
+                return $singleMain;
+            }
+        }
+
         $folderKeys = [$folder];
         if ($folder === 'notes') {
             $folderKeys[] = 'note';

@@ -24,6 +24,14 @@
         </div>
     </details>
 
+    <label class="sr-only" for="sidebar-tools-modules">Инструменты и модули</label>
+    <select id="sidebar-tools-modules"
+            disabled
+            aria-disabled="true"
+            class="w-full cursor-not-allowed rounded-md border border-transparent bg-zinc-100 px-2 py-1.5 text-sm font-medium text-zinc-500 opacity-90 [&:disabled]:text-zinc-500">
+        <option value="">Инструменты и модули</option>
+    </select>
+
     {% set onOverview = active_module_slug is not defined or active_module_slug == '' %}
     <a href="{{ path('workspace_show', {slug: workspace.slug}) }}"
        class="block overflow-hidden rounded-lg ring-1 {% if onOverview %}ring-emerald-500 ring-2{% else %}ring-zinc-200 hover:ring-zinc-300{% endif %}"

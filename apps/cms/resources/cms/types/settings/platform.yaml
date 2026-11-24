@@ -132,9 +132,6 @@ fields:
         key: BOOTSTRAP.md
         name: BOOTSTRAP.md
       -
-        key: ONBOARDING.md
-        name: ONBOARDING.md
-      -
         key: SKILL.md
         name: SKILL.md
       -

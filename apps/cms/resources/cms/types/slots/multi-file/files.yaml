@@ -7,9 +7,6 @@ description: |
   Библиотека файлов hub — 0-storage/files/ у awn.hub.media и awn.hub.channel. Разделы (awn.content.category), записи .md, бинарники + sidecar — как слот media у темы.
 path: files/
 slot-order: 8
-allowed-containers:
-  - sections/media/media
-  - sections/channel/channel
 allowed-content:
   - content/record
   - content/category

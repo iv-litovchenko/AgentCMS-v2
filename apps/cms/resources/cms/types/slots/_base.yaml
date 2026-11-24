@@ -75,12 +75,3 @@ properties:
     enum:
       - user
       - system
-  allowed-containers:
-    title: 'Где можно создавать'
-    type: list
-    description: |
-      Тип страницы-контейнера (awn.page.* / awn.hub.*): тема, медиатека, канал. Пустой список — везде, где слот есть в политике контейнера.
-    enum:
-      - awn.page.topic
-      - sections/media/media
-      - sections/channel/channel

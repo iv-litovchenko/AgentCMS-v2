@@ -3,6 +3,12 @@ status: active
 sort: 20
 hub: database
 extends: sections/database/_base
+storage-slots:
+  - data
+  - assets
+  - todo
+  - state
+  - archive
 tree-ui:
   icon: database
   icon-class: text-violet-600

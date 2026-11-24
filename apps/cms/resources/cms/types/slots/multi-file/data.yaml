@@ -7,10 +7,6 @@ description: |
   Записи инфоблока database — 0-storage/data/ (md, csv, файлы по awn-collection-type).
 path: data/
 slot-order: 1
-allowed-containers:
-  - sections/database/collection
-  - sections/database/single
-  - sections/database/taxonomy-collection
 allowed-content:
   - content/record
   - content/category

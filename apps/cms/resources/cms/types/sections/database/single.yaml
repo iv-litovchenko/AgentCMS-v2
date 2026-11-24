@@ -3,7 +3,11 @@ status: active
 sort: 30
 hub: database
 extends: sections/database/_base
-description: 'manifest + schema в корне; main.md в 0-storage/data/'
+description: 'manifest + schema в корне; однофайловые main.md, todo.md, state.md (как у темы-одиночки + main)'
+storage-slots:
+  - main-md
+  - todo
+  - state
 kind-ui:
   for: single
   label: Одиночка
