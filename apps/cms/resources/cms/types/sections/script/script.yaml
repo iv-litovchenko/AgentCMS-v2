@@ -8,7 +8,7 @@ tree-ui:
   icon-class: text-emerald-600
 view:
   screen:
-    template: workspace/hubs/script_script.html.twig
+    template: vault/hubs/script_script.html.twig
 description: 'Скрипт — manifest и слоты (заготовка)'
 storage-slots:
   - todo

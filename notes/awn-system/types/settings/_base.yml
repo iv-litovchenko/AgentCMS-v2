@@ -12,7 +12,7 @@ properties:
   scope:
     title: Область
     description: К чему относится настройка
-    enum: [agent, workspace, ui]
+    enum: [agent, хранилище, ui]
     default: agent
   value:
     title: Значение

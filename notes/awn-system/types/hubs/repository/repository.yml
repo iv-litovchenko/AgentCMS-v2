@@ -1,5 +1,5 @@
 id: awn.hub.repository
-name: Репозиторий (workspace)
+name: Репозиторий (хранилище)
 kind: type
 domain: hubs
 status: active
@@ -39,7 +39,7 @@ field-groups:
     collapsed: false
   - id: indexing
     name: "{A2!} Индексирование"
-    description: Что попадает в поиск workspace
+    description: Что попадает в поиск хранилище
     collapsed: true
 
 fields:

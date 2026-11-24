@@ -1,5 +1,5 @@
 id: awn.hub.channel
-name: Канал ingress (workspace)
+name: Канал ingress (хранилище)
 kind: type
 domain: hubs
 status: active

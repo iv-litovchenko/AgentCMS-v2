@@ -8,6 +8,8 @@
 #   apps/cms      → /var/www/cms
 #   shared/php    → /var/www/shared/php  (autoload AgentCms\Shared)
 #   packages      → /var/www/packages    (symlink vendor → ../../../packages/…)
+#   /var/www/cms/var — том в контейнере (кэш/логи; bind apps/cms иначе ломает права www-data)
+#   ./vaults      → /var/www/vaults (compose base; на Mac при EACCES: chmod ugo+rwx vaults)
 # vendor — именованный том (не затирается bind-mount'ом).
 #
 # Первый запуск / после смены composer.json (в образе vendor без --dev):
@@ -28,6 +30,7 @@ services:
       PROJECT_README_PATH: /var/www/README.md
     volumes:
       - ./apps/cms:/var/www/cms
+      - /var/www/cms/var
       - ./shared/php:/var/www/shared/php
       - ./packages:/var/www/packages
       - ./README.md:/var/www/README.md:ro

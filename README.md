@@ -2,7 +2,7 @@
 
 Контейнер **внешней цифровой памяти** пользователя и агентов: хранилища на диске (YAML), веб-админка, API и MCP.
 
-- **Источник правды** — файлы workspace, БД для метаданных и ускорения.
+- **Источник правды** — файлы vault (хранилища), БД для метаданных и ускорения.
 - **Модульность** — расширения (Composer-пакеты), сервисы в Docker, настройки без правок ядра.
 
 Репозиторий: полный rewrite преемника Agent CMS; разработка и документация — в приложении «Документация» в CMS.
@@ -23,7 +23,7 @@
 |------|------------|
 | **Приложение** | PHP 8.2+, Symfony 7, Twig |
 | **UI** | Tailwind CSS 3, Twig |
-| **Хранение** | Workspace на диске (YAML, Markdown); PostgreSQL 16 — метаданные; Redis 7 — кеш |
+| **Хранение** | Vault на диске (YAML, Markdown); PostgreSQL 16 — метаданные; Redis 7 — кеш |
 | **Интеграции** | HTTP API, MCP для агентов; модульные Composer-пакеты |
 | **Инфраструктура** | Docker Compose: Nginx (proxy), `cms`, `mcp`, `api`, `db`, `redis` |
 
@@ -60,7 +60,7 @@ agent-cms-cli-v2 start    # PATH дописывает install.sh в ~/.zshrc / ~
 ```bash
 agent-cms-cli-v2 version                          # версия CLI
 agent-cms-cli-v2 doctor                           # Docker, compose, каталог, HTTP-порт
-agent-cms-cli-v2 paths                            # пути: HOME, CLI, URL, workspaces mount
+agent-cms-cli-v2 paths                            # пути: HOME, CLI, URL, vaults mount
 agent-cms-cli-v2 urls                             # HTTP и HTTPS ссылки из .env
 agent-cms-cli-v2 status                           # HTTP ping + docker compose ps
 
@@ -84,7 +84,7 @@ agent-cms-cli-v2 logs                             # логи потоком (-f)
 agent-cms-cli-v2 logs snap                        # снимок ~200 строк (proxy, cms, mcp, api)
 agent-cms-cli-v2 logs snap --tail 400             # снимок, другой хвост
 
-agent-cms-cli-v2 backup_zzz                       # WIP: архив workspaces
+agent-cms-cli-v2 backup_zzz                       # WIP: архив vaults
 agent-cms-cli-v2 restore_zzz                      # WIP: восстановление из архива
 
 agent-cms-cli-v2 update                           # git pull --ff-only
@@ -113,7 +113,7 @@ agent-cms-cli-v2 env set KEY=VALUE                # запись в .env (whitel
 | Symfony | `PROJECT_README_PATH` | корневой README | Документация в CMS |
 | Данные | `DATABASE_URL` | `postgresql://…@db:5432/agentcms` | PostgreSQL |
 | Данные | `REDIS_URL` | `redis://redis:6379` | Кеш |
-| Данные | `WORKSPACES_DIR` | `/var/www/workspaces` | Volume `workspaces/` |
+| Данные | `VAULTS_DIR` | `/var/www/vaults` | Volume `vaults/` |
 | Prod | `TLS_CERTS_DIR` | `./deploy/certs` | TLS prod-compose |
 | Служебная | `MAINTENANCE_MODE_FILE` | `var/cli/maintenance-mode` | Режим 503 |
 

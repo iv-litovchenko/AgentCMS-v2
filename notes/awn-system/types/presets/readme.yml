@@ -1,14 +1,14 @@
 id: awn.preset.readme
-name: "README.md — описание workspace"
+name: "README.md — описание хранилище"
 kind: preset
 domain: presets
 status: active
 extends: awn.preset
 target-file: "README.md"
-hint-title: "README.md — описание workspace"
+hint-title: "README.md — описание хранилище"
 hint-text: ""
 sort: 8
 body: |
   # README
   
-  > Описание workspace.
+  > Описание хранилище.

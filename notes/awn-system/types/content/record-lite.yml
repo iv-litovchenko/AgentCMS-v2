@@ -24,7 +24,7 @@ field-groups:
     collapsed: false
   - id: indexing
     name: "{A2!} Индексирование"
-    description: Поиск и индексы workspace
+    description: Поиск и индексы хранилище
     collapsed: true
   - id: system
     name: "{A2!} Системные"
@@ -58,7 +58,7 @@ fields:
   awn-id:
     type: awn.field.number.integer
     title: "{A2!} ID"
-    description: Глобальный номер workspace (счётчик в settings.yml)
+    description: Глобальный номер хранилище (счётчик в settings.yml)
     placement: aside-body
     group: system
     sort: 0

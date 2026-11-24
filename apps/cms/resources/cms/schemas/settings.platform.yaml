@@ -8,10 +8,10 @@ groups:
         label: Заголовок сайта
         type: ref:fields/text
         default: Agent CMS
-      - key: cms.default_workspace
-        label: Workspace по умолчанию
+      - key: cms.default_vault
+        label: Vault по умолчанию
         type: ref:fields/slug
-        help: slug каталога в workspaces/
+        help: slug каталога в vaults/
   - id: search
     label: Поиск
     fields:

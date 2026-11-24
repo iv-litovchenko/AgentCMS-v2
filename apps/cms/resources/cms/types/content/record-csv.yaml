@@ -13,7 +13,7 @@ fields:
   awn-id:
     type: fields/number/integer
     title: ID
-    description: 'Глобальный номер workspace (счётчик в settings.yml)'
+    description: 'Глобальный номер vault (счётчик в settings.yml)'
     sort: 0
   awn-parent-id:
     type: fields/string

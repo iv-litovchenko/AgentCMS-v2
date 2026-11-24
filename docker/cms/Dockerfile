@@ -29,6 +29,9 @@ COPY shared/php /var/www/shared/php
 RUN mkdir -p var/cache var/log var/starter var/connector var/ui && chown -R www-data:www-data var \
     && echo "error_log=/var/www/cms/var/log/php.log" > /usr/local/etc/php/conf.d/cms-error-log.ini
 
-USER www-data
+COPY docker/cms/docker-entrypoint.sh /usr/local/bin/cms-entrypoint.sh
+RUN chmod +x /usr/local/bin/cms-entrypoint.sh
+
 EXPOSE 9000
+ENTRYPOINT ["/usr/local/bin/cms-entrypoint.sh"]
 CMD ["php-fpm"]

@@ -1,9 +1,9 @@
-name: 'Путь в workspace'
+name: 'Путь в vault'
 extends: fields/string
 widget: path
 storage: string
 mdbase: path
-description: 'Произвольный путь к файлу в workspace (без семантики отношения)'
+description: 'Произвольный путь к файлу в vault (без семантики отношения)'
 settings:
   - hint
   - required

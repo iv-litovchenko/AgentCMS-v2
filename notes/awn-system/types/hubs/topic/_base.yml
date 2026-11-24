@@ -4,4 +4,4 @@ kind: base
 domain: hubs
 status: active
 extends: awn.hub.base
-description: Дерево тем workspace — ws, area, section, topic
+description: Дерево тем хранилище — ws, area, section, topic

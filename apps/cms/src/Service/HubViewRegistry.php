@@ -20,7 +20,7 @@ class HubViewRegistry
     {
         $hubPath = trim(str_replace('\\', '/', $hubPath), '/');
         $config = $this->loadConfig();
-        $default = 'workspace/hubs/_default.html.twig';
+        $default = 'vault/hubs/_default.html.twig';
         if (isset($config['default']) && is_string($config['default']) && $config['default'] !== '') {
             $default = $config['default'];
         }

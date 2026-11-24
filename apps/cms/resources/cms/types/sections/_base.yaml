@@ -3,14 +3,14 @@ status: active
 manifest-pattern: manifest.section.md
 manifest-body-label: 'Бриф, контекст, инструкция и договоренности с агентом'
 extends: base/base
-description: 'Секция workspace — manifest.section.md в папке зоны hub'
+description: 'Секция vault — manifest.section.md в папке зоны hub'
 allows-section-children: false
 storage-slots:
   - todo
   - state
   - archive
 # view: экраны по типу — disk (экземпляр на диске), screen (карточка типа), family (секция на странице зоны)
-#   disk: { template, action? }  action — метод WorkspaceDiskNodeController
+#   disk: { template, action? }  action — метод VaultDiskNodeController
 #   screen: { template, action? }
 #   family: { template }
 mixins:
@@ -29,7 +29,7 @@ fields:
   awn-focus:
     type: fields/boolean
     title: '{A2!} В фокусе'
-    description: 'Показывать в быстром навигаторе workspace'
+    description: 'Показывать в быстром навигаторе vault'
     default: false
     placement: aside-body
     group: nav

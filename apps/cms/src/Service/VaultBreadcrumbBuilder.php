@@ -1,0 +1,332 @@
+<?php
+
+namespace App\Service;
+
+class VaultBreadcrumbBuilder
+{
+    private TypeSchemaRegistry $typeSchemaRegistry;
+
+    public function __construct(TypeSchemaRegistry $typeSchemaRegistry)
+    {
+        $this->typeSchemaRegistry = $typeSchemaRegistry;
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    public function buildForModule(array $vault, string $moduleLabel, string $moduleSlug): array
+    {
+        $crumbs = $this->buildVaultRootCrumb($vault, false);
+
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+
+        $crumbs[] = [
+            'label' => $moduleLabel,
+            'route' => 'vault_module_show',
+            'route_params' => [
+                'slug' => $slug,
+                'module' => $moduleSlug,
+            ],
+            'current' => true,
+        ];
+
+        return $crumbs;
+    }
+
+    public function buildForVaultOverview(array $vault): array
+    {
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+        $name = $slug;
+        if (isset($vault['name']) && is_string($vault['name']) && $vault['name'] !== '') {
+            $name = $vault['name'];
+        }
+
+        return [
+            [
+                'label' => $name,
+                'route' => 'vault_show',
+                'route_params' => ['slug' => $slug],
+                'current' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     * @param array<string, mixed> $hubGroup
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    public function buildForHubFamily(array $vault, array $hubGroup): array
+    {
+        $crumbs = $this->buildVaultRootCrumb($vault, false);
+
+        $family = '';
+        if (isset($hubGroup['family']) && is_string($hubGroup['family'])) {
+            $family = $hubGroup['family'];
+        }
+
+        $label = $family;
+        if (isset($hubGroup['label']) && is_string($hubGroup['label']) && $hubGroup['label'] !== '') {
+            $label = $hubGroup['label'];
+        }
+
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+
+        $hubIcon = 'folder';
+        $hubIconClass = 'text-amber-500';
+        if (isset($hubGroup['tree_icon']) && is_string($hubGroup['tree_icon']) && $hubGroup['tree_icon'] !== '') {
+            $hubIcon = $hubGroup['tree_icon'];
+        }
+        if (isset($hubGroup['tree_icon_class']) && is_string($hubGroup['tree_icon_class']) && $hubGroup['tree_icon_class'] !== '') {
+            $hubIconClass = $hubGroup['tree_icon_class'];
+        }
+
+        $urlZone = $family;
+        if (isset($hubGroup['url_segment']) && is_string($hubGroup['url_segment']) && $hubGroup['url_segment'] !== '') {
+            $urlZone = $hubGroup['url_segment'];
+        }
+
+        $crumbs[] = [
+            'label' => $label,
+            'route' => 'vault_hub_family_show',
+            'route_params' => [
+                'slug' => $slug,
+                'zone' => $urlZone,
+                'family' => $family,
+            ],
+            'current' => true,
+            'tree_icon' => $hubIcon,
+            'tree_icon_class' => $hubIconClass,
+        ];
+
+        return $crumbs;
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    public function buildForDiskNode(
+        array $vault,
+        string $nodePath,
+        string $nodeLabel,
+        string $hubFamily,
+        string $typeId = ''
+    ): array {
+        $crumbs = $this->buildVaultRootCrumb($vault, false);
+
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+
+        $familyLabel = $hubFamily;
+        if ($hubFamily !== '') {
+            $group = $this->typeSchemaRegistry->findHubTreeGroupByFamily($hubFamily, $slug);
+            if ($group !== null && isset($group['label']) && is_string($group['label']) && $group['label'] !== '') {
+                $familyLabel = $group['label'];
+            }
+
+            $hubIcon = 'folder';
+            $hubIconClass = 'text-amber-500';
+            if ($group !== null) {
+                if (isset($group['tree_icon']) && is_string($group['tree_icon']) && $group['tree_icon'] !== '') {
+                    $hubIcon = $group['tree_icon'];
+                }
+                if (isset($group['tree_icon_class']) && is_string($group['tree_icon_class']) && $group['tree_icon_class'] !== '') {
+                    $hubIconClass = $group['tree_icon_class'];
+                }
+            }
+
+            $urlZone = $hubFamily;
+            if ($group !== null && isset($group['url_segment']) && is_string($group['url_segment']) && $group['url_segment'] !== '') {
+                $urlZone = $group['url_segment'];
+            }
+
+            $crumbs[] = [
+                'label' => $familyLabel,
+                'route' => 'vault_hub_family_show',
+                'route_params' => [
+                    'slug' => $slug,
+                    'zone' => $urlZone,
+                    'family' => $hubFamily,
+                ],
+                'current' => false,
+                'tree_icon' => $hubIcon,
+                'tree_icon_class' => $hubIconClass,
+            ];
+        }
+
+        $nodeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $slug);
+
+        $crumbs[] = [
+            'label' => $nodeLabel,
+            'route' => 'vault_disk_node_show',
+            'route_params' => [
+                'slug' => $slug,
+                'nodePath' => $nodePath !== '' ? $nodePath : '_',
+            ],
+            'current' => true,
+            'tree_icon' => $nodeUi['icon'],
+            'tree_icon_class' => $nodeUi['icon_class'],
+        ];
+
+        return $crumbs;
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    public function buildForDiskFolder(
+        array $vault,
+        string $folderDiskPath,
+        string $nodeDiskPath,
+        string $nodeLabel,
+        string $hubFamily
+    ): array {
+        $crumbs = $this->buildForDiskNode($vault, $nodeDiskPath, $nodeLabel, $hubFamily);
+        if (count($crumbs) === 0) {
+            return [];
+        }
+
+        $lastIndex = count($crumbs) - 1;
+        $crumbs[$lastIndex]['current'] = false;
+
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+
+        $split = VaultNodeStorage::splitFolderDiskPath($folderDiskPath);
+        $suffix = $split['folder_suffix'];
+        if ($suffix === '') {
+            $crumbs[] = [
+                'label' => VaultNodeStorage::DIR_NAME,
+                'route' => 'vault_disk_node_show',
+                'route_params' => [
+                    'slug' => $slug,
+                    'nodePath' => $folderDiskPath,
+                ],
+                'current' => true,
+            ];
+
+            return $crumbs;
+        }
+
+        $parts = explode('/', $suffix);
+        $accum = $nodeDiskPath;
+        $lastPartIndex = count($parts) - 1;
+        foreach ($parts as $index => $part) {
+            if ($accum === '') {
+                $accum = $part;
+            } else {
+                $accum = $accum . '/' . $part;
+            }
+
+            $crumbs[] = [
+                'label' => $part,
+                'route' => 'vault_disk_node_show',
+                'route_params' => [
+                    'slug' => $slug,
+                    'nodePath' => $accum,
+                ],
+                'current' => $index === $lastPartIndex,
+            ];
+        }
+
+        return $crumbs;
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     * @param array<string, mixed> $hubGroup
+     *
+     * @return array{reveal_enabled: bool, reveal_relative_path: string}
+     */
+    public function buildToolbarForHubFamily(array $vault, array $hubGroup): array
+    {
+        $folder = '';
+        if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
+            $folder = trim($hubGroup['folder']);
+        }
+        $relative = '';
+        if ($folder !== '' && $folder !== '.') {
+            $relative = $folder;
+        }
+
+        return $this->buildToolbar($vault, $relative);
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return array{reveal_enabled: bool, reveal_relative_path: string}
+     */
+    public function buildToolbarForDiskNode(array $vault, string $nodePath): array
+    {
+        $nodePath = trim(str_replace('\\', '/', $nodePath), '/');
+
+        return $this->buildToolbar($vault, $nodePath);
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return array{reveal_enabled: bool, reveal_relative_path: string}
+     */
+    private function buildToolbar(array $vault, string $relativePath): array
+    {
+        $local = false;
+        if (isset($vault['location']) && is_string($vault['location']) && $vault['location'] === 'local') {
+            $local = true;
+        }
+
+        return [
+            'reveal_enabled' => $local,
+            'reveal_relative_path' => $relativePath,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $vault
+     *
+     * @return list<array{label: string, route: string, route_params: array<string, string>, current: bool}>
+     */
+    private function buildVaultRootCrumb(array $vault, bool $current): array
+    {
+        $slug = '';
+        if (isset($vault['slug']) && is_string($vault['slug'])) {
+            $slug = $vault['slug'];
+        }
+        $name = $slug;
+        if (isset($vault['name']) && is_string($vault['name']) && $vault['name'] !== '') {
+            $name = $vault['name'];
+        }
+
+        return [
+            [
+                'label' => $name,
+                'route' => 'vault_show',
+                'route_params' => ['slug' => $slug],
+                'current' => $current,
+                'tree_icon' => 'root',
+                'tree_icon_class' => 'text-zinc-500',
+            ],
+        ];
+    }
+}

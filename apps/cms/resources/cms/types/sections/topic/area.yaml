@@ -7,9 +7,9 @@ tree-ui:
   icon-class: text-amber-500
 view:
   screen:
-    template: workspace/hubs/_default.html.twig
+    template: vault/hubs/_default.html.twig
   disk:
-    template: workspace/disk_nodes/topic/area.html.twig
+    template: vault/disk_nodes/topic/area.html.twig
     action: showDiskNodeTopicArea
 description: 'Область контента — папка-раздел в awn-container (не служебная секция корня)'
 allows-section-children: true

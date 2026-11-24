@@ -4,6 +4,9 @@ sort: 30
 hub: database
 extends: sections/database/_base
 description: 'manifest + schema в корне; однофайловые main.md, todo.md, state.md (как у темы-одиночки + main)'
+tree-ui:
+  icon: file
+  icon-class: text-cyan-700
 storage-slots:
   - main-md
   - todo

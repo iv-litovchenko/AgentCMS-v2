@@ -2,7 +2,7 @@ name: 'Правило триггера'
 extends: fields/object
 status: draft
 description: |
-  Крючок workspace: событие → условие (опционально) → действие. Примеры действий: webhook, notify_user, run_script, вызов MCP-tool. Runtime-исполнитель — позже; тип зарезервирован под редактор правил.
+  Крючок vault: событие → условие (опционально) → действие. Примеры действий: webhook, notify_user, run_script, вызов MCP-tool. Runtime-исполнитель — позже; тип зарезервирован под редактор правил.
 widget: json
 storage: object
 mdbase: object
@@ -26,12 +26,12 @@ properties:
   event:
     type: fields/choice/one
     title: Событие
-    description: 'Что отслеживать в workspace'
+    description: 'Что отслеживать в vault'
     enum:
       - file.saved
       - page.created
       - index.pipeline.done
-      - workspace.cron
+      - vault.cron
       - agent.session.end
   filter:
     type: fields/string

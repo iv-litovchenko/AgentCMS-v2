@@ -2,7 +2,7 @@ name: Корень
 status: active
 hub: root
 extends: sections/_base
-description: 'Узел корня — читает manifest.section.md (или manifest.md) из корня workspace'
+description: 'Узел корня — читает manifest.section.md (или manifest.md) из корня vault'
 tree-ui:
   icon: root
   icon-class: text-zinc-600

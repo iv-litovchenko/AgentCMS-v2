@@ -5,7 +5,7 @@ domain: settings
 status: active
 extends: awn.settings.base
 description: >
-  UI и дерево меню для текущего пользователя в этом workspace (аналог uc в TYPO3).
+  UI и дерево меню для текущего пользователя в этом хранилище (аналог uc в TYPO3).
   Значения — .agent-cms/settings/user.yml. Не влияют на MCP-политику.
 scope: user
 enabled: true

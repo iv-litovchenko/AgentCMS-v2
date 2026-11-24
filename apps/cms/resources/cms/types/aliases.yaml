@@ -120,11 +120,11 @@ awn.hub.script: sections/script/script
 awn.hub.script.group: sections/script/group
 awn.hub.inbox: sections/inbox/inbox
 awn.hub.root: sections/root/root
-awn.hub.root.ws: sections/root/ws
+awn.hub.root.vault: sections/root/vault
 awn.hub.topic: sections/topic/default
 awn.hub.topic.area: sections/topic/area
-awn.hub.topic.ws: sections/root/ws
-hubs/topic/ws: sections/root/ws
+awn.hub.topic.vault: sections/root/vault
+hubs/topic/vault: sections/root/vault
 hubs/topic/topic: sections/topic/default
 hubs/topic/default: sections/topic/default
 hubs/topic/minimal: sections/topic/minimal
@@ -172,7 +172,7 @@ awn.settings.base: settings/_base
 awn.settings.integrations: settings/integrations
 awn.settings.platform: settings/platform
 awn.settings.user: settings/user
-awn.settings.workspace: settings/workspace
+awn.settings.vault: settings/vault
 awn.slot: slots/_base
 awn.slot.artefacts: slots/multi-file/artefacts
 awn.slot.assets: slots/multi-file/assets

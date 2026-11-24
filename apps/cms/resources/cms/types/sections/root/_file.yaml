@@ -4,7 +4,7 @@ hub: root
 extends: sections/_base
 manifest-pattern: ''
 manifest-body-label: ''
-description: 'База служебных .md в корне workspace (не папка с manifest.section.md)'
+description: 'База служебных .md в корне vault (не папка с manifest.section.md)'
 storage-slots: []
 tree-ui:
   icon: file

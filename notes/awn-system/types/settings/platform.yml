@@ -5,8 +5,8 @@ domain: settings
 status: active
 extends: awn.settings.base
 description: >
-  Политика всей платформы Agent CMS (0-ws-core): MCP, лимиты, индексы, память.
-  Значения — .agent-cms-global/settings/platform.yml. Не перекрываются workspace/user.
+  Политика всей платформы Agent CMS (vault-core): MCP, лимиты, индексы, память.
+  Значения — .agent-cms-global/settings/platform.yml. Не перекрываются хранилище/user.
 scope: platform
 enabled: true
 consumer: [mcp-server, server, ui, context]
@@ -22,7 +22,7 @@ fieldGroups:
   - id: auto-context
     name: Автоконтекст
     description: >
-      Что всегда попадает в контекст агента (always-context): документы платформы, корневые .md workspace
+      Что всегда попадает в контекст агента (always-context): документы платформы, корневые .md хранилище
       (галочки ниже) и текстовые файлы из каталога ws/ (platform.yml).
   - id: mcp
     name: MCP
@@ -70,11 +70,11 @@ fields:
     group: main
     sort: 21
 
-  default-workspace-id:
+  default-хранилище-id:
     type: awn.field.choice.one
     title: Хранилище по умолчанию
     description: >
-      Какой workspace открывать при старте CMS и Voice. Текущий выбор в шапке Shell — сессия
+      Какой хранилище открывать при старте CMS и Voice. Текущий выбор в шапке Shell — сессия
       (localStorage), это поле задаёт дефолт при первом открытии.
     default: ""
     enum: []
@@ -84,7 +84,7 @@ fields:
   ui-theme:
     type: awn.field.choice.one
     title: "{NOT WORK} Тема оформления"
-    description: Глобальная тема UI для всех workspace (пока заглушка)
+    description: Глобальная тема UI для всех хранилище (пока заглушка)
     default: system
     enum: [system, light, dark]
     group: ui
@@ -117,8 +117,8 @@ fields:
 
   always-context-md-files:
     type: awn.field.choice.many
-    title: Корневые .md workspace
-    description: Какие системные .md из корня workspace добавлять в always-context всех агентов
+    title: Корневые .md хранилище
+    description: Какие системные .md из корня хранилище добавлять в always-context всех агентов
     default: [AGENTS.md]
     enum:
       - key: AGENTS.md
@@ -144,7 +144,7 @@ fields:
     type: awn.field.string
     title: Папка автоконтекста (shared)
     description: >
-      Относительный путь от корня workspace — каталог с файлами для always-context
+      Относительный путь от корня хранилище — каталог с файлами для always-context
       (по умолчанию awn-topics/0-shared/0-context/awn-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
     default: awn-topics/0-shared/0-context/awn-storage/
     group: auto-context
@@ -208,7 +208,7 @@ fields:
   read-text-max-bytes:
     type: awn.field.choice.one
     title: Лимит read_file (текст)
-    description: read_workspace / scan folder / partial text read
+    description: read_vault / scan folder / partial text read
     default: "120000"
     enum:
       - key: "65536"
@@ -324,7 +324,7 @@ fields:
     group: indexing
     sort: 242
 
-  index-workspace-id-enabled:
+  index-хранилище-id-enabled:
     type: awn.field.boolean
     title: ID (awn-id)
     description: Шаг 6 pipeline — синхронизация счётчика awn-id
@@ -332,10 +332,10 @@ fields:
     group: indexing
     sort: 25
 
-  index-wsmap-enabled:
+  index-vault-map-enabled:
     type: awn.field.boolean
-    title: Карта (WS-MAP)
-    description: Шаг 7 pipeline — собрать WS-MAP.md (реестр manifest.md) в корне workspace
+    title: Карта (VAULT-MAP)
+    description: Шаг 7 pipeline — собрать VAULT-MAP.md (реестр manifest.md) в корне хранилища
     default: true
     group: indexing
     sort: 26
@@ -368,7 +368,7 @@ fields:
     title: Пачка записей (поля → SQLite)
     description: >
       Сколько записей каталога полей записывать в catalog.sqlite за одну транзакцию
-      при пересборке индекса (1–500). Меньше — чаще коммит и отзывчивее UI; больше — быстрее на больших workspace.
+      при пересборке индекса (1–500). Меньше — чаще коммит и отзывчивее UI; больше — быстрее на больших хранилище.
     default: 30
     group: indexing
     sort: 29

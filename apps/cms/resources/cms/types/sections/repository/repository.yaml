@@ -41,7 +41,7 @@ field-groups:
   -
     id: indexing
     name: '{A2!} Индексирование'
-    description: 'Что попадает в поиск workspace'
+    description: 'Что попадает в поиск vault'
     collapsed: true
 fields:
   awn-slots-flexible:

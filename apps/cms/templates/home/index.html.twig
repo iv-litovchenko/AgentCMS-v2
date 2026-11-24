@@ -14,7 +14,7 @@
             {% include '@DemoBlock/block.html.twig' %}
         {% endif %}
 
-        {% include 'workspace/_storages_section.html.twig' with {storages: storages, is_compact: is_compact} %}
+        {% include 'vault/_storages_section.html.twig' with {storages: storages, is_compact: is_compact} %}
 
         {% include 'home/_records_grid_stub.html.twig' with {is_compact: is_compact} %}
         {% include 'home/_in_focus_stub.html.twig' with {is_compact: is_compact} %}

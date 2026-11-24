@@ -2,7 +2,7 @@ name: 'Короткая ссылка'
 status: active
 extends: content/record-lite
 description: |
-  Запись реестра awn-short-links/{code}.md — публичный короткий URL (/link/{workspace}/{code}) на страницу workspace. Якорь только в реестре; при перемещении файла цели ссылка может устареть.
+  Запись реестра awn-short-links/{code}.md — публичный короткий URL (/link/{vault}/{code}) на страницу vault. Якорь только в реестре; при перемещении файла цели ссылка может устареть.
 kind-ui:
   label: 'Короткая ссылка'
   badge:
@@ -34,7 +34,7 @@ fields:
   awn-target-path:
     type: fields/string/link
     title: '{A2!} Целевой путь'
-    description: 'Workspace-relative путь (manifest, .md, слот)'
+    description: 'Vault-relative путь (manifest, .md, слот)'
     placement: aside-body
     group: link
     sort: 2

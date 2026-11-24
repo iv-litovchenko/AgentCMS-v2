@@ -2,7 +2,7 @@ name: 'Настройки платформы'
 status: active
 extends: settings/_base
 description: |
-  Политика всей платформы Agent CMS (0-ws-core): MCP, лимиты, индексы, память. Значения — .agent-cms-global/settings/platform.yml. Не перекрываются workspace/user.
+  Политика всей платформы Agent CMS (vault-core): MCP, лимиты, индексы, память. Значения — .agent-cms-global/settings/platform.yml. Не перекрываются vault/user.
 scope: platform
 enabled: true
 consumer:
@@ -24,7 +24,7 @@ fieldGroups:
     id: auto-context
     name: Автоконтекст
     description: |
-      Что всегда попадает в контекст агента (always-context): документы платформы, корневые .md workspace (галочки ниже) и текстовые файлы из каталога ws/ (platform.yml).
+      Что всегда попадает в контекст агента (always-context): документы платформы, корневые .md vault (галочки ниже) и текстовые файлы из каталога ws/ (platform.yml).
   -
     id: mcp
     name: MCP
@@ -71,11 +71,11 @@ fields:
       - en
     group: main
     sort: 21
-  default-workspace-id:
+  default-vault-id:
     type: fields/choice/one
     title: 'Хранилище по умолчанию'
     description: |
-      Какой workspace открывать при старте CMS и Voice. Текущий выбор в шапке Shell — сессия (localStorage), это поле задаёт дефолт при первом открытии.
+      Какой vault открывать при старте CMS и Voice. Текущий выбор в шапке Shell — сессия (localStorage), это поле задаёт дефолт при первом открытии.
     default: ''
     enum: {  }
     group: main
@@ -83,7 +83,7 @@ fields:
   ui-theme:
     type: fields/choice/one
     title: '{NOT WORK} Тема оформления'
-    description: 'Глобальная тема UI для всех workspace (пока заглушка)'
+    description: 'Глобальная тема UI для всех vault (пока заглушка)'
     default: system
     enum:
       - system
@@ -117,8 +117,8 @@ fields:
     sort: 4
   always-context-md-files:
     type: fields/choice/many
-    title: 'Корневые .md workspace'
-    description: 'Какие системные .md из корня workspace добавлять в always-context всех агентов'
+    title: 'Корневые .md vault'
+    description: 'Какие системные .md из корня vault добавлять в always-context всех агентов'
     default:
       - AGENTS.md
     enum:
@@ -149,7 +149,7 @@ fields:
     type: fields/string
     title: 'Папка автоконтекста (shared)'
     description: |
-      Относительный путь от корня workspace — каталог с файлами для always-context (по умолчанию awn-topics/0-shared/0-context/0-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
+      Относительный путь от корня vault — каталог с файлами для always-context (по умолчанию awn-topics/0-shared/0-context/0-storage/). Рекурсивно .md/.yml/.txt. Пусто — отключить.
     default: awn-topics/0-shared/0-context/0-storage/
     group: auto-context
     sort: 12
@@ -207,7 +207,7 @@ fields:
   read-text-max-bytes:
     type: fields/choice/one
     title: 'Лимит read_file (текст)'
-    description: 'read_workspace / scan folder / partial text read'
+    description: 'read_vault / scan folder / partial text read'
     default: '120000'
     enum:
       -
@@ -321,17 +321,17 @@ fields:
     default: false
     group: indexing
     sort: 242
-  index-workspace-id-enabled:
+  index-vault-id-enabled:
     type: fields/boolean
     title: 'ID (awn-id)'
     description: 'Шаг 6 pipeline — синхронизация счётчика awn-id'
     default: true
     group: indexing
     sort: 25
-  index-wsmap-enabled:
+  index-vault-map-enabled:
     type: fields/boolean
-    title: 'Карта (WS-MAP)'
-    description: 'Шаг 7 pipeline — собрать WS-MAP.md (реестр manifest.md) в корне workspace'
+    title: 'Карта (VAULT-MAP)'
+    description: 'Шаг 7 pipeline — собрать VAULT-MAP.md (реестр manifest.md) в корне vault'
     default: true
     group: indexing
     sort: 26
@@ -361,7 +361,7 @@ fields:
     type: fields/number/integer
     title: 'Пачка записей (поля → SQLite)'
     description: |
-      Сколько записей каталога полей записывать в catalog.sqlite за одну транзакцию при пересборке индекса (1–500). Меньше — чаще коммит и отзывчивее UI; больше — быстрее на больших workspace.
+      Сколько записей каталога полей записывать в catalog.sqlite за одну транзакцию при пересборке индекса (1–500). Меньше — чаще коммит и отзывчивее UI; больше — быстрее на больших vault.
     default: 30
     group: indexing
     sort: 29

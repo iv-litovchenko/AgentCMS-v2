@@ -12,4 +12,4 @@ description: >
 # settings: {}
 
 # Topic overrides: {topic}/schema.yml
-# Workspace overrides: schema.yml в корне workspace агента
+# Vault overrides: schema.yml в корне хранилище агента

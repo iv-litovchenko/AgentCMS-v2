@@ -10,7 +10,7 @@ class TypeSchemaRegistry
 {
     private string $platformTypesDir;
 
-    private string $workspacesDir;
+    private string $vaultsDir;
 
     private string $projectRoot;
 
@@ -30,17 +30,17 @@ class TypeSchemaRegistry
     private ?array $mergedPlatformCache = null;
 
     /** @var array<string, array<string, array<string, mixed>>> */
-    private array $mergedWorkspaceCache = [];
+    private array $mergedVaultCache = [];
 
     public function __construct(
         string $platformTypesDir,
-        string $workspacesDir,
+        string $vaultsDir,
         string $projectRoot,
         string $bootstrapTypesDir,
         string $aliasesFile
     ) {
         $this->platformTypesDir = $platformTypesDir;
-        $this->workspacesDir = $workspacesDir;
+        $this->vaultsDir = $vaultsDir;
         $this->projectRoot = rtrim($projectRoot, '/');
         $this->bootstrapTypesDir = rtrim($bootstrapTypesDir, '/');
         $this->aliasesFile = $aliasesFile;
@@ -114,22 +114,22 @@ class TypeSchemaRegistry
     /**
      * @return array<string, mixed>|null
      */
-    public function getTypeForWorkspace(string $workspaceSlug, string $typeId): ?array
+    public function getTypeForVault(string $vaultSlug, string $typeId): ?array
     {
-        return $this->resolveType($typeId, $workspaceSlug);
+        return $this->resolveType($typeId, $vaultSlug);
     }
 
     /**
      * @return array<string, mixed>|null
      */
-    public function resolveType(string $typeId, string $workspaceSlug): ?array
+    public function resolveType(string $typeId, string $vaultSlug): ?array
     {
         $canonicalId = $this->normalizeTypeId($typeId);
         if ($canonicalId === '') {
             return null;
         }
 
-        $index = $this->loadMergedIndex($workspaceSlug);
+        $index = $this->loadMergedIndex($vaultSlug);
         if (!isset($index[$canonicalId])) {
             return null;
         }
@@ -148,9 +148,9 @@ class TypeSchemaRegistry
     /**
      * @return list<string>
      */
-    public function listResolvedTypeIds(string $workspaceSlug = ''): array
+    public function listResolvedTypeIds(string $vaultSlug = ''): array
     {
-        $index = $this->loadMergedIndex($workspaceSlug);
+        $index = $this->loadMergedIndex($vaultSlug);
         $ids = array_keys($index);
         sort($ids);
 
@@ -160,9 +160,9 @@ class TypeSchemaRegistry
     /**
      * @return list<array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array<string, mixed>>, type_items: list<array{id: string, hub_path: string, name: string}>}>
      */
-    public function listHubTreeGroups(string $workspaceSlug = ''): array
+    public function listHubTreeGroups(string $vaultSlug = ''): array
     {
-        $ids = $this->listResolvedTypeIds($workspaceSlug);
+        $ids = $this->listResolvedTypeIds($vaultSlug);
         /** @var array<string, array{family: string, label: string, items: list<array{id: string, hub_path: string, name: string}>}> $groups */
         $groups = [];
 
@@ -179,7 +179,7 @@ class TypeSchemaRegistry
             }
 
             $family = $parts[1];
-            $hubDef = $this->resolveType($id, $workspaceSlug);
+            $hubDef = $this->resolveType($id, $vaultSlug);
             if (!is_array($hubDef)) {
                 continue;
             }
@@ -199,7 +199,7 @@ class TypeSchemaRegistry
                 continue;
             }
 
-            $def = $this->resolveType($id, $workspaceSlug);
+            $def = $this->resolveType($id, $vaultSlug);
             if (is_array($def) && isset($def['status']) && is_string($def['status']) && $def['status'] === 'draft') {
                 continue;
             }
@@ -214,7 +214,7 @@ class TypeSchemaRegistry
 
             if (!isset($groups[$hubKey])) {
                 $hubZoneId = 'hubs/' . $hubKey;
-                $hubDef = $this->resolveType($hubZoneId, $workspaceSlug);
+                $hubDef = $this->resolveType($hubZoneId, $vaultSlug);
                 if (!is_array($hubDef)) {
                     continue;
                 }
@@ -256,7 +256,7 @@ class TypeSchemaRegistry
             $result[$index]['items'] = $group['items'];
             if (isset($group['type_items']) && is_array($group['type_items'])) {
                 $typeItems = $group['type_items'];
-                usort($typeItems, function (array $a, array $b) use ($workspaceSlug): int {
+                usort($typeItems, function (array $a, array $b) use ($vaultSlug): int {
                     $idA = '';
                     $idB = '';
                     if (isset($a['id']) && is_string($a['id'])) {
@@ -266,8 +266,8 @@ class TypeSchemaRegistry
                         $idB = $b['id'];
                     }
 
-                    $containerA = $this->sectionAllowsSectionChildren($idA, $workspaceSlug);
-                    $containerB = $this->sectionAllowsSectionChildren($idB, $workspaceSlug);
+                    $containerA = $this->sectionAllowsSectionChildren($idA, $vaultSlug);
+                    $containerB = $this->sectionAllowsSectionChildren($idB, $vaultSlug);
                     if ($containerA !== $containerB) {
                         if ($containerA) {
                             return -1;
@@ -317,22 +317,22 @@ class TypeSchemaRegistry
     }
 
     /**
-     * Служебные .md в корне workspace (AGENTS.md и т.д.) — типы sections/root/* с manifest-pattern.
+     * Служебные .md в корне хранилища (AGENTS.md и т.д.) — типы sections/root/* с manifest-pattern.
      *
      * @return list<array{file: string, preset: string, label: string, type_id: string, sort: int}>
      */
-    public function listRootDiskManifestTypes(string $workspaceSlug = ''): array
+    public function listRootDiskManifestTypes(string $vaultSlug = ''): array
     {
         $result = [];
-        foreach ($this->listResolvedTypeIds($workspaceSlug) as $id) {
+        foreach ($this->listResolvedTypeIds($vaultSlug) as $id) {
             if (!str_starts_with($id, 'sections/root/')) {
                 continue;
             }
-            if ($id === 'sections/root/_file' || $id === 'sections/root/ws' || $id === 'sections/root/root') {
+            if ($id === 'sections/root/_file' || $id === 'sections/root/vault' || $id === 'sections/root/root') {
                 continue;
             }
 
-            $def = $this->resolveType($id, $workspaceSlug);
+            $def = $this->resolveType($id, $vaultSlug);
             if (!is_array($def)) {
                 continue;
             }
@@ -389,11 +389,11 @@ class TypeSchemaRegistry
     /**
      * @return array{family: string, label: string, folder: string, tree_sort: int, tree_icon: string, tree_icon_class: string, items: list<array{id: string, hub_path: string, name: string}>}|null
      */
-    public function resolveDefaultNodeTypeIdForHub(string $hubFamily, string $workspaceSlug = ''): string
+    public function resolveDefaultNodeTypeIdForHub(string $hubFamily, string $vaultSlug = ''): string
     {
         $hubFamily = trim($hubFamily);
         $fallback = '';
-        $ids = $this->listResolvedTypeIds($workspaceSlug);
+        $ids = $this->listResolvedTypeIds($vaultSlug);
         foreach ($ids as $id) {
             if (!str_starts_with($id, 'sections/')) {
                 continue;
@@ -402,7 +402,7 @@ class TypeSchemaRegistry
                 continue;
             }
 
-            $def = $this->resolveType($id, $workspaceSlug);
+            $def = $this->resolveType($id, $vaultSlug);
             if (!is_array($def)) {
                 continue;
             }
@@ -431,21 +431,21 @@ class TypeSchemaRegistry
         return $fallback;
     }
 
-    public function findHubTreeGroupByFamily(string $family, string $workspaceSlug = ''): ?array
+    public function findHubTreeGroupByFamily(string $family, string $vaultSlug = ''): ?array
     {
         $family = trim($family);
         if ($family === '') {
             return null;
         }
 
-        foreach ($this->listHubTreeGroups($workspaceSlug) as $group) {
+        foreach ($this->listHubTreeGroups($vaultSlug) as $group) {
             if ($group['family'] === $family) {
                 return $group;
             }
         }
 
         $hubZoneId = 'hubs/' . $family;
-        $hubZone = $this->resolveType($hubZoneId, $workspaceSlug);
+        $hubZone = $this->resolveType($hubZoneId, $vaultSlug);
         if ($hubZone === null) {
             return null;
         }
@@ -492,19 +492,19 @@ class TypeSchemaRegistry
         ];
     }
 
-    public function hubUrlSegmentForFamily(string $family, string $workspaceSlug = ''): string
+    public function hubUrlSegmentForFamily(string $family, string $vaultSlug = ''): string
     {
         $family = trim($family);
         if ($family === '') {
             return '';
         }
 
-        $group = $this->findHubTreeGroupByFamily($family, $workspaceSlug);
+        $group = $this->findHubTreeGroupByFamily($family, $vaultSlug);
         if ($group !== null && isset($group['url_segment']) && is_string($group['url_segment']) && $group['url_segment'] !== '') {
             return $group['url_segment'];
         }
 
-        $hubZone = $this->resolveType('hubs/' . $family, $workspaceSlug);
+        $hubZone = $this->resolveType('hubs/' . $family, $vaultSlug);
         if (!is_array($hubZone)) {
             return $family;
         }
@@ -520,7 +520,7 @@ class TypeSchemaRegistry
         return $family;
     }
 
-    public function resolveManifestBodyLabel(string $typeId, string $workspaceSlug = ''): string
+    public function resolveManifestBodyLabel(string $typeId, string $vaultSlug = ''): string
     {
         $typeId = trim($typeId);
         if ($typeId === '') {
@@ -532,7 +532,7 @@ class TypeSchemaRegistry
             return '';
         }
 
-        $def = $this->resolveType($canonicalId, $workspaceSlug);
+        $def = $this->resolveType($canonicalId, $vaultSlug);
         if ($def === null) {
             return '';
         }
@@ -549,7 +549,7 @@ class TypeSchemaRegistry
     }
 
     /**
-     * Служебные .md в корне workspace (AGENTS.md и т.д.) — без подписи «бриф» у тела.
+     * Служебные .md в корне хранилища (AGENTS.md и т.д.) — без подписи «бриф» у тела.
      */
     public function isRootDiskMarkdownManifestType(string $typeId): bool
     {
@@ -568,7 +568,7 @@ class TypeSchemaRegistry
         }
 
         if ($canonicalId === 'sections/root/_file'
-            || $canonicalId === 'sections/root/ws'
+            || $canonicalId === 'sections/root/vault'
             || $canonicalId === 'sections/root/root') {
             return false;
         }
@@ -576,14 +576,14 @@ class TypeSchemaRegistry
         return true;
     }
 
-    public function sectionAllowsSectionChildren(string $typeId, string $workspaceSlug = ''): bool
+    public function sectionAllowsSectionChildren(string $typeId, string $vaultSlug = ''): bool
     {
         $typeId = trim($typeId);
         if ($typeId === '') {
             return false;
         }
 
-        $def = $this->resolveType($typeId, $workspaceSlug);
+        $def = $this->resolveType($typeId, $vaultSlug);
         if ($def === null) {
             return false;
         }
@@ -606,14 +606,14 @@ class TypeSchemaRegistry
         return false;
     }
 
-    public function hubAllowsSectionChildren(string $family, string $workspaceSlug = ''): bool
+    public function hubAllowsSectionChildren(string $family, string $vaultSlug = ''): bool
     {
         $family = trim($family);
         if ($family === '') {
             return true;
         }
 
-        $hubZone = $this->resolveType('hubs/' . $family, $workspaceSlug);
+        $hubZone = $this->resolveType('hubs/' . $family, $vaultSlug);
         if (!is_array($hubZone)) {
             return true;
         }
@@ -623,14 +623,14 @@ class TypeSchemaRegistry
         return $treeUi['section_children'];
     }
 
-    public function hubFamilyForUrlSegment(string $segment, string $workspaceSlug = ''): ?string
+    public function hubFamilyForUrlSegment(string $segment, string $vaultSlug = ''): ?string
     {
         $segment = trim($segment);
         if ($segment === '') {
             return null;
         }
 
-        foreach ($this->listHubTreeGroups($workspaceSlug) as $group) {
+        foreach ($this->listHubTreeGroups($vaultSlug) as $group) {
             if (!isset($group['family']) || !is_string($group['family'])) {
                 continue;
             }
@@ -652,7 +652,7 @@ class TypeSchemaRegistry
     /**
      * @return array{icon: string, icon_class: string}
      */
-    public function resolveTreeUiForTypeId(string $typeId, string $workspaceSlug = ''): array
+    public function resolveTreeUiForTypeId(string $typeId, string $vaultSlug = ''): array
     {
         $canonicalId = '';
         if ($typeId !== '') {
@@ -661,10 +661,10 @@ class TypeSchemaRegistry
 
         $def = null;
         if ($canonicalId !== '') {
-            $def = $this->resolveType($canonicalId, $workspaceSlug);
+            $def = $this->resolveType($canonicalId, $vaultSlug);
         }
         if ($def === null && $typeId !== '' && $typeId !== $canonicalId) {
-            $def = $this->resolveType($typeId, $workspaceSlug);
+            $def = $this->resolveType($typeId, $vaultSlug);
         }
         if ($def === null) {
             return [
@@ -700,13 +700,13 @@ class TypeSchemaRegistry
      *
      * @return list<array{folder: string, name: string, category: string, icon: string, icon_class: string, single_file: bool, relative_path: string, display_path: string, accept_files: list<string>, accept_files_label: string}>
      */
-    public function listStorageSlotsForNodeType(string $typeId, string $workspaceSlug = ''): array
+    public function listStorageSlotsForNodeType(string $typeId, string $vaultSlug = ''): array
     {
         if (trim($typeId) === '') {
             return [];
         }
 
-        $nodeType = $this->getTypeForWorkspace($workspaceSlug, $typeId);
+        $nodeType = $this->getTypeForVault($vaultSlug, $typeId);
         if ($nodeType === null) {
             return [];
         }
@@ -726,7 +726,7 @@ class TypeSchemaRegistry
                 continue;
             }
 
-            $slotDef = $this->resolveStorageSlotTypeDefinition($folder, $workspaceSlug);
+            $slotDef = $this->resolveStorageSlotTypeDefinition($folder, $vaultSlug);
             $name = $folder;
             $category = '';
             if ($slotDef !== null) {
@@ -842,7 +842,7 @@ class TypeSchemaRegistry
                 } else {
                     $path = trim($path, '/');
                     if ($path !== '') {
-                        $displayPath = WorkspaceNodeStorage::canonicalPrefix() . rtrim($path, '/') . '/';
+                        $displayPath = VaultNodeStorage::canonicalPrefix() . rtrim($path, '/') . '/';
                         $relativePath = $displayPath;
                     }
                 }
@@ -851,7 +851,7 @@ class TypeSchemaRegistry
 
         if (!$singleFile) {
             if ($displayPath === '') {
-                $displayPath = WorkspaceNodeStorage::canonicalPrefix() . $folder . '/';
+                $displayPath = VaultNodeStorage::canonicalPrefix() . $folder . '/';
             }
             if ($relativePath === '') {
                 $relativePath = $displayPath;
@@ -973,11 +973,11 @@ class TypeSchemaRegistry
     /**
      * @return array<string, mixed>|null
      */
-    private function resolveStorageSlotTypeDefinition(string $folder, string $workspaceSlug): ?array
+    private function resolveStorageSlotTypeDefinition(string $folder, string $vaultSlug): ?array
     {
         $singleMainKeys = ['main-md', 'main-single'];
         if (in_array($folder, $singleMainKeys, true)) {
-            $singleMain = $this->resolveType('slots/single-file/main', $workspaceSlug);
+            $singleMain = $this->resolveType('slots/single-file/main', $vaultSlug);
             if ($singleMain !== null) {
                 return $singleMain;
             }
@@ -996,7 +996,7 @@ class TypeSchemaRegistry
                 'slots/multi-file/system/' . $key,
             ];
             foreach ($candidates as $candidate) {
-                $def = $this->resolveType($candidate, $workspaceSlug);
+                $def = $this->resolveType($candidate, $vaultSlug);
                 if ($def !== null) {
                     return $def;
                 }
@@ -1098,18 +1098,18 @@ class TypeSchemaRegistry
     /**
      * @return array<string, array<string, mixed>>
      */
-    private function loadMergedIndex(string $workspaceSlug): array
+    private function loadMergedIndex(string $vaultSlug): array
     {
-        if ($workspaceSlug !== '') {
-            if (isset($this->mergedWorkspaceCache[$workspaceSlug])) {
-                return $this->mergedWorkspaceCache[$workspaceSlug];
+        if ($vaultSlug !== '') {
+            if (isset($this->mergedVaultCache[$vaultSlug])) {
+                return $this->mergedVaultCache[$vaultSlug];
             }
         } elseif ($this->mergedPlatformCache !== null) {
             return $this->mergedPlatformCache;
         }
 
         $merged = [];
-        $layerDirs = $this->buildLayerDirectories($workspaceSlug);
+        $layerDirs = $this->buildLayerDirectories($vaultSlug);
         foreach ($layerDirs as $dir) {
             if ($dir === '' || !is_dir($dir)) {
                 continue;
@@ -1124,8 +1124,8 @@ class TypeSchemaRegistry
             }
         }
 
-        if ($workspaceSlug !== '') {
-            $this->mergedWorkspaceCache[$workspaceSlug] = $merged;
+        if ($vaultSlug !== '') {
+            $this->mergedVaultCache[$vaultSlug] = $merged;
         } else {
             $this->mergedPlatformCache = $merged;
         }
@@ -1136,7 +1136,7 @@ class TypeSchemaRegistry
     /**
      * @return list<string>
      */
-    private function buildLayerDirectories(string $workspaceSlug): array
+    private function buildLayerDirectories(string $vaultSlug): array
     {
         $dirs = [];
 
@@ -1157,9 +1157,9 @@ class TypeSchemaRegistry
 
         $dirs[] = $this->platformTypesDir;
 
-        if ($workspaceSlug !== '') {
-            $workspaceTypes = rtrim($this->workspacesDir, '/') . '/' . $workspaceSlug . '/types';
-            $dirs[] = $workspaceTypes;
+        if ($vaultSlug !== '') {
+            $vaultTypes = rtrim($this->vaultsDir, '/') . '/' . $vaultSlug . '/types';
+            $dirs[] = $vaultTypes;
         }
 
         return $dirs;

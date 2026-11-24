@@ -17,7 +17,7 @@
                         Официальный стек для LLM в Symfony: провайдеры (Platform), агенты с инструментами (Agent),
                         векторное хранилище и RAG (Store), CLI для coding-агентов (Mate), MCP на PHP SDK.
                         Один API для <span class="font-medium text-zinc-800">Text</span>, <span class="font-medium text-zinc-800">Image</span> и <span class="font-medium text-zinc-800">Audio</span> — мультимодальность из коробки.
-                        Для Agent CMS — локальные модели через Ollama рядом с MCP и workspace на диске.
+                        Для Agent CMS — локальные модели через Ollama рядом с MCP и vault на диске.
                     </p>
                 </div>
                 <span class="inline-flex shrink-0 items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-800">
@@ -35,7 +35,7 @@
                 </div>
                 <div class="rounded-md border border-zinc-100 bg-zinc-50 px-3 py-2.5">
                     <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500">Связь с CMS</dt>
-                    <dd class="mt-1 text-sm font-medium text-zinc-900">MCP + YAML workspace</dd>
+                    <dd class="mt-1 text-sm font-medium text-zinc-900">MCP + YAML vault</dd>
                 </div>
             </dl>
         </section>
@@ -88,7 +88,7 @@ Image::fromFile('/path/to/photo.jpg')</pre>
                         <li class="font-mono text-xs">moondream</li>
                     </ul>
                     <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
-                        CMS: описание скриншота, подпись к медиа, «что на фото» по ссылке из workspace.
+                        CMS: описание скриншота, подпись к медиа, «что на фото» по ссылке из vault.
                     </p>
                 </div>
                 <div class="rounded-md border border-zinc-100 p-4">
@@ -122,7 +122,7 @@ Image::fromFile('/path/to/photo.jpg')</pre>
                 </p>
                 <ul class="mt-3 space-y-2 text-sm text-zinc-700">
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Llama 3, Gemma, Qwen и др. через pull</li>
-                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Данные workspace не уходят наружу</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Данные vault не уходят наружу</li>
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Отдельный compose-сервис <span class="font-mono text-xs">ollama</span> + volume моделей</li>
                 </ul>
                 <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
@@ -136,7 +136,7 @@ Image::fromFile('/path/to/photo.jpg')</pre>
                     Агент с tool calling: те же операции, что MCP, но из PHP-сервисов Symfony.
                 </p>
                 <ul class="mt-3 space-y-2 text-sm text-zinc-700">
-                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Чтение / поиск / запись в workspace (flock, temp+rename)</li>
+                    <li class="flex gap-2"><span class="text-zinc-400">·</span> Чтение / поиск / запись в vault (flock, temp+rename)</li>
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Саммари заметки, черновик по типу из YAML</li>
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Классификация входящего текста в слот / тему</li>
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> CLI-команда параллельно веб-UI</li>
@@ -149,7 +149,7 @@ Image::fromFile('/path/to/photo.jpg')</pre>
             <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
                 <h3 class="text-sm font-semibold text-zinc-900">Store · RAG</h3>
                 <p class="mt-2 text-sm text-zinc-600">
-                    Индексация markdown/YAML workspace для семантического поиска и контекста в ответах.
+                    Индексация markdown/YAML vault для семантического поиска и контекста в ответах.
                 </p>
                 <ul class="mt-3 space-y-2 text-sm text-zinc-700">
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Source of truth остаётся на диске; Store — вторичный слой</li>
@@ -157,7 +157,7 @@ Image::fromFile('/path/to/photo.jpg')</pre>
                     <li class="flex gap-2"><span class="text-zinc-400">·</span> Связка с гибридным поиском из skills Agent CMS</li>
                 </ul>
                 <p class="mt-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-500">
-                    Экран: статус индекса, «задать вопрос по workspace», цитаты из файлов.
+                    Экран: статус индекса, «задать вопрос по vault», цитаты из файлов.
                 </p>
             </section>
 
@@ -196,12 +196,12 @@ Image::fromFile('/path/to/photo.jpg')</pre>
                         </tr>
                         <tr>
                             <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">2</td>
-                            <td class="py-2.5 pr-4">Один Agent + tools read/search workspace</td>
+                            <td class="py-2.5 pr-4">Один Agent + tools read/search vault</td>
                             <td class="py-2.5"><span class="rounded bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800">высокий</span></td>
                         </tr>
                         <tr>
                             <td class="py-2.5 pr-4 font-mono text-xs text-zinc-900">3</td>
-                            <td class="py-2.5 pr-4">Store + переиндексация по workspace UUID</td>
+                            <td class="py-2.5 pr-4">Store + переиндексация по vault UUID</td>
                             <td class="py-2.5"><span class="rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-900">средний</span></td>
                         </tr>
                         <tr>

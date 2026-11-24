@@ -1,7 +1,7 @@
 name: 'Shell — промпт TTS'
 status: active
 extends: presets/_base
-target-file: .agent-cms/settings/workspace.yml
+target-file: .agent-cms/settings/vault.yml
 hint-title: 'Agent Shell — ответ: голос + экран ([tts-break])'
 hint-text: 'Формат ответа агента: озвучка → маркер <code>[tts-break]</code> (конец голосовой части) → подробный текст на экран.'
 sort: 20

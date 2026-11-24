@@ -126,8 +126,8 @@ cmd_paths() {
     echo "CLI=$(command -v agent-cms-cli-v2 2>/dev/null || echo '?')"
     echo "Public URL:"
     public_urls | sed 's/^/  /'
-    echo "Bind-mount (workspace):"
-    echo "  ${AGENT_CMS_ROOT}/workspaces → /var/www/workspaces (cms)"
+    echo "Bind-mount (vaults):"
+    echo "  ${AGENT_CMS_ROOT}/vaults → /var/www/vaults (cms)"
 }
 
 cmd_status() {
@@ -365,7 +365,7 @@ cmd_update() {
 
 cmd_backup_zzz() {
     load_config
-    echo "WIP: backup workspaces → .backups/workspaces-*.tar.gz"
+    echo "WIP: backup vaults → .backups/vaults-*.tar.gz"
     if [ -n "${1:-}" ]; then
         echo "  целевой архив: $1"
     fi
@@ -373,7 +373,7 @@ cmd_backup_zzz() {
 }
 
 cmd_restore_zzz() {
-    echo "WIP: restore workspaces из архива (--force для перезаписи)"
+    echo "WIP: restore vaults из архива (--force для перезаписи)"
     exit 2
 }
 
@@ -460,7 +460,7 @@ agent-cms-cli-v2 — Agent CMS
 
   version
   doctor                 Docker, compose, каталог, HTTP-порт
-  paths                  HOME, CLI, URL, workspace mount
+  paths                  HOME, CLI, URL, vaults mount
   urls                   HTTP и HTTPS ссылки из .env
   status                 HTTP ping + compose ps
 

@@ -22,7 +22,7 @@ field-groups:
   -
     id: indexing
     name: '{A2!} Индексирование'
-    description: 'Поиск и индексы workspace'
+    description: 'Поиск и индексы vault'
     collapsed: true
   -
     id: system
@@ -53,7 +53,7 @@ fields:
   awn-id:
     type: fields/number/integer
     title: '{A2!} ID'
-    description: 'Глобальный номер workspace (счётчик в settings.yml)'
+    description: 'Глобальный номер vault (счётчик в settings.yml)'
     placement: aside-body
     group: system
     sort: 0

@@ -2,7 +2,7 @@ name: 'Интеграции и плагины'
 status: active
 extends: settings/_base
 description: |
-  Контейнеры настроек внешних сервисов для workspace: Cursor skills, MCP tools, hooks и другие плагины. Значения — .agent-cms/settings/integrations.yml. Область не сливается с platform/workspace/user. Пока схема статическая; позже контейнеры можно создавать из реестра без правки ядра CMS.
+  Контейнеры настроек внешних сервисов для vault: Cursor skills, MCP tools, hooks и другие плагины. Значения — .agent-cms/settings/integrations.yml. Область не сливается с platform/vault/user. Пока схема статическая; позже контейнеры можно создавать из реестра без правки ядра CMS.
 scope: integrations
 enabled: true
 consumer:
@@ -19,7 +19,7 @@ fieldGroups:
     id: module-git
     name: 'Модуль git'
     description: |
-      Параметры встроенного модуля module-git (панель Git workspace, MCP module_git_*). Только для справки — значения задаются платформой.
+      Параметры встроенного модуля module-git (панель Git vault, MCP module_git_*). Только для справки — значения задаются платформой.
   -
     id: example-cursor-skill
     name: 'Пример · Cursor Skill'
@@ -29,7 +29,7 @@ fieldGroups:
     id: example-mcp-bridge
     name: 'Пример · MCP bridge'
     description: |
-      Заглушка контейнера MCP tool / server, подключаемого к workspace.
+      Заглушка контейнера MCP tool / server, подключаемого к vault.
 fields:
   integrations-model-version:
     type: fields/string
@@ -53,7 +53,7 @@ fields:
     type: fields/string
     title: 'Ветка по умолчанию'
     description: |
-      Начальная ветка при git init в корне workspace (module_git_init, кнопка «Инициализировать git»).
+      Начальная ветка при git init в корне vault (module_git_init, кнопка «Инициализировать git»).
     default: main
     group: module-git
     locked: true
@@ -78,7 +78,7 @@ fields:
           mdx
           csv
           txt
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Records'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Records'
         maxFileSizeMb: 5
       -
         id: records-history
@@ -86,7 +86,7 @@ fields:
         emoji: 🕓
         extensions: |
           mdback
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Records history'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Records history'
         maxFileSizeMb: 1
       -
         id: images
@@ -108,7 +108,7 @@ fields:
           bmp
           tif
           tiff
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Images'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Images'
         maxFileSizeMb: 25
       -
         id: sources
@@ -130,7 +130,7 @@ fields:
           go
           rs
           sql
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Sources'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Sources'
         maxFileSizeMb: 5
       -
         id: documents
@@ -144,7 +144,7 @@ fields:
           xlsx
           ppt
           pptx
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Documents'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Documents'
         maxFileSizeMb: 45
       -
         id: media
@@ -162,7 +162,7 @@ fields:
           mov
           mkv
           avi
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Media'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Media'
         maxFileSizeMb: 45
       -
         id: design-2d
@@ -177,7 +177,7 @@ fields:
           xd
           indd
           afdesign
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Design 2D'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Design 2D'
         maxFileSizeMb: 45
       -
         id: design-3d
@@ -196,7 +196,7 @@ fields:
           ma
           mb
           ztl
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Design 3D'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Design 3D'
         maxFileSizeMb: 45
       -
         id: design-bim
@@ -212,7 +212,7 @@ fields:
           pln
           nwd
           nwc
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Architecture BIM'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Architecture BIM'
         maxFileSizeMb: 45
       -
         id: archives
@@ -226,7 +226,7 @@ fields:
           bz2
           xz
           7z
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Archives'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Archives'
         maxFileSizeMb: 45
       -
         id: other
@@ -236,7 +236,7 @@ fields:
           wasm
           woff
           woff2
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Other'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Other'
         maxFileSizeMb: 25
       -
         id: configs
@@ -253,7 +253,7 @@ fields:
           cfg
           properties
           lock
-        messageTemplate: '[{branch}] Сохранение workspace ({date} {time}) - Configs'
+        messageTemplate: '[{branch}] Сохранение vault ({date} {time}) - Configs'
         maxFileSizeMb: 5
     properties:
       id:
@@ -300,7 +300,7 @@ fields:
   module-git-user-email:
     type: fields/string
     title: 'Email автора коммита'
-    description: 'Git user.email для коммитов из workspace.'
+    description: 'Git user.email для коммитов из vault.'
     default: ''
     group: module-git
     sort: 7
@@ -328,7 +328,7 @@ fields:
   container-cursor-skill-enabled:
     type: fields/boolean
     title: '{NOT WORK} Включено'
-    description: 'Подключать skill при старте агента в этом workspace'
+    description: 'Подключать skill при старте агента в этом vault'
     default: false
     group: example-cursor-skill
     sort: 10
@@ -377,7 +377,7 @@ fields:
     type: fields/string
     title: '{NOT WORK} Разрешённые tools'
     description: 'Список через запятую; пусто = все tools сервера'
-    default: 'workspaces_list, topic_body_read, search_content'
+    default: 'vaults_list, topic_body_read, search_content'
     group: example-mcp-bridge
     sort: 22
   container-mcp-bridge-auth-token:

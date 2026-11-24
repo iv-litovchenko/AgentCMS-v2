@@ -1,0 +1,45 @@
+{% set is_compact = is_compact|default(false) %}
+<section class="w-full rounded-lg border border-zinc-200 bg-white shadow-sm" aria-labelledby="storages-heading">
+    <div class="flex items-center justify-between border-b border-zinc-100 {{ is_compact ? 'px-3 py-2' : 'px-4 py-3' }}">
+        <h2 id="storages-heading" class="{{ is_compact ? 'text-xs' : 'text-sm' }} font-semibold text-zinc-900">Хранилища</h2>
+        <a href="{{ path('vault_new') }}"
+           class="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+            + Создать
+        </a>
+    </div>
+    <ul class="divide-y divide-zinc-100">
+        {% for storage in storages %}
+            <li class="flex flex-col {{ is_compact ? 'gap-2 px-3 py-2' : 'gap-3 px-4 py-3' }} sm:flex-row sm:items-center sm:justify-between hover:bg-zinc-50">
+                <a href="{{ path('vault_show', {slug: storage.slug}) }}"
+                   class="flex min-w-0 flex-1 items-center gap-2 {{ is_compact ? 'text-xs' : 'gap-3 text-sm' }} text-inherit">
+                    {% include 'vault/_avatar.html.twig' with {
+                        avatar: storage.avatar,
+                        initials: storage.initials,
+                        size: is_compact ? 'h-7 w-7' : 'h-9 w-9'
+                    } %}
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate font-medium text-zinc-900 hover:text-blue-600 hover:underline">{{ storage.name }}</p>
+                        {% if storage.description|default('') != '' %}
+                            <p class="truncate text-xs text-zinc-600">{{ storage.description }}</p>
+                        {% endif %}
+                        <p class="truncate text-xs text-zinc-500">
+                            <span class="font-mono text-zinc-400">{{ storage.id }}</span>
+                            <span class="text-zinc-300" aria-hidden="true"> · </span>
+                            {{ storage.path }}
+                        </p>
+                    </div>
+                    <span class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium {% if storage.location == 'server' %}bg-blue-50 text-blue-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">
+                        {% if storage.location == 'server' %}сервер{% else %}локально{% endif %}
+                    </span>
+                </a>
+                <div class="pl-9 sm:pl-0">
+                    {% include 'vault/_list_actions.html.twig' with {id: storage.id, name: storage.name} %}
+                </div>
+            </li>
+        {% else %}
+            <li class="px-4 py-6 text-center text-sm text-zinc-500">
+                Пока нет хранилищ{% if show_empty_create_link|default(true) %} · <a href="{{ path('vault_new') }}" class="text-blue-600 hover:underline">Создать</a>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>

@@ -48,7 +48,7 @@ fields:
     type: awn.field.relation.one
     title: "{A2!} [Идея] Якорь (к чему привязано)"
     description: >
-      manifest.md, content ref в слоте или workspace-путь к бинарнику/файлу.
+      manifest.md, content ref в слоте или vault-путь к бинарнику/файлу.
       Comment: path + file/mode в API. Sidecar: sourcePath или path+slot+file.
     placement: aside-body
     group: attachment

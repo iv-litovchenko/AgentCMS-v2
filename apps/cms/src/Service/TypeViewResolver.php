@@ -17,7 +17,7 @@ class TypeViewResolver
     /**
      * @return array{template: string, action: string}
      */
-    public function resolveDiskNodeView(string $typeId, string $workspaceSlug = ''): array
+    public function resolveDiskNodeView(string $typeId, string $vaultSlug = ''): array
     {
         $typeId = $this->typeSchemaRegistry->normalizeTypeId($typeId);
         $action = '';
@@ -25,7 +25,7 @@ class TypeViewResolver
 
         $def = null;
         if ($typeId !== '') {
-            $def = $this->typeSchemaRegistry->resolveType($typeId, $workspaceSlug);
+            $def = $this->typeSchemaRegistry->resolveType($typeId, $vaultSlug);
         }
         if (is_array($def)) {
             $view = $def['view'] ?? null;
@@ -50,7 +50,7 @@ class TypeViewResolver
         }
 
         if ($template === '' || !$this->twigTemplateExists($template)) {
-            $template = 'workspace/disk_nodes/_default.html.twig';
+            $template = 'vault/disk_nodes/_default.html.twig';
         }
 
         return [
@@ -62,13 +62,13 @@ class TypeViewResolver
   /**
      * @return array{template: string, action: string}
      */
-    public function resolveSchemaNodeView(string $hubPath, string $workspaceSlug = ''): array
+    public function resolveSchemaNodeView(string $hubPath, string $vaultSlug = ''): array
     {
         $typeId = 'sections/' . trim(str_replace('\\', '/', $hubPath), '/');
         $action = '';
         $template = '';
 
-        $def = $this->typeSchemaRegistry->resolveType($typeId, $workspaceSlug);
+        $def = $this->typeSchemaRegistry->resolveType($typeId, $vaultSlug);
         if (is_array($def)) {
             $view = $def['view'] ?? null;
             if (is_array($view)) {
@@ -92,7 +92,7 @@ class TypeViewResolver
         }
 
         if ($template === '' || !$this->twigTemplateExists($template)) {
-            $template = 'workspace/hubs/_default.html.twig';
+            $template = 'vault/hubs/_default.html.twig';
         }
 
         return [
@@ -101,14 +101,14 @@ class TypeViewResolver
         ];
     }
 
-    public function resolveFamilySectionTemplate(string $typeId, string $workspaceSlug = ''): string
+    public function resolveFamilySectionTemplate(string $typeId, string $vaultSlug = ''): string
     {
         $typeId = $this->typeSchemaRegistry->normalizeTypeId($typeId);
         $template = '';
 
         $def = null;
         if ($typeId !== '') {
-            $def = $this->typeSchemaRegistry->resolveType($typeId, $workspaceSlug);
+            $def = $this->typeSchemaRegistry->resolveType($typeId, $vaultSlug);
         }
         if (is_array($def)) {
             $view = $def['view'] ?? null;
@@ -128,7 +128,7 @@ class TypeViewResolver
         }
 
         if ($template === '' || !$this->twigTemplateExists($template)) {
-            $template = 'workspace/hubs/family/_type_section.html.twig';
+            $template = 'vault/hubs/family/_type_section.html.twig';
         }
 
         return $template;
@@ -145,7 +145,7 @@ class TypeViewResolver
             return '';
         }
 
-        return 'workspace/disk_nodes/' . $relative . '.html.twig';
+        return 'vault/disk_nodes/' . $relative . '.html.twig';
     }
 
     private function conventionalSchemaTemplate(string $hubPath): string
@@ -155,7 +155,7 @@ class TypeViewResolver
             return '';
         }
 
-        return 'workspace/schema_sections/' . $hubPath . '.html.twig';
+        return 'vault/schema_sections/' . $hubPath . '.html.twig';
     }
 
     private function conventionalFamilyTemplate(string $typeId): string
@@ -169,7 +169,7 @@ class TypeViewResolver
             return '';
         }
 
-        return 'workspace/hubs/family/' . $relative . '.html.twig';
+        return 'vault/hubs/family/' . $relative . '.html.twig';
     }
 
     private function twigTemplateExists(string $logicalPath): bool

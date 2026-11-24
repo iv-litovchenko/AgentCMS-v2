@@ -22,20 +22,20 @@ class TypeListCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('workspace', 'w', InputOption::VALUE_OPTIONAL, 'Slug workspace для верхнего слоя');
+        $this->addOption('vault', 'v', InputOption::VALUE_OPTIONAL, 'Slug хранилища для верхнего слоя');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $workspace = $input->getOption('workspace');
-        $workspaceSlug = '';
-        if (is_string($workspace)) {
-            $workspaceSlug = $workspace;
+        $vault = $input->getOption('vault');
+        $vaultSlug = '';
+        if (is_string($vault)) {
+            $vaultSlug = $vault;
         }
 
-        $ids = $this->typeSchemaRegistry->listResolvedTypeIds($workspaceSlug);
+        $ids = $this->typeSchemaRegistry->listResolvedTypeIds($vaultSlug);
         foreach ($ids as $typeId) {
-            $def = $this->typeSchemaRegistry->resolveType($typeId, $workspaceSlug);
+            $def = $this->typeSchemaRegistry->resolveType($typeId, $vaultSlug);
             $name = '';
             if (is_array($def)) {
                 if (isset($def['name']) && is_string($def['name'])) {

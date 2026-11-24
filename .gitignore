@@ -7,10 +7,10 @@
 /node_modules/
 /public/hot
 /public/storage
-/workspaces/*
-!/workspaces/avatars/
-!/workspaces/avatars/.gitkeep
-!/workspaces/*/manifest.md
+/vaults/*
+!/vaults/avatars/
+!/vaults/avatars/.gitkeep
+!/vaults/*/manifest.md
 /bootstrap/cache/*.php
 /bootstrap/cache/packages.php
 /bootstrap/cache/services.php

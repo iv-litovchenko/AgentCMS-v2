@@ -1,12 +1,12 @@
 # node path (без sections/) → Twig-шаблон экрана
-default: workspace/hubs/_default.html.twig
+default: vault/hubs/_default.html.twig
 views:
-  root/root: workspace/hubs/root_root.html.twig
-  root/ws: workspace/hubs/topic_ws.html.twig
-  topic/topic: workspace/hubs/topic_topic.html.twig
-  channel/channel: workspace/hubs/channel_channel.html.twig
-  database/collection: workspace/hubs/database_collection.html.twig
-  media/media: workspace/hubs/media_media.html.twig
-  repository/repository: workspace/hubs/repository_repository.html.twig
-  command/command: workspace/hubs/command_command.html.twig
-  script/script: workspace/hubs/script_script.html.twig
+  root/root: vault/hubs/root_root.html.twig
+  root/ws: vault/hubs/topic_ws.html.twig
+  topic/topic: vault/hubs/topic_topic.html.twig
+  channel/channel: vault/hubs/channel_channel.html.twig
+  database/collection: vault/hubs/database_collection.html.twig
+  media/media: vault/hubs/media_media.html.twig
+  repository/repository: vault/hubs/repository_repository.html.twig
+  command/command: vault/hubs/command_command.html.twig
+  script/script: vault/hubs/script_script.html.twig

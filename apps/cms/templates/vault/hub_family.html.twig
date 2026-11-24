@@ -1,0 +1,20 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ hub_group.label }} — {{ vault.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'vault/_shell.html.twig' %}
+        {% block vault_main %}
+            {% include 'vault/hubs/_family.html.twig' with {
+                hub_group: hub_group,
+                hub_family: hub_family,
+                hub_family_base: hub_family_base,
+                vault: vault,
+                hub_folder_entries: hub_folder_entries|default([]),
+                hub_zone_folder_only: hub_zone_folder_only|default(false),
+                root_creatable_files: root_creatable_files|default([]),
+                existing_root_files: existing_root_files|default({}),
+            } %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

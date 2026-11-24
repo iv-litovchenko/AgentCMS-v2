@@ -4,4 +4,4 @@
 
 Типы, поля, md-blocks, presets: `resources/cms/types/**`.
 
-Workspace override типов: `workspaces/{slug}/types/**`. Локальные значения настроек: `workspaces/{slug}/.agent-cms/settings.yaml`.
+Vault override типов: `vaults/{slug}/types/**`. Локальные значения настроек: `vaults/{slug}/.agent-cms/settings.yaml`.

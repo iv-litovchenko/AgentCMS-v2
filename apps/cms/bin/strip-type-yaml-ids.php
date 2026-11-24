@@ -40,10 +40,10 @@ foreach ($iterator as $fileInfo) {
     $updated++;
 }
 
-$workspaceRoot = dirname(__DIR__, 2) . '/workspaces';
-if (is_dir($workspaceRoot)) {
+$vaultsRoot = dirname(__DIR__, 3) . '/vaults';
+if (is_dir($vaultsRoot)) {
     $wsIter = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($workspaceRoot, FilesystemIterator::SKIP_DOTS)
+        new RecursiveDirectoryIterator($vaultsRoot, FilesystemIterator::SKIP_DOTS)
     );
     foreach ($wsIter as $fileInfo) {
         if (!$fileInfo->isFile() || !preg_match('/\/types\/.+\.ya?ml$/i', $fileInfo->getPathname())) {

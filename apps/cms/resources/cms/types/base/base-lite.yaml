@@ -67,7 +67,7 @@ fields:
   awn-id:
     type: fields/number/integer
     title: '{A2!} ID'
-    description: 'Глобальный номер workspace (settings → автоинкремент)'
+    description: 'Глобальный номер vault (settings → автоинкремент)'
     placement: aside-body
     group: system
     sort: 0

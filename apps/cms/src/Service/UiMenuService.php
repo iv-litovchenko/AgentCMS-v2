@@ -24,7 +24,7 @@ class UiMenuService
 
     private StarterToggleService $starterToggleService;
 
-    private WorkspaceService $workspaceService;
+    private VaultService $vaultService;
 
     /** @var array<string, mixed>|null */
     private ?array $configCache = null;
@@ -34,7 +34,7 @@ class UiMenuService
         UrlGeneratorInterface $urlGenerator,
         RequestStack $requestStack,
         StarterToggleService $starterToggleService,
-        WorkspaceService $workspaceService,
+        VaultService $vaultService,
         string $publicBaseDomain,
         string $publicHttpPort,
         string $publicHttpsPort,
@@ -44,7 +44,7 @@ class UiMenuService
         $this->urlGenerator = $urlGenerator;
         $this->requestStack = $requestStack;
         $this->starterToggleService = $starterToggleService;
-        $this->workspaceService = $workspaceService;
+        $this->vaultService = $vaultService;
         $this->publicBaseDomain = $publicBaseDomain;
         $this->publicHttpPort = $publicHttpPort;
         $this->publicHttpsPort = $publicHttpsPort;
@@ -123,12 +123,12 @@ class UiMenuService
 
     public function getHeaderSearchUrl(): string
     {
-        $slug = $this->resolveWorkspaceSlugForHeaderSearch();
+        $slug = $this->resolveVaultSlugForHeaderSearch();
         if ($slug === '') {
-            return $this->urlGenerator->generate('workspace_index');
+            return $this->urlGenerator->generate('vault_index');
         }
 
-        return $this->urlGenerator->generate('workspace_module_show', [
+        return $this->urlGenerator->generate('vault_module_show', [
             'slug' => $slug,
             'module' => 'search',
         ]);
@@ -136,23 +136,23 @@ class UiMenuService
 
     public function isHeaderSearchAvailable(): bool
     {
-        return $this->resolveWorkspaceSlugForHeaderSearch() !== '';
+        return $this->resolveVaultSlugForHeaderSearch() !== '';
     }
 
-    private function resolveWorkspaceSlugForHeaderSearch(): string
+    private function resolveVaultSlugForHeaderSearch(): string
     {
         $request = $this->requestStack->getCurrentRequest();
         if ($request !== null) {
             $route = $request->attributes->get('_route');
             $slug = $request->attributes->get('slug');
             if (is_string($route) && is_string($slug) && $slug !== '') {
-                if ($route === 'workspace_show' || $route === 'workspace_module_show') {
+                if ($route === 'vault_show' || $route === 'vault_module_show') {
                     return $slug;
                 }
             }
         }
 
-        $storages = $this->workspaceService->listForDisplay();
+        $storages = $this->vaultService->listForDisplay();
         if (count($storages) === 0) {
             return '';
         }
@@ -173,7 +173,7 @@ class UiMenuService
         }
 
         $route = $request->attributes->get('_route');
-        if ($route !== 'workspace_module_show') {
+        if ($route !== 'vault_module_show') {
             return false;
         }
 

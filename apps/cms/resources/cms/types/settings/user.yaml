@@ -2,7 +2,7 @@ name: 'Пользовательские настройки'
 status: active
 extends: settings/_base
 description: |
-  UI и дерево меню для текущего пользователя в этом workspace (аналог uc в TYPO3). Значения — .agent-cms/settings/user.yml. Не влияют на MCP-политику.
+  UI и дерево меню для текущего пользователя в этом vault (аналог uc в TYPO3). Значения — .agent-cms/settings/user.yml. Не влияют на MCP-политику.
 scope: user
 enabled: true
 consumer:

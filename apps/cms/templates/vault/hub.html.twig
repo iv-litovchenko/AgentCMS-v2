@@ -1,0 +1,19 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}{{ hub_label }} — {{ vault.name }} — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    {% embed 'vault/_shell.html.twig' %}
+        {% block vault_main %}
+            {% include hub_view_template with {
+                hub_type: hub_type,
+                hub_path: hub_path,
+                hub_id: hub_id,
+                hub_label: hub_label,
+                hub_view_template: hub_view_template,
+                vault: vault,
+                hub_root_manifest: hub_root_manifest|default(null),
+            } %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

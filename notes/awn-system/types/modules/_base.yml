@@ -1,11 +1,11 @@
 id: awn.module.base
-name: Модуль workspace
+name: Модуль хранилище
 kind: base
 domain: modules
 status: active
 extends: awn.entity
 description: >
-  Встроенный модуль Agent CMS — отдельный экран workspace (canvas),
+  Встроенный модуль Agent CMS — отдельный экран хранилище (canvas),
   открывается из picker агента или нижней панели. Пока каталог
   описательный: не влияет на данные проекта, пока нет кода-потребителя.
 
@@ -15,7 +15,7 @@ properties:
     description: CHPU-сегмент (~module-…)
   view:
     title: View id
-    description: Ключ agentWorkspaceView в UI
+    description: Ключ agentVaultView в UI
   ui-surfaces:
     title: Точки входа
     description: picker, footer, menu-stats

@@ -1,15 +1,15 @@
-name: 'Модуль workspace'
+name: 'Модуль vault'
 status: active
 extends: base/_base
 description: |
-  Встроенный модуль Agent CMS — отдельный экран workspace (canvas), открывается из picker агента или нижней панели. Пока каталог описательный: не влияет на данные проекта, пока нет кода-потребителя.
+  Встроенный модуль Agent CMS — отдельный экран vault (canvas), открывается из picker агента или нижней панели. Пока каталог описательный: не влияет на данные проекта, пока нет кода-потребителя.
 properties:
   module-id:
     title: 'ID модуля'
     description: 'CHPU-сегмент (~module-…)'
   view:
     title: 'View id'
-    description: 'Ключ agentWorkspaceView в UI'
+    description: 'Ключ agentVaultView в UI'
   ui-surfaces:
     title: 'Точки входа'
     description: 'picker, footer, menu-stats'

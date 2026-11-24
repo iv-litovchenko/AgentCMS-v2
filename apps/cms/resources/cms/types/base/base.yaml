@@ -51,7 +51,7 @@ field-groups:
   -
     id: indexing
     name: '{A2!} Индексирование'
-    description: 'Поиск, индексы workspace и автооглавление'
+    description: 'Поиск, индексы vault и автооглавление'
     collapsed: true
   -
     id: taxonomy
@@ -269,7 +269,7 @@ fields:
   awn-viz-graph:
     type: fields/object
     title: Граф
-    description: 'Узел на графе связей workspace'
+    description: 'Узел на графе связей vault'
     placement: aside-body
     group: visualization
     sort: 1
@@ -407,7 +407,7 @@ fields:
   awn-viz-roadmap:
     type: fields/object
     title: Roadmap
-    description: 'Позиция на дорожной карте workspace'
+    description: 'Позиция на дорожной карте vault'
     placement: aside-body
     group: visualization
     sort: 3
@@ -461,7 +461,7 @@ fields:
   awn-id:
     type: fields/number/integer
     title: '{A2!} ID'
-    description: 'Глобальный номер workspace (счётчик в settings.yml → Автоинкремент). Дубликаты допустимы — можно изменить вручную.'
+    description: 'Глобальный номер vault (счётчик в settings.yml → Автоинкремент). Дубликаты допустимы — можно изменить вручную.'
     placement: aside-body
     group: system
     sort: 0

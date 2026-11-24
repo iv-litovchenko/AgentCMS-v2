@@ -8,7 +8,7 @@ tree-ui:
   icon-class: text-emerald-600
 view:
   screen:
-    template: workspace/hubs/command_command.html.twig
+    template: vault/hubs/command_command.html.twig
 description: 'Команда — manifest и слоты (заготовка)'
 storage-slots:
   - todo

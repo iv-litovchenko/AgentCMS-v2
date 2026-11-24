@@ -7,4 +7,4 @@ tree-ui:
   icon: root
   icon-class: text-emerald-600
 extends: hubs/_base
-description: 'Корень workspace — .gitignore, .env, AGENTS.md, manifest.section.md и др. (типы sections/root/*)'
+description: 'Корень vault — .gitignore, .env, AGENTS.md, manifest.section.md и др. (типы sections/root/*)'

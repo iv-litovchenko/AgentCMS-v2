@@ -46,7 +46,7 @@ export async function render(target, source, ctx) {
       fenceTag,
       dql,
       `<p class="awn-dql-empty">Нет строк (total ${data.total ?? 0})</p>
-       <p class="awn-dql-empty-hint">Проверьте FROM/WHERE, пересоберите storage-index в меню workspace или ослабьте фильтры.</p>`
+       <p class="awn-dql-empty-hint">Проверьте FROM/WHERE, пересоберите storage-index в меню хранилище или ослабьте фильтры.</p>`
     );
     return;
   }

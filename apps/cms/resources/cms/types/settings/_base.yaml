@@ -9,7 +9,7 @@ properties:
     description: 'К чему относится настройка'
     enum:
       - agent
-      - workspace
+      - vault
       - ui
     default: agent
   value:

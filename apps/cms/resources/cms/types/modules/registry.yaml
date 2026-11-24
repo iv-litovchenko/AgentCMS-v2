@@ -1,8 +1,8 @@
-name: 'Каталог модулей workspace'
+name: 'Каталог модулей vault'
 status: active
 extends: modules/_base
 description: |
-  Реестр встроенных модулей Agent CMS. Соответствует кнопкам в picker агента и CHPU ~module-*. Пока справочник — не меняет runtime workspace.
+  Реестр встроенных модулей Agent CMS. Соответствует кнопкам в picker агента и CHPU ~module-*. Пока справочник — не меняет runtime vault.
 entries:
   -
     module-id: module-git
@@ -105,7 +105,7 @@ entries:
       - list_tools
   -
     module-id: module-visualization
-    label: 'Визуализация workspace'
+    label: 'Визуализация vault'
     view: roadmap-map
     implementation: active
     ui-surfaces:

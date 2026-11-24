@@ -1,12 +1,12 @@
 id: awn.module.registry
-name: Каталог модулей workspace
+name: Каталог модулей хранилище
 kind: type
 domain: modules
 status: active
 extends: awn.module.base
 description: >
   Реестр встроенных модулей Agent CMS. Соответствует кнопкам в picker
-  агента и CHPU ~module-*. Пока справочник — не меняет runtime workspace.
+  агента и CHPU ~module-*. Пока справочник — не меняет runtime хранилище.
 
 entries:
   - module-id: module-git
@@ -79,7 +79,7 @@ entries:
     ui-surfaces: [picker]
     mcp: [list_tools]
   - module-id: module-visualization
-    label: Визуализация workspace
+    label: Визуализация хранилище
     view: roadmap-map
     implementation: active
     ui-surfaces: [picker, sidebar-globe]

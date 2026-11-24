@@ -21,6 +21,6 @@
 | Схема колонок | Массив `columns` в YAML типа + Validator |
 | Фильтры/агрегации | **openspout/openspout** (большие файлы), или импорт в SQLite для ad‑hoc SQL |
 
-**Для Agent CMS логично:** тип сущности в YAML (`fields:`), источник — `.md` с frontmatter или `.csv`; один слой **WorkspaceEntityReader/Writer** (файл + flock), без отдельной «MD‑БД» библиотеки.
+**Для Agent CMS логично:** тип сущности в YAML (`fields:`), источник — `.md` с frontmatter или `.csv`; один слой **VaultEntityReader/Writer** (файл + flock), без отдельной «MD‑БД» библиотеки.
 
 Если нужно — могу набросать минимальный тип `note_md` + `table_csv` в реестре и один сервис чтения.

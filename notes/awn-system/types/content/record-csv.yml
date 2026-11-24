@@ -16,7 +16,7 @@ fields:
   awn-id:
     type: awn.field.number.integer
     title: ID
-    description: Глобальный номер workspace (счётчик в settings.yml)
+    description: Глобальный номер хранилище (счётчик в settings.yml)
     sort: 0
 
   awn-parent-id:

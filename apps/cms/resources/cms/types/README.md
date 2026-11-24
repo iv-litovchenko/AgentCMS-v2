@@ -8,7 +8,7 @@
 
 1. `packages/*/resources/cms/types/` — пакеты
 2. `resources/cms/types/` — платформа (миграция из `notes/awn-system/types/`)
-3. `workspaces/{slug}/types/` — хранилище
+3. `vaults/{slug}/types/` — хранилище
 
 Повторная миграция: `php bin/migrate-types-from-notes.php` (обновляет дерево и `aliases.yaml`).
 Опциональный bootstrap: `BOOTSTRAP_TYPES_DIR` (обычно не нужен).
@@ -17,4 +17,4 @@
 
 Мета-схема значений настроек (не тип): `resources/cms/schemas/settings.platform.yaml`.
 
-CLI: `php bin/console app:types:list` и `php bin/console app:types:list -w ws-core`.
+CLI: `php bin/console app:types:list` и `php bin/console app:types:list -w vault-core`.

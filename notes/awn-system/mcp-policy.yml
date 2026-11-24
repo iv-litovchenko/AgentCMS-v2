@@ -1,12 +1,12 @@
 version: 1
 description: >
   Центральная MCP policy платформы Agent CMS.
-  Значения лимитов per-workspace — в config.yml → awn_settings (batch-read-limit, batch-write-limit).
+  Значения лимитов per-vault — в config.yml → awn_settings (batch-read-limit, batch-write-limit).
   Этот файл — denylist, категории tools, паттерны. Меняется редко, одно на платформу.
 
 mcp:
   # single-call write tools (blocked in mcp-mode=readonly)
-  write_tool_pattern: "^(write_|create_|register_|delete_|move_|rename_|append_|upload_|import_|triage_|inbox_item_triage|retain_|write_database_|register_database|create_database|delete_database|rename_database|database_register|database_update|database_delete|database_rename|database_schema_write|database_properties_write|database_property_write|delete_channel|rename_channel|channel_register|channel_update|channel_delete|channel_rename|delete_media_library|rename_media_library|media_library_register|media_library_update|media_library_delete|media_library_rename|delete_repository|rename_repository|repository_register|repository_update|repository_delete|repository_rename|nav_map_workspace_refresh|nav_index_toc_topics_refresh|nav_index_toc_contents_refresh|nav_index_toc_databases_refresh|nav_index_toc_channels_refresh|nav_index_toc_repositories_refresh|nav_index_toc_media_libraries_refresh|databases_index_toc_refresh|channels_index_toc_refresh|repositories_index_toc_refresh|media_libraries_index_toc_refresh|topics_index_toc_refresh|contents_index_toc_refresh|workspace_map_refresh|refresh_databases_index_toc|database_frame_write_|database_frame_create_|database_frame_refresh_|refresh_database_frame_index_toc|database_frame_delete_|database_frame_rename_|fact_create|fact_update|workspace_fact_create|workspace_fact_update|glossary_term_create|glossary_term_update|reference_entry_create|reference_entry_update|topic_create|topic_update|topic_delete|topic_rename|topic_move|topic_body_write|topic_properties_write|topic_property_write|topic_schema_write|topic_config_write|topic_env_write|topic_slots_template_set|content_create|content_write|content_delete|content_rename|content_move|content_split|content_merge|content_binary_write|content_binary_write_from_url|content_binary_upload_begin|content_binary_upload_complete|content_binary_upload_abort|content_property_write|session_note_write|session_todo_write|workspace_note_write|workspace_todo_write|annotation_sidecar_create|annotation_sidecar_update|annotation_sidecar_write|annotation_sidecar_delete|sidecar_create|sidecar_write|sidecar_delete|annotation_comment_append|annotation_comment_update|annotation_comment_delete|session_context_buffer_items_append|session_context_buffer_append|session_buffer_append|session_context_buffer_items_remove|session_context_buffer_remove|session_buffer_item_remove|session_context_buffer_items_clear|session_context_buffer_clear|session_buffer_clear|context_buffer_append|context_buffer_item_remove|context_buffer_clear|append_context_buffer|remove_context_buffer_item|clear_context_buffer|session_context_buffer_text_write|session_buffer_text_write|comment_append|comment_update|comment_delete|journal_entry_append|setting_write|platform_doc_write|workspace_dependencies_write|workspace_create|workspace_register|workspace_update|workspace_default_set|workspace_orchestrator_set|workspace_group_create|workspace_group_update|workspace_group_delete|workspace_group_assign|workspace_group_unassign|workspace_groups_reorder|user_notification_send|notify_user|utility_script_run|utility_command_exec|utility_shell_exec|tool_script_run|tool_command_exec|tool_shell_exec|run_script|exec_|module_git_commit|module_git_init|module_git_push|module_git_pull|module_git_remote)"
+  write_tool_pattern: "^(write_|create_|register_|delete_|move_|rename_|append_|upload_|import_|triage_|inbox_item_triage|retain_|write_database_|register_database|create_database|delete_database|rename_database|database_register|database_update|database_delete|database_rename|database_schema_write|database_properties_write|database_property_write|delete_channel|rename_channel|channel_register|channel_update|channel_delete|channel_rename|delete_media_library|rename_media_library|media_library_register|media_library_update|media_library_delete|media_library_rename|delete_repository|rename_repository|repository_register|repository_update|repository_delete|repository_rename|nav_map_vault_refresh|nav_index_toc_topics_refresh|nav_index_toc_contents_refresh|nav_index_toc_databases_refresh|nav_index_toc_channels_refresh|nav_index_toc_repositories_refresh|nav_index_toc_media_libraries_refresh|databases_index_toc_refresh|channels_index_toc_refresh|repositories_index_toc_refresh|media_libraries_index_toc_refresh|topics_index_toc_refresh|contents_index_toc_refresh|vault_map_refresh|refresh_databases_index_toc|database_frame_write_|database_frame_create_|database_frame_refresh_|refresh_database_frame_index_toc|database_frame_delete_|database_frame_rename_|fact_create|fact_update|vault_fact_create|vault_fact_update|glossary_term_create|glossary_term_update|reference_entry_create|reference_entry_update|topic_create|topic_update|topic_delete|topic_rename|topic_move|topic_body_write|topic_properties_write|topic_property_write|topic_schema_write|topic_config_write|topic_env_write|topic_slots_template_set|content_create|content_write|content_delete|content_rename|content_move|content_split|content_merge|content_binary_write|content_binary_write_from_url|content_binary_upload_begin|content_binary_upload_complete|content_binary_upload_abort|content_property_write|session_note_write|session_todo_write|vault_note_write|vault_todo_write|annotation_sidecar_create|annotation_sidecar_update|annotation_sidecar_write|annotation_sidecar_delete|sidecar_create|sidecar_write|sidecar_delete|annotation_comment_append|annotation_comment_update|annotation_comment_delete|session_context_buffer_items_append|session_context_buffer_append|session_buffer_append|session_context_buffer_items_remove|session_context_buffer_remove|session_buffer_item_remove|session_context_buffer_items_clear|session_context_buffer_clear|session_buffer_clear|context_buffer_append|context_buffer_item_remove|context_buffer_clear|append_context_buffer|remove_context_buffer_item|clear_context_buffer|session_context_buffer_text_write|session_buffer_text_write|comment_append|comment_update|comment_delete|journal_entry_append|setting_write|platform_doc_write|vault_dependencies_write|vault_create|vault_register|vault_update|vault_default_set|vault_orchestrator_set|vault_group_create|vault_group_update|vault_group_delete|vault_group_assign|vault_group_unassign|vault_groups_reorder|user_notification_send|notify_user|utility_script_run|utility_command_exec|utility_shell_exec|tool_script_run|tool_command_exec|tool_shell_exec|run_script|exec_|module_git_commit|module_git_init|module_git_push|module_git_pull|module_git_remote)"
   exec_tools:
     - utility_script_run
     - utility_command_exec
@@ -34,7 +34,7 @@ batch_invoke:
     - batch_invoke
     - index_search_query_batch
     - search_batch
-    - search_workspace_batch
+    - search_vault_batch
     - session_context_get
     - get_session_context
     - session_context_get_user_open_url_location_in_ui
@@ -42,11 +42,11 @@ batch_invoke:
     - get_ui_focus
     - get_user_active_context_now
     - get_ui_open_location
-    - workspaces_list
-    - list_workspaces
+    - vaults_list
     - list_vaults
-    - query_workspace_ask
-    - ask_workspace
+    - list_vaults
+    - query_vault_ask
+    - ask_vault
     - search_and_get_context
     - user_notification_send
     - notify_user
@@ -75,13 +75,13 @@ batch_invoke:
     - index_1_ocr_run
     - index_ocr_run
     - index_record_sync
-    - rebuild_workspace_indexes
-    - rebuild_workspace_semantic_index
-    - rebuild_workspace_storage_index
-    - rebuild_workspace_fulltext_index
-    - rebuild_workspace_link_index
-    - run_workspace_ocr_index
-    - sync_workspace_index_file
+    - rebuild_vault_indexes
+    - rebuild_vault_semantic_index
+    - rebuild_vault_storage_index
+    - rebuild_vault_fulltext_index
+    - rebuild_vault_link_index
+    - run_vault_ocr_index
+    - sync_vault_index_file
 
   exec_tools:
     - utility_script_run
@@ -143,8 +143,8 @@ batch_invoke:
     - content_property_read
     - session_note_read
     - session_todo_read
-    - workspace_note_read
-    - workspace_todo_read
+    - vault_note_read
+    - vault_todo_read
     - annotation_sidecar_path_resolve
     - annotation_sidecar_read
     - sidecar_path_resolve
@@ -174,7 +174,7 @@ batch_invoke:
     - read_setting
     - databases_list
     - database_get
-    - nav_map_workspace_read
+    - nav_map_vault_read
     - nav_index_toc_topics_read
     - nav_index_toc_contents_read
     - nav_index_toc_databases_read
@@ -186,21 +186,21 @@ batch_invoke:
     - database_property_read
     - facts_list
     - facts_search
-    - workspace_facts_list
-    - workspace_facts_search
+    - vault_facts_list
+    - vault_facts_search
     - glossary_terms_list
     - glossary_terms_search
     - reference_entries_list
     - reference_entries_search
     - index_4_storage_query
     - index_storage_query
-    - query_workspace_storage
+    - query_vault_storage
     - index_status_get
     - index_status_get
-    - get_workspace_index_status
+    - get_vault_index_status
     - index_monitor_get
     - index_monitor_get
-    - get_workspace_index_monitor
+    - get_vault_index_monitor
     - index_2_fulltext_search_query
     - search_content
     - index_3_semantic_search_query

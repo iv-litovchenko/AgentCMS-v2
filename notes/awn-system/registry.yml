@@ -1,6 +1,6 @@
 version: 1
 mode: agent-owned
-agent: 0-ws-test
+agent: 0-vault-test
 description: CMS-модель агента — типы, слоты, поля. Runtime читает awn-system/types/
 
 # domains — источник правды по доменам («какие бывают компоненты»).
@@ -22,21 +22,21 @@ domains:
 
 # Четыре независимые области настроек (не merge):
 #   platform — .agent-cms-global/settings/platform.yml (корень проекта)
-#   workspace — .agent-cms/settings/workspace.yml (хранилище)
+#   vault — .agent-cms/settings/vault.yml (хранилище)
 #   integrations — .agent-cms/settings/integrations.yml (skills, MCP, плагины)
 #   user — .agent-cms/settings/user.yml (UI пользователя)
 settings:
   description: >
-    Platform — политика CMS (MCP, лимиты, индексы). Workspace — параметры хранилища.
+    Platform — политика CMS (MCP, лимиты, индексы). Vault — параметры хранилища.
     Integrations — контейнеры внешних сервисов (skills, MCP tools, плагины).
     User — UI/дерево для пользователя. Области не сливаются. MCP policy — .agent-cms-global/settings/platform.yml → awn_policy.
   schema:
     platform:
       type: awn.settings.platform
       path: awn-system/types/settings/platform.yml
-    workspace:
-      type: awn.settings.workspace
-      path: awn-system/types/settings/workspace.yml
+    vault:
+      type: awn.settings.vault
+      path: awn-system/types/settings/vault.yml
     integrations:
       type: awn.settings.integrations
       path: awn-system/types/settings/integrations.yml
@@ -45,7 +45,7 @@ settings:
       path: awn-system/types/settings/user.yml
   values:
     platform: .agent-cms-global/settings/platform.yml
-    workspace: .agent-cms/settings/workspace.yml
+    vault: .agent-cms/settings/vault.yml
     integrations: .agent-cms/settings/integrations.yml
     user: .agent-cms/settings/user.yml
 

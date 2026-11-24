@@ -2,7 +2,7 @@ name: 'Пресет системного файла'
 status: active
 extends: base/_base
 description: |
-  Заготовка содержимого файла workspace (.env, AGENTS.md, SKILL.md, промпты Shell). Канон — awn-system/types/presets/*.yml. Используются UI «Вставить шаблон» и API system-file-templates.
+  Заготовка содержимого файла vault (.env, AGENTS.md, SKILL.md, промпты Shell). Канон — awn-system/types/presets/*.yml. Используются UI «Вставить шаблон» и API system-file-templates.
 kind-ui:
   label: Пресет
   badge:
@@ -12,7 +12,7 @@ kind-ui:
 properties:
   target-file:
     title: 'Целевой файл'
-    description: 'Имя файла в корне workspace или путь (например .env, AGENTS.md)'
+    description: 'Имя файла в корне vault или путь (например .env, AGENTS.md)'
     required: true
   hint-title:
     title: 'Подсказка — заголовок'

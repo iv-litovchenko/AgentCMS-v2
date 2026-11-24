@@ -1,0 +1,7 @@
+name: VAULT-MAP
+status: active
+hub: root
+extends: sections/root/_file
+manifest-pattern: VAULT-MAP.md
+create-preset: ''
+sort: 100

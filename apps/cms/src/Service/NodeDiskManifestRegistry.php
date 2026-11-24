@@ -38,10 +38,10 @@ class NodeDiskManifestRegistry
         return in_array($filename, $this->fixed(), true);
     }
 
-    public function diskPathForRelativeFile(string $relativeToWorkspace, string $filename): string
+    public function diskPathForRelativeFile(string $relativeToVault, string $filename): string
     {
         if ($filename === 'manifest.section.md') {
-            $dir = dirname($relativeToWorkspace);
+            $dir = dirname($relativeToVault);
             if ($dir === '.' || $dir === '') {
                 return '';
             }
@@ -50,23 +50,23 @@ class NodeDiskManifestRegistry
         }
 
         if (in_array($filename, $this->fixed(), true)) {
-            return $relativeToWorkspace;
+            return $relativeToVault;
         }
 
-        $stripped = preg_replace('/\.section\.md$/', '', $relativeToWorkspace);
+        $stripped = preg_replace('/\.section\.md$/', '', $relativeToVault);
         if (is_string($stripped)) {
             return $stripped;
         }
 
-        return $relativeToWorkspace;
+        return $relativeToVault;
     }
 
     /**
      * @return list<array{file: string, preset: string, label: string, type_id: string}>
      */
-    public function listRootCreatableFiles(string $workspaceSlug = ''): array
+    public function listRootCreatableFiles(string $vaultSlug = ''): array
     {
-        $fromTypes = $this->typeSchemaRegistry->listRootDiskManifestTypes($workspaceSlug);
+        $fromTypes = $this->typeSchemaRegistry->listRootDiskManifestTypes($vaultSlug);
         $result = [];
         foreach ($fromTypes as $row) {
             $result[] = [

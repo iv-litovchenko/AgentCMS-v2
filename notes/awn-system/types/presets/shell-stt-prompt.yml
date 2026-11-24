@@ -4,7 +4,7 @@ kind: preset
 domain: presets
 status: active
 extends: awn.preset
-target-file: ".agent-cms/settings/workspace.yml"
+target-file: ".agent-cms/settings/vault.yml"
 hint-title: "Agent Shell — голосовые блоки в сообщении"
 hint-text: "Инструкция агенту: как читать блоки <code>```awn-stt```</code> в общем сообщении (текст + голос)."
 sort: 21

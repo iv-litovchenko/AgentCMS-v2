@@ -5,7 +5,7 @@ domain: fields
 extends: awn.field.object
 status: draft
 description: >
-  Крючок workspace: событие → условие (опционально) → действие.
+  Крючок хранилище: событие → условие (опционально) → действие.
   Примеры действий: webhook, notify_user, run_script, вызов MCP-tool.
   Runtime-исполнитель — позже; тип зарезервирован под редактор правил.
 widget: json
@@ -28,12 +28,12 @@ properties:
   event:
     type: awn.field.choice.one
     title: Событие
-    description: Что отслеживать в workspace
+    description: Что отслеживать в хранилище
     enum:
       - file.saved
       - page.created
       - index.pipeline.done
-      - workspace.cron
+      - vault.cron
       - agent.session.end
   filter:
     type: awn.field.string

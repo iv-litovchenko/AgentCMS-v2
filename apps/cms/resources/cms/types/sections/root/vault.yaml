@@ -1,0 +1,9 @@
+name: Vault
+status: active
+default: true
+hub: root
+extends: sections/_base
+description: 'Корневой манифест vault — manifest.section.md или manifest.md в корне хранилища'
+tree-ui:
+  icon: root
+  icon-class: text-zinc-600

@@ -5,9 +5,9 @@ domain: settings
 status: active
 extends: awn.settings.base
 description: >
-  Контейнеры настроек внешних сервисов для workspace: Cursor skills, MCP tools,
+  Контейнеры настроек внешних сервисов для хранилище: Cursor skills, MCP tools,
   hooks и другие плагины. Значения — .agent-cms/settings/integrations.yml. Область не
-  сливается с platform/workspace/user. Пока схема статическая; позже контейнеры
+  сливается с platform/хранилище/user. Пока схема статическая; позже контейнеры
   можно создавать из реестра без правки ядра CMS.
 scope: integrations
 enabled: true
@@ -23,7 +23,7 @@ fieldGroups:
   - id: module-git
     name: Модуль git
     description: >
-      Параметры встроенного модуля module-git (панель Git workspace, MCP
+      Параметры встроенного модуля module-git (панель Git хранилище, MCP
       module_git_*). Только для справки — значения задаются платформой.
   - id: example-cursor-skill
     name: Пример · Cursor Skill
@@ -32,7 +32,7 @@ fieldGroups:
   - id: example-mcp-bridge
     name: Пример · MCP bridge
     description: >
-      Заглушка контейнера MCP tool / server, подключаемого к workspace.
+      Заглушка контейнера MCP tool / server, подключаемого к хранилище.
 
 fields:
 
@@ -62,7 +62,7 @@ fields:
     type: awn.field.string
     title: Ветка по умолчанию
     description: >
-      Начальная ветка при git init в корне workspace (module_git_init, кнопка
+      Начальная ветка при git init в корне хранилище (module_git_init, кнопка
       «Инициализировать git»).
     default: main
     group: module-git
@@ -92,14 +92,14 @@ fields:
           mdx
           csv
           txt
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Records"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Records"
         maxFileSizeMb: 5
       - id: records-history
         label: Записи (контент) — история
         emoji: "🕓"
         extensions: |
           mdback
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Records history"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Records history"
         maxFileSizeMb: 1
       - id: images
         label: Изображения (контент)
@@ -120,7 +120,7 @@ fields:
           bmp
           tif
           tiff
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Images"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Images"
         maxFileSizeMb: 25
       - id: sources
         label: Исходник (код)
@@ -141,7 +141,7 @@ fields:
           go
           rs
           sql
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Sources"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Sources"
         maxFileSizeMb: 5
       - id: documents
         label: Документы
@@ -154,7 +154,7 @@ fields:
           xlsx
           ppt
           pptx
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Documents"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Documents"
         maxFileSizeMb: 45
       - id: media
         label: Медиа
@@ -171,7 +171,7 @@ fields:
           mov
           mkv
           avi
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Media"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Media"
         maxFileSizeMb: 45
       - id: design-2d
         label: 2D — дизайн
@@ -185,7 +185,7 @@ fields:
           xd
           indd
           afdesign
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Design 2D"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Design 2D"
         maxFileSizeMb: 45
       - id: design-3d
         label: 3D — моделирование
@@ -203,7 +203,7 @@ fields:
           ma
           mb
           ztl
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Design 3D"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Design 3D"
         maxFileSizeMb: 45
       - id: design-bim
         label: Архитектура / BIM
@@ -218,7 +218,7 @@ fields:
           pln
           nwd
           nwc
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Architecture BIM"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Architecture BIM"
         maxFileSizeMb: 45
       - id: archives
         label: Архивы
@@ -231,7 +231,7 @@ fields:
           bz2
           xz
           7z
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Archives"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Archives"
         maxFileSizeMb: 45
       - id: other
         label: Прочее
@@ -240,7 +240,7 @@ fields:
           wasm
           woff
           woff2
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Other"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Other"
         maxFileSizeMb: 25
       - id: configs
         label: Конфиги, настройки (служебное)
@@ -256,7 +256,7 @@ fields:
           cfg
           properties
           lock
-        messageTemplate: "[{branch}] Сохранение workspace ({date} {time}) - Configs"
+        messageTemplate: "[{branch}] Сохранение хранилище ({date} {time}) - Configs"
         maxFileSizeMb: 5
     properties:
       id:
@@ -309,7 +309,7 @@ fields:
   module-git-user-email:
     type: awn.field.string
     title: Email автора коммита
-    description: Git user.email для коммитов из workspace.
+    description: Git user.email для коммитов из хранилище.
     default: ""
     group: module-git
     sort: 7
@@ -338,7 +338,7 @@ fields:
   container-cursor-skill-enabled:
     type: awn.field.boolean
     title: "{NOT WORK} Включено"
-    description: Подключать skill при старте агента в этом workspace
+    description: Подключать skill при старте агента в этом хранилище
     default: false
     group: example-cursor-skill
     sort: 10
@@ -389,7 +389,7 @@ fields:
     type: awn.field.string
     title: "{NOT WORK} Разрешённые tools"
     description: Список через запятую; пусто = все tools сервера
-    default: workspaces_list, topic_body_read, search_content
+    default: vaults_list, topic_body_read, search_content
     group: example-mcp-bridge
     sort: 22
 
