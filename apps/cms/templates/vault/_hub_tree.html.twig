@@ -27,15 +27,20 @@
             {% set zoneFilter = (group.label ~ ' ' ~ group.family ~ ' ' ~ group.folder|default('') ~ ' ' ~ group.url_segment|default(''))|lower %}
             <li role="treeitem" class="hub-tree-zone" data-hub-tree-zone data-filter-text="{{ zoneFilter|e('html_attr') }}">
                 {% if zoneFolderOnly %}
-                    <a href="{{ path('vault_hub_family_show', {slug: vault.slug, zone: group.url_segment|default(group.family), family: group.family}) }}"
-                       class="flex items-center gap-1 rounded px-1 py-0.5 font-medium {% if onFamily %}bg-zinc-100 text-zinc-900 hover:bg-zinc-100{% else %}text-zinc-800 hover:bg-zinc-50{% endif %}"
+                    <a href="{{ path('vault_hub_family_show', {slug: vault.slug, zone: group.url_segment|default(group.family)}) }}"
+                       class="flex items-center gap-0.5 rounded px-0.5 py-0.5 font-medium {% if onFamily %}bg-zinc-100 text-zinc-900 hover:bg-zinc-100{% else %}text-zinc-800 hover:bg-zinc-50{% endif %}"
                        {% if group.folder|default('') != '' %}title="{{ group.folder }}"{% endif %}
                        {% if onFamily %}aria-current="page"{% endif %}>
-                        {% include 'vault/_hub_tree_icon.html.twig' with {
-                            icon: group.tree_icon|default('folder'),
-                            icon_class: group.tree_icon_class|default('text-amber-500'),
-                        } %}
-                        <span class="truncate">{{ group.label }}</span>
+                        <span class="inline-flex shrink-0 rounded p-0.5 text-zinc-400" aria-hidden="true" title="Без вложенного дерева">
+                            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/></svg>
+                        </span>
+                        <span class="flex min-w-0 flex-1 items-center gap-1 rounded px-1 py-0.5">
+                            {% include 'vault/_hub_tree_icon.html.twig' with {
+                                icon: group.tree_icon|default('folder'),
+                                icon_class: group.tree_icon_class|default('text-amber-500'),
+                            } %}
+                            <span class="truncate">{{ group.label }}</span>
+                        </span>
                     </a>
                 {% else %}
                 <details class="group/tree" open>

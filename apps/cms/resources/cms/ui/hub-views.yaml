@@ -6,6 +6,7 @@ views:
   topic/topic: vault/hubs/topic_topic.html.twig
   channel/channel: vault/hubs/channel_channel.html.twig
   database/collection: vault/hubs/database_collection.html.twig
+  taxonomy/reference: vault/hubs/database_collection.html.twig
   media/media: vault/hubs/media_media.html.twig
   repository/repository: vault/hubs/repository_repository.html.twig
   command/command: vault/hubs/command_command.html.twig

@@ -1,0 +1,10 @@
+name: 'База taxonomy'
+status: active
+hub: taxonomy
+extends: sections/_base
+tree-ui:
+  icon: tag
+  icon-class: text-emerald-600
+description: 'Справочник в acms-taxonomies/'
+storage-slots:
+  - data

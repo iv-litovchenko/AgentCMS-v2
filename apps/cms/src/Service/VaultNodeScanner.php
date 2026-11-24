@@ -50,7 +50,8 @@ class VaultNodeScanner
             if (isset($group['folder']) && is_string($group['folder'])) {
                 $folder = $group['folder'];
             }
-            $groups[$index]['items'] = $this->listNodeFilesInHubFolder($vaultSlug, $folder);
+            $items = $this->listNodeFilesInHubFolder($vaultSlug, $folder);
+            $groups[$index]['items'] = $this->filterItemsExcludedByNestedHubZones($items, $folder, $groups);
         }
 
         return $groups;
@@ -315,6 +316,62 @@ class VaultNodeScanner
         usort($filtered, function (array $a, array $b): int {
             return $this->compareHubTreeDiskItems($a, $b);
         });
+
+        return $filtered;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $items
+     * @param list<array<string, mixed>> $groups
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function filterItemsExcludedByNestedHubZones(array $items, string $hubFolder, array $groups): array
+    {
+        $hubFolder = trim(str_replace('\\', '/', $hubFolder), '/');
+        $excludePrefixes = [];
+        foreach ($groups as $other) {
+            if (!is_array($other)) {
+                continue;
+            }
+            $otherFolder = '';
+            if (isset($other['folder']) && is_string($other['folder'])) {
+                $otherFolder = trim(str_replace('\\', '/', $other['folder']), '/');
+            }
+            if ($otherFolder === '' || $otherFolder === $hubFolder) {
+                continue;
+            }
+            if ($hubFolder === '' || str_starts_with($otherFolder, $hubFolder . '/')) {
+                $excludePrefixes[] = $otherFolder . '/';
+            }
+        }
+        if (count($excludePrefixes) === 0) {
+            return $items;
+        }
+
+        $filtered = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $diskPath = '';
+            if (isset($item['disk_path']) && is_string($item['disk_path'])) {
+                $diskPath = trim(str_replace('\\', '/', $item['disk_path']), '/');
+            }
+            if ($diskPath === '') {
+                continue;
+            }
+            $skip = false;
+            foreach ($excludePrefixes as $prefix) {
+                if (str_starts_with($diskPath, $prefix)) {
+                    $skip = true;
+                    break;
+                }
+            }
+            if (!$skip) {
+                $filtered[] = $item;
+            }
+        }
 
         return $filtered;
     }

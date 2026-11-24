@@ -473,7 +473,7 @@ class TypeSchemaRegistry
         }
 
         $urlSegment = $family;
-        if ($folder !== '' && $folder !== '.') {
+        if ($folder !== '' && $folder !== '.' && !str_contains($folder, '/')) {
             $urlSegment = $folder;
         }
 
@@ -513,7 +513,7 @@ class TypeSchemaRegistry
         if (isset($hubZone['folder']) && is_string($hubZone['folder'])) {
             $folder = trim($hubZone['folder']);
         }
-        if ($folder !== '' && $folder !== '.') {
+        if ($folder !== '' && $folder !== '.' && !str_contains($folder, '/')) {
             return $folder;
         }
 

@@ -146,7 +146,7 @@ class UiMenuService
             $route = $request->attributes->get('_route');
             $slug = $request->attributes->get('slug');
             if (is_string($route) && is_string($slug) && $slug !== '') {
-                if ($route === 'vault_show' || $route === 'vault_module_show') {
+                if ($route === 'vault_show' || $route === 'vault_module_show' || $route === 'vault_hub_family_show' || $route === 'vault_disk_node_show') {
                     return $slug;
                 }
             }

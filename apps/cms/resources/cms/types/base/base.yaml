@@ -56,7 +56,7 @@ field-groups:
   -
     id: taxonomy
     name: '{A2!} Таксономия'
-    description: 'Справочники из awn-databases/taxonomies/'
+    description: 'Справочники из acms-taxonomies/'
     collapsed: true
   -
     id: visualization
@@ -454,7 +454,7 @@ fields:
   awn-taxonomy:
     type: fields/taxonomy
     title: '{A2!} Таксономия'
-    description: 'Теги, категория, цвет и другие справочники из awn-databases/taxonomies/'
+    description: 'Теги, категория, цвет и другие справочники из acms-taxonomies/'
     placement: aside-body
     group: taxonomy
     sort: 1

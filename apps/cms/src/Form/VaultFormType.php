@@ -25,7 +25,7 @@ class VaultFormType extends AbstractType
             ])
             ->add('slug', TextType::class, [
                 'label' => 'Ключ (папка в vaults/)',
-                'help' => 'Каталог vaults/{ключ}/ с manifest.md. URL: /vaults/demo-main.',
+                'help' => 'Каталог vaults/{ключ}/ с manifest.md. URL: /{ключ}/.',
                 'constraints' => [
                     new NotBlank(),
                     new Regex([

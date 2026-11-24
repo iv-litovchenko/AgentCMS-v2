@@ -1,0 +1,38 @@
+name: Справочник
+status: active
+sort: 10
+hub: taxonomy
+extends: sections/taxonomy/_base
+description: 'CSV-словарь; ключ в awn-taxonomy — slug папки'
+storage-slots:
+  - data
+tree-ui:
+  icon: tag
+  icon-class: text-emerald-600
+kind-ui:
+  for: reference
+  label: Справочник
+  badge:
+    background: '#ecfdf5'
+    border: '#a7f3d0'
+    text: '#047857'
+fields:
+  awn-taxonomy-cardinality:
+    type: fields/choice/one
+    title: '{A2!} Кардинальность'
+    description: 'one — одно значение; many — список в awn-taxonomy'
+    placement: aside-body
+    group: infoblock
+    sort: 10
+    enum:
+      - one
+      - many
+    default: one
+  awn-taxonomy-hierarchy:
+    type: fields/boolean
+    title: '{A2!} Иерархия значений'
+    description: 'Дерево кодов в справочнике (awn-parent-id в CSV)'
+    placement: aside-body
+    group: infoblock
+    sort: 11
+    default: false

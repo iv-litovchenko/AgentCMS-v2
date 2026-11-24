@@ -4,7 +4,7 @@ widget: taxonomy
 storage: taxonomy
 mdbase: object
 description: |
-  Значения из CSV-справочников группы awn-databases/taxonomies/. В YAML — объект awn-taxonomy с ключами словарей (tags, category, color…).
+  Значения из CSV-справочников acms-taxonomies/. В YAML — объект awn-taxonomy с ключами словарей (tags, category, color…).
 settings:
   - hint
   - required

@@ -41,7 +41,7 @@ field-groups:
   -
     id: taxonomy
     name: '{A2!} Таксономия'
-    description: 'Справочники из awn-databases/taxonomies/'
+    description: 'Справочники из acms-taxonomies/'
     collapsed: true
   -
     id: physical-location

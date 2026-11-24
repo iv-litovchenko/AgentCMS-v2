@@ -1,4 +1,4 @@
-# Модули внутри хранилища. URL: /vaults/{slug}/module/{slug модуля}
+# Модули внутри хранилища. URL: /{slug}/module/{slug модуля}
 items:
   - slug: search
     module-id: module-search
