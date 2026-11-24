@@ -437,6 +437,22 @@ class WorkspaceService
         return null;
     }
 
+    public function readRootMarkdownBody(string $slug, string $filename): string
+    {
+        $filename = trim(str_replace('\\', '/', $filename), '/');
+        if ($filename === '' || str_contains($filename, '/')) {
+            return '';
+        }
+
+        $path = $this->workspacePath($slug) . '/' . $filename;
+        $parsed = $this->manifestReader->parseFile($path);
+        if ($parsed === null) {
+            return '';
+        }
+
+        return trim($parsed['body']);
+    }
+
     private function storeUploadedAvatar(string $slug, UploadedFile $file): string
     {
         $this->ensureAvatarsDirectory();

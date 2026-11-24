@@ -62,7 +62,7 @@ class WorkspaceRootFileCreator
         }
 
         $body = $this->resolvePresetBody($presetId, $filename);
-        if ($typeId !== '') {
+        if ($typeId !== '' && str_ends_with($filename, '.md')) {
             $body = $this->wrapWithFrontmatter($body, $typeId, $typeName);
         }
 

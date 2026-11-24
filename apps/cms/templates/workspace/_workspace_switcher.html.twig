@@ -36,6 +36,12 @@
         } %}
     </a>
 
+    {% include 'workspace/_sidebar_root_quick.html.twig' with {
+        workspace: workspace,
+        sidebar_root_note_body: sidebar_root_note_body|default(''),
+        sidebar_root_todo_body: sidebar_root_todo_body|default(''),
+    } %}
+
     {% include 'workspace/_hub_tree.html.twig' with {
         active_module_slug: active_module_slug|default(''),
         active_hub_path: active_hub_path|default(''),

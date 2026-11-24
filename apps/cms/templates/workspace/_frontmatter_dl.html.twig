@@ -16,13 +16,13 @@
                 {% set display_value = value %}
             {% endif %}
             <tr class="align-top hover:bg-zinc-50/80">
-                <th scope="row" class="border-r border-zinc-100 bg-zinc-50/60 px-3 py-2 text-left font-mono text-[11px] font-normal leading-snug text-zinc-600">{{ label }}</th>
+                <th scope="row" class="w-1/2 border-r border-zinc-100 bg-zinc-50/60 px-3 py-2 text-left font-mono text-[11px] font-normal leading-snug text-zinc-600">{{ label }}</th>
                 {% if display_value|default('')|trim == '' %}
-                    <td class="px-3 py-2 text-sm text-zinc-400">—</td>
+                    <td class="w-1/2 px-3 py-2 text-sm text-zinc-400">—</td>
                 {% elseif is_type %}
-                    <td class="break-words px-3 py-2 font-mono text-xs text-zinc-800">{{ display_value }}</td>
+                    <td class="w-1/2 break-words px-3 py-2 font-mono text-xs text-zinc-800">{{ display_value }}</td>
                 {% else %}
-                    <td class="break-words px-3 py-2 text-sm leading-snug text-zinc-800">{{ display_value }}</td>
+                    <td class="w-1/2 break-words px-3 py-2 text-sm leading-snug text-zinc-800">{{ display_value }}</td>
                 {% endif %}
             </tr>
         {% endif %}

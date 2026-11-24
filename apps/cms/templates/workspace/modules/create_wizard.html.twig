@@ -48,7 +48,10 @@
                 {{ create_wizard_group.label|default(create_wizard_family) }}
             </h2>
             {% if create_wizard_family == 'root' %}
-                <p class="mt-1 text-xs text-zinc-500">Служебные markdown-файлы в корне workspace</p>
+                <p class="mt-1 text-xs text-zinc-500">
+                    Корень хранилища «{{ workspace.name }}»
+                    {%- if workspace.folder|default('') != '' %} — <span class="font-mono">{{ workspace.folder }}</span>{% endif %}
+                </p>
                 {% if root_creatable_files|default([])|length > 0 %}
                     {% include 'workspace/modules/_create_root_files.html.twig' %}
                 {% else %}
