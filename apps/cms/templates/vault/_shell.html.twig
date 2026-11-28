@@ -18,18 +18,78 @@
         </div>
     </div>
 
-    <div class="flex min-h-11 shrink-0 flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm"
+    <div class="flex min-h-11 shrink-0 flex-col gap-2 rounded-lg border border-zinc-200 px-3 py-2 shadow-sm"
+         style="background-color:#dc2626;color:#fff;line-height:1.4;font-size:12px;"
          role="region"
          aria-label="Нижняя панель">
-        <p class="text-[10px] font-medium uppercase tracking-wide text-zinc-400">Слои</p>
-        <p class="font-mono text-[11px] text-zinc-600" title="Порядок: бизнес-логика → шаблон → HTTP API → агенты">
-            <span class="text-zinc-800">Service</span>
-            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
-            <span class="text-zinc-800">Twig</span>
-            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
-            <span class="text-zinc-800">API</span>
-            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
-            <span class="text-zinc-800">MCP</span>
-        </p>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="text-[10px] font-medium uppercase tracking-wide" style="color:rgba(255,255,255,0.85);">Слои</p>
+            <p class="font-mono text-[11px]" style="color:#fff;" title="Порядок: бизнес-логика → шаблон → HTTP API → агенты">
+                <span>Service</span>
+                <span class="px-1" style="color:rgba(255,255,255,0.75);" aria-hidden="true">→</span>
+                <span>Twig</span>
+                <span class="px-1" style="color:rgba(255,255,255,0.75);" aria-hidden="true">→</span>
+                <span>API</span>
+                <span class="px-1" style="color:rgba(255,255,255,0.75);" aria-hidden="true">→</span>
+                <span>MCP</span>
+            </p>
+        </div>
+        <div class="border-t pt-2" style="border-color:rgba(255,255,255,0.25);">
+            <p class="text-[10px] font-medium uppercase tracking-wide" style="color:rgba(255,255,255,0.85);">План MCP</p>
+            <p class="mt-1 font-mono text-[10px] leading-snug" style="color:rgba(255,255,255,0.9);">resource_* — возможно объединим все эти методы</p>
+            <ul class="mt-1 list-none font-mono text-[11px]" style="color:#fff;" aria-label="План MCP tools">
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> session_context_get</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_index_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_list</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_create</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_update</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_exists</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_index_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_list</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_create</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_update</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_delete</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_move</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_exists</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_index_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_list</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_create</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_update</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_copy</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_rename</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_move</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_delete</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_upload</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_download</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_exists</li>
+            </ul>
+            <div class="mt-2 border-t pt-2" style="border-color:rgba(255,255,255,0.25);">
+                <p class="text-[10px] font-medium uppercase tracking-wide" style="color:rgba(255,255,255,0.85);">Набор параметров (черновик)</p>
+                <pre class="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap font-mono text-[10px] leading-snug" style="color:rgba(255,255,255,0.95);">session_context_get → { workspace_id?, vault_slug?, disk_path? }
+
+vault_*     vault_slug
+            + поля manifest (name, description, …) на create/update
+
+section_*   vault_slug, disk_path (узел: папка + manifest.*)
+content_*   vault_slug, disk_path (файл в vault)
+            + body | properties на write; upload/download — bytes, без YAML
+
+list        vault_slug, parent_disk_path ('' = корень vault)
+index_read  vault_slug, index_disk_path (INDEX.md | …/index.md | …)
+
+exists/read/update/delete/move/copy/rename
+            vault_slug + disk_path — один каркас; kind: vault | section | content
+            смотрим по пути (файл/папка) и acms-type в manifest
+
+Объединить в 1 MCP-метод?
+  • resource_read / resource_write / resource_exists / resource_move — да для узла+файла
+  • resource_create — нет: vault (новая папка vaults/), section (mkdir),
+    content (файл + frontmatter | upload) — разные ветки
+  • vaults_list / vaults_index_read — вне vault_slug (каталог хранилищ)</pre>
+            </div>
+        </div>
     </div>
 </div>
