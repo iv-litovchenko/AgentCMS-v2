@@ -14,16 +14,20 @@ class VaultSlotFolderWriter
 
     private VaultManifestReader $manifestReader;
 
+    private VaultRecordCreateExtensionCatalog $recordCreateExtensionCatalog;
+
     public function __construct(
         VaultService $vaultService,
         VaultNodeScanner $vaultNodeScanner,
         TypeSchemaRegistry $typeSchemaRegistry,
-        VaultManifestReader $manifestReader
+        VaultManifestReader $manifestReader,
+        VaultRecordCreateExtensionCatalog $recordCreateExtensionCatalog
     ) {
         $this->vaultService = $vaultService;
         $this->vaultNodeScanner = $vaultNodeScanner;
         $this->typeSchemaRegistry = $typeSchemaRegistry;
         $this->manifestReader = $manifestReader;
+        $this->recordCreateExtensionCatalog = $recordCreateExtensionCatalog;
     }
 
     public function isStorageFolderDiskPath(string $folderDiskPath): bool
@@ -38,6 +42,26 @@ class VaultSlotFolderWriter
         return $split['folder_suffix'] !== '';
     }
 
+    /**
+     * @return list<string>
+     */
+    public function listRecordCreateExtensions(string $vaultSlug, string $folderDiskPath): array
+    {
+        $acceptFiles = $this->resolveAcceptFilesForFolder($vaultSlug, $folderDiskPath);
+
+        return $this->typeSchemaRegistry->listRecordCreateExtensions($acceptFiles);
+    }
+
+    /**
+     * @return list<array{label: string, items: list<array{ext: string, title: string, hint: string, option_label: string}>}>
+     */
+    public function listRecordCreateExtensionGroups(string $vaultSlug, string $folderDiskPath): array
+    {
+        $acceptFiles = $this->resolveAcceptFilesForFolder($vaultSlug, $folderDiskPath);
+
+        return $this->typeSchemaRegistry->listRecordCreateExtensionGroups($acceptFiles);
+    }
+
   /**
    * @return array{disk_path: string}
    */
@@ -45,11 +69,13 @@ class VaultSlotFolderWriter
         string $vaultSlug,
         string $folderDiskPath,
         string $slug,
-        string $name
+        string $name,
+        string $description
     ): array {
         $this->assertStorageFolder($folderDiskPath);
         $slug = trim($slug);
         $name = trim($name);
+        $description = trim($description);
         if ($slug === '' || $name === '') {
             throw new \InvalidArgumentException('Укажите slug и название раздела.');
         }
@@ -74,6 +100,9 @@ class VaultSlotFolderWriter
             'acms-create' => $now,
             'acms-update' => $now,
         ];
+        if ($description !== '') {
+            $properties['acms-description'] = $description;
+        }
 
         $manifestPath = $targetDir . '/manifest.md';
         $this->vaultService->writeFileAtomicPublic(
@@ -95,12 +124,24 @@ class VaultSlotFolderWriter
         string $vaultSlug,
         string $folderDiskPath,
         string $title,
-        string $slug
+        string $slug,
+        string $description,
+        string $extension
     ): array {
         $this->assertStorageFolder($folderDiskPath);
         $title = trim($title);
+        $description = trim($description);
         if ($title === '') {
             throw new \InvalidArgumentException('Укажите название записи.');
+        }
+
+        $extension = strtolower(trim($extension));
+        if ($extension === '') {
+            $extension = 'md';
+        }
+        $acceptFiles = $this->resolveAcceptFilesForFolder($vaultSlug, $folderDiskPath);
+        if (!$this->typeSchemaRegistry->isRecordCreateExtensionAllowed($extension, $acceptFiles)) {
+            throw new \InvalidArgumentException('Недопустимое расширение файла для этого слота.');
         }
 
         $slug = trim($slug);
@@ -111,26 +152,38 @@ class VaultSlotFolderWriter
             throw new \InvalidArgumentException('Slug: kebab-case, латиница и цифры.');
         }
 
-        $filename = $slug . '.md';
+        $filename = $slug . '.' . $extension;
         $parentAbsolute = $this->resolveWritableDirectory($vaultSlug, $folderDiskPath);
         $filePath = $parentAbsolute . '/' . $filename;
         if (file_exists($filePath)) {
             throw new \InvalidArgumentException('Файл уже существует.');
         }
 
+        $contentTypeId = $this->typeSchemaRegistry->resolveRecordContentTypeIdForExtension($extension);
         $now = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format(\DateTimeInterface::ATOM);
         $properties = [
-            'acms-type' => $this->typeSchemaRegistry->publicTypeId('content/record'),
+            'acms-type' => $this->typeSchemaRegistry->publicTypeId($contentTypeId),
             'acms-name' => $title,
             'acms-create' => $now,
             'acms-update' => $now,
         ];
+        if ($description !== '') {
+            $properties['acms-description'] = $description;
+        }
 
-        $body = "# " . $title . "\n\n";
-        $this->vaultService->writeFileAtomicPublic(
-            $filePath,
-            $this->manifestReader->buildFileContent($properties, $body)
-        );
+        $body = '';
+        if ($extension === 'md') {
+            $body = "# " . $title . "\n\n";
+        }
+
+        if ($this->recordCreateExtensionCatalog->isBinaryExtension($extension)) {
+            $this->vaultService->writeFileAtomicPublic($filePath, '');
+        } else {
+            $this->vaultService->writeFileAtomicPublic(
+                $filePath,
+                $this->manifestReader->buildFileContent($properties, $body)
+            );
+        }
 
         return [
             'disk_path' => $folderDiskPath . '/' . $filename,
@@ -183,6 +236,53 @@ class VaultSlotFolderWriter
         return [
             'count' => $saved,
         ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function resolveAcceptFilesForFolder(string $vaultSlug, string $folderDiskPath): array
+    {
+        $split = VaultNodeStorage::splitFolderDiskPath($folderDiskPath);
+        if ($split['folder_suffix'] === '') {
+            return [];
+        }
+
+        $ownerNode = $this->vaultNodeScanner->readDiskNode($vaultSlug, $split['node_disk_path']);
+        if ($ownerNode === null) {
+            return [];
+        }
+
+        $typeId = '';
+        $properties = $ownerNode['properties'];
+        if (is_array($properties) && isset($properties['acms-type']) && is_string($properties['acms-type'])) {
+            $typeId = trim($properties['acms-type']);
+        }
+        if ($typeId === '') {
+            return [];
+        }
+
+        $slot = $this->typeSchemaRegistry->resolveMultiFileSlotContainingFolderSuffix(
+            $vaultSlug,
+            $typeId,
+            $split['folder_suffix']
+        );
+        if ($slot === null) {
+            return [];
+        }
+
+        if (!isset($slot['accept_files']) || !is_array($slot['accept_files'])) {
+            return [];
+        }
+
+        $acceptFiles = [];
+        foreach ($slot['accept_files'] as $item) {
+            if (is_string($item) && trim($item) !== '') {
+                $acceptFiles[] = trim($item);
+            }
+        }
+
+        return $acceptFiles;
     }
 
     private function assertStorageFolder(string $folderDiskPath): void

@@ -488,11 +488,13 @@ class VaultDiskNodeController extends AbstractController
         ): string {
             $sectionSlug = $request->request->getString('section_slug');
             $sectionName = $request->request->getString('section_name');
+            $sectionDescription = $request->request->getString('section_description');
             $created = $this->vaultSlotFolderWriter->createCategory(
                 $vaultSlug,
                 $folderDiskPath,
                 $sectionSlug,
-                $sectionName
+                $sectionName,
+                $sectionDescription
             );
 
             return $created['disk_path'];
@@ -509,14 +511,18 @@ class VaultDiskNodeController extends AbstractController
         ): string {
             $title = $request->request->getString('record_title');
             $recordSlug = $request->request->getString('record_slug');
-            $this->vaultSlotFolderWriter->createRecord(
+            $recordDescription = $request->request->getString('record_description');
+            $recordExtension = $request->request->getString('record_extension');
+            $created = $this->vaultSlotFolderWriter->createRecord(
                 $vaultSlug,
                 $folderDiskPath,
                 $title,
-                $recordSlug
+                $recordSlug,
+                $recordDescription,
+                $recordExtension
             );
 
-            return $folderDiskPath;
+            return $created['disk_path'];
         }, 'Запись создана.');
     }
 
@@ -782,8 +788,12 @@ class VaultDiskNodeController extends AbstractController
 
         $slotActionsEnabled = $this->vaultSlotFolderWriter->isStorageFolderDiskPath($folderDiskPath);
         $slotFolderCsrfId = '';
+        $recordExtensions = ['md'];
+        $recordExtensionGroups = [];
         if ($slotActionsEnabled) {
             $slotFolderCsrfId = $this->slotFolderCsrfId($folderDiskPath);
+            $recordExtensions = $this->vaultSlotFolderWriter->listRecordCreateExtensions($vault['slug'], $folderDiskPath);
+            $recordExtensionGroups = $this->vaultSlotFolderWriter->listRecordCreateExtensionGroups($vault['slug'], $folderDiskPath);
         }
 
         return $this->render('vault/disk_folder.html.twig', array_merge(
@@ -795,6 +805,8 @@ class VaultDiskNodeController extends AbstractController
                 'disk_folder_entries' => $entries,
                 'disk_folder_slot_actions' => $slotActionsEnabled,
                 'disk_folder_slot_csrf_id' => $slotFolderCsrfId,
+                'disk_folder_record_extensions' => $recordExtensions,
+                'disk_folder_record_extension_groups' => $recordExtensionGroups,
                 'disk_node_path' => $nodeDiskPath,
                 'active_disk_node_path' => $folderDiskPath,
                 'active_hub_path' => '',

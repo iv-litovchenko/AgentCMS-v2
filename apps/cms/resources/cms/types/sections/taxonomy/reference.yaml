@@ -1,5 +1,5 @@
 name: Справочник
-status: active
+status: draft
 sort: 10
 hub: taxonomy
 extends: sections/taxonomy/_base

@@ -1,5 +1,5 @@
 name: BOOTSTRAP
-status: active
+status: draft
 hub: root
 extends: sections/root/_file
 manifest-pattern: BOOTSTRAP.md

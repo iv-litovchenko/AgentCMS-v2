@@ -18,6 +18,12 @@ items:
     implementation: stub
     sidebar: true
     sort: 20
+  - slug: tag-navigator
+    module-id: module-tag-navigator
+    label: Навигатор тегов
+    implementation: stub
+    sidebar: true
+    sort: 25
   - slug: dependencies
     module-id: module-dependencies
     label: Внешние зависимости

@@ -20,6 +20,8 @@
                         vault: vault,
                         disk_folder_path: disk_folder_path,
                         disk_folder_slot_csrf_id: disk_folder_slot_csrf_id,
+                        disk_folder_record_extensions: disk_folder_record_extensions|default(['md']),
+                        disk_folder_record_extension_groups: disk_folder_record_extension_groups|default([]),
                     } %}
                 {% endif %}
                 {% if disk_folder_entries|default([])|length == 0 %}

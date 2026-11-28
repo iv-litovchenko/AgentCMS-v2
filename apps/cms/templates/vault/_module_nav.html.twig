@@ -24,6 +24,8 @@
                     {% set moduleIcon = 'file' %}
                     {% if module.slug == 'journal' %}
                         {% set moduleIcon = 'book' %}
+                    {% elseif module.slug == 'tag-navigator' %}
+                        {% set moduleIcon = 'tag' %}
                     {% elseif module.slug == 'dependencies' %}
                         {% set moduleIcon = 'map' %}
                     {% elseif module.slug == 'settings' %}

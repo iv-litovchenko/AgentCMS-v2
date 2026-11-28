@@ -13,6 +13,9 @@
             <input type="text" name="section_name" required
                    placeholder="Название"
                    class="w-full rounded-md border border-zinc-200 px-2 py-1.5 text-xs text-zinc-800">
+            <input type="text" name="section_description"
+                   placeholder="Описание (необяз.)"
+                   class="w-full rounded-md border border-zinc-200 px-2 py-1.5 text-xs text-zinc-800">
             <button type="submit"
                     class="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
                 Создать
@@ -22,7 +25,7 @@
         <form method="post"
               action="{{ path('vault_disk_slot_create_record', {slug: vault.slug, nodePath: disk_folder_path ~ '~slot-create-record'}) }}"
               class="flex min-w-0 flex-col gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-2">
-            <span class="text-xs font-medium text-zinc-900">Создать запись</span>
+            <span class="text-xs font-medium text-zinc-900">Создать запись (файл)</span>
             <input type="hidden" name="_token" value="{{ csrf_token(disk_folder_slot_csrf_id) }}">
             <input type="text" name="record_title" required
                    placeholder="Заголовок"
@@ -30,6 +33,31 @@
             <input type="text" name="record_slug" pattern="[a-z0-9]+(-[a-z0-9]+)*"
                    placeholder="slug (необяз.)"
                    class="w-full rounded-md border border-zinc-200 px-2 py-1.5 font-mono text-xs text-zinc-800">
+            <input type="text" name="record_description"
+                   placeholder="Описание (необяз.)"
+                   class="w-full rounded-md border border-zinc-200 px-2 py-1.5 text-xs text-zinc-800">
+            {% set record_exts = disk_folder_record_extensions|default(['md']) %}
+            {% set record_groups = disk_folder_record_extension_groups|default([]) %}
+            {% if record_exts|length > 1 %}
+                <select name="record_extension"
+                        class="w-full rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-800">
+                    {% if record_groups|length > 0 %}
+                        {% for group in record_groups %}
+                            <optgroup label="{{ group.label }}">
+                                {% for item in group.items %}
+                                    <option value="{{ item.ext }}"{% if item.ext == 'md' %} selected{% endif %}>{{ item.option_label }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    {% else %}
+                        {% for ext in record_exts %}
+                            <option value="{{ ext }}"{% if ext == 'md' %} selected{% endif %}>.{{ ext }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            {% else %}
+                <input type="hidden" name="record_extension" value="{{ record_exts[0] }}">
+            {% endif %}
             <button type="submit"
                     class="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
                 Создать

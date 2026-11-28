@@ -3,6 +3,10 @@
     <div class="{{ wrapper_class|default('mt-3 border-t border-zinc-100 pt-3') }}">
         <div class="overflow-x-auto rounded-md border border-zinc-200">
             <table class="w-full min-w-[16rem] table-fixed border-collapse text-sm">
+                <colgroup>
+                    <col class="w-1/2">
+                    <col class="w-1/2">
+                </colgroup>
                 <tbody class="divide-y divide-zinc-100 bg-white">
                     {% include 'vault/_frontmatter_dl.html.twig' with {
                         frontmatter_properties: frontmatter_properties,

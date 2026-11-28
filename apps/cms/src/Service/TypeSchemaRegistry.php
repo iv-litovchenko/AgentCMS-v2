@@ -32,18 +32,22 @@ class TypeSchemaRegistry
     /** @var array<string, array<string, array<string, mixed>>> */
     private array $mergedVaultCache = [];
 
+    private VaultRecordCreateExtensionCatalog $recordCreateExtensionCatalog;
+
     public function __construct(
         string $platformTypesDir,
         string $vaultsDir,
         string $projectRoot,
         string $bootstrapTypesDir,
-        string $aliasesFile
+        string $aliasesFile,
+        VaultRecordCreateExtensionCatalog $recordCreateExtensionCatalog
     ) {
         $this->platformTypesDir = $platformTypesDir;
         $this->vaultsDir = $vaultsDir;
         $this->projectRoot = rtrim($projectRoot, '/');
         $this->bootstrapTypesDir = rtrim($bootstrapTypesDir, '/');
         $this->aliasesFile = $aliasesFile;
+        $this->recordCreateExtensionCatalog = $recordCreateExtensionCatalog;
     }
 
     public function normalizeTypeId(string $rawId): string
@@ -183,6 +187,9 @@ class TypeSchemaRegistry
             if (!is_array($hubDef)) {
                 continue;
             }
+            if (isset($hubDef['status']) && is_string($hubDef['status']) && $hubDef['status'] === 'draft') {
+                continue;
+            }
             $groups[$family] = $this->buildHubTreeGroupShell($family, $hubDef);
         }
 
@@ -216,6 +223,9 @@ class TypeSchemaRegistry
                 $hubZoneId = 'hubs/' . $hubKey;
                 $hubDef = $this->resolveType($hubZoneId, $vaultSlug);
                 if (!is_array($hubDef)) {
+                    continue;
+                }
+                if (isset($hubDef['status']) && is_string($hubDef['status']) && $hubDef['status'] === 'draft') {
                     continue;
                 }
                 $groups[$hubKey] = $this->buildHubTreeGroupShell($hubKey, $hubDef);
@@ -801,6 +811,111 @@ class TypeSchemaRegistry
         }
 
         return implode(', ', $acceptFiles);
+    }
+
+    /**
+     * Слот (multi-file), внутри которого лежит путь folder_suffix (0-storage/...).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function resolveMultiFileSlotContainingFolderSuffix(string $vaultSlug, string $typeId, string $folderSuffix): ?array
+    {
+        $folderSuffix = trim(str_replace('\\', '/', $folderSuffix), '/');
+        if ($folderSuffix === '' || trim($typeId) === '') {
+            return null;
+        }
+
+        $slots = $this->listStorageSlotsForNodeType($typeId, $vaultSlug);
+        $best = null;
+        $bestLen = -1;
+
+        foreach ($slots as $slot) {
+            $isSingle = false;
+            if (isset($slot['single_file']) && $slot['single_file'] === true) {
+                $isSingle = true;
+            }
+            if ($isSingle) {
+                continue;
+            }
+
+            $relative = '';
+            if (isset($slot['relative_path']) && is_string($slot['relative_path'])) {
+                $relative = trim($slot['relative_path'], '/');
+            }
+            if ($relative === '') {
+                continue;
+            }
+
+            $matches = false;
+            if ($folderSuffix === $relative) {
+                $matches = true;
+            } elseif (str_starts_with($folderSuffix, $relative . '/')) {
+                $matches = true;
+            }
+
+            if (!$matches) {
+                continue;
+            }
+
+            $len = strlen($relative);
+            if ($len > $bestLen) {
+                $best = $slot;
+                $bestLen = $len;
+            }
+        }
+
+        return $best;
+    }
+
+    /**
+     * Расширения для «Создать запись» по accept-files слота.
+     *
+     * @param list<string> $acceptFiles
+     *
+     * @return list<string> без точки, lowercase
+     */
+    public function listRecordCreateExtensions(array $acceptFiles): array
+    {
+        return $this->recordCreateExtensionCatalog->extensionsForAcceptFiles($acceptFiles);
+    }
+
+    /**
+     * @param list<string> $acceptFiles
+     *
+     * @return list<array{label: string, items: list<array{ext: string, title: string, hint: string, option_label: string}>}>
+     */
+    public function listRecordCreateExtensionGroups(array $acceptFiles): array
+    {
+        return $this->recordCreateExtensionCatalog->groupsForAcceptFiles($acceptFiles);
+    }
+
+    /**
+     * @param list<string> $acceptFiles
+     */
+    public function isRecordCreateExtensionAllowed(string $extension, array $acceptFiles): bool
+    {
+        $extension = strtolower(trim($extension));
+        if ($extension === '' || !preg_match('/^[a-z0-9]+$/', $extension)) {
+            return false;
+        }
+
+        if (!$this->recordCreateExtensionCatalog->isKnownExtension($extension)) {
+            return false;
+        }
+
+        $allowed = $this->listRecordCreateExtensions($acceptFiles);
+
+        return in_array($extension, $allowed, true);
+    }
+
+    public function resolveRecordContentTypeIdForExtension(string $extension): string
+    {
+        $extension = strtolower(trim($extension));
+        if ($extension === 'csv') {
+            return 'content/record-csv';
+        }
+
+        return 'content/record';
     }
 
     private function normalizeMultiFileSlotRelativePath(string $path): string

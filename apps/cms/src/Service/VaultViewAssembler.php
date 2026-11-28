@@ -87,7 +87,47 @@ class VaultViewAssembler
             $groups[$index]['tree_section_children'] = !$folderOnly;
         }
 
-        return $groups;
+        $visible = [];
+        foreach ($groups as $group) {
+            $itemCount = 0;
+            if (isset($group['items']) && is_array($group['items'])) {
+                $itemCount = count($group['items']);
+            }
+            if ($itemCount > 0) {
+                $visible[] = $group;
+                continue;
+            }
+
+            $folderOnly = false;
+            if (isset($group['zone_folder_only']) && $group['zone_folder_only'] === true) {
+                $folderOnly = true;
+            }
+            if (!$folderOnly) {
+                continue;
+            }
+
+            $folder = '';
+            if (isset($group['folder']) && is_string($group['folder'])) {
+                $folder = trim($group['folder']);
+            }
+            if ($folder === '' || $folder === '.') {
+                continue;
+            }
+
+            $listing = $this->vaultNodeScanner->readDiskDirectoryListing($vaultSlug, $folder);
+            if ($listing === null) {
+                continue;
+            }
+            $entries = [];
+            if (isset($listing['entries']) && is_array($listing['entries'])) {
+                $entries = $listing['entries'];
+            }
+            if (count($entries) > 0) {
+                $visible[] = $group;
+            }
+        }
+
+        return $visible;
     }
 
     public function resolveHubFamilyForDiskPath(string $diskPath, string $vaultSlug): string

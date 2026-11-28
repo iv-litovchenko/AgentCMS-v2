@@ -1,5 +1,6 @@
+# Хаб временно выключен (дерево vault / hub-tree).
 name: 'Зона таксономий'
-status: active
+status: draft
 folder: acms-taxonomies
 tree-ui:
   label: Таксономии

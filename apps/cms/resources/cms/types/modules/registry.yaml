@@ -29,6 +29,13 @@ entries:
       - footer
       - menu-stats
   -
+    module-id: module-tag-navigator
+    label: Навигатор тегов
+    view: tag-navigator
+    implementation: stub
+    ui-surfaces:
+      - sidebar
+  -
     module-id: module-settings
     label: 'Настройки проекта'
     view: project-settings
