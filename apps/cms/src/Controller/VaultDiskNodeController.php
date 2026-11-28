@@ -12,6 +12,7 @@ use App\Service\VaultNodeScanner;
 use App\Service\VaultNodeStorage;
 use App\Service\VaultService;
 use App\Service\VaultSlotFolderWriter;
+use App\Service\VaultSlotTocIndexBuilder;
 use App\Service\VaultViewAssembler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -41,6 +42,8 @@ class VaultDiskNodeController extends AbstractController
 
     private VaultSlotFolderWriter $vaultSlotFolderWriter;
 
+    private VaultSlotTocIndexBuilder $vaultSlotTocIndexBuilder;
+
     public function __construct(
         VaultService $vaultService,
         VaultNodeScanner $vaultNodeScanner,
@@ -51,7 +54,8 @@ class VaultDiskNodeController extends AbstractController
         AcmsManifestPropertyBridge $acmsManifestPropertyBridge,
         VaultDiskNodeEditService $vaultDiskNodeEditService,
         VaultNodeCreator $vaultNodeCreator,
-        VaultSlotFolderWriter $vaultSlotFolderWriter
+        VaultSlotFolderWriter $vaultSlotFolderWriter,
+        VaultSlotTocIndexBuilder $vaultSlotTocIndexBuilder
     ) {
         $this->vaultService = $vaultService;
         $this->vaultNodeScanner = $vaultNodeScanner;
@@ -63,6 +67,7 @@ class VaultDiskNodeController extends AbstractController
         $this->vaultDiskNodeEditService = $vaultDiskNodeEditService;
         $this->vaultNodeCreator = $vaultNodeCreator;
         $this->vaultSlotFolderWriter = $vaultSlotFolderWriter;
+        $this->vaultSlotTocIndexBuilder = $vaultSlotTocIndexBuilder;
     }
 
     /** @var list<string> */
@@ -368,6 +373,49 @@ class VaultDiskNodeController extends AbstractController
         ]);
     }
 
+    #[Route('/{slug}/{nodePath}', name: 'vault_disk_build_slot_index', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~build-slot-index'], methods: ['POST'], priority: 4)]
+    public function buildSlotIndex(string $slug, string $nodePath, Request $request): Response
+    {
+        $vault = $this->vaultService->findBySlug($slug);
+        if ($vault === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $nodeDiskPath = $this->stripBuildSlotIndexSuffix($nodePath);
+        $this->assertDiskPathAllowed($nodeDiskPath);
+
+        $csrfId = 'disk_slot_index_build_' . md5($nodeDiskPath);
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid($csrfId, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        $ownerNode = $this->vaultNodeScanner->readDiskNode($vault['slug'], $nodeDiskPath);
+        if ($ownerNode === null) {
+            throw $this->createNotFoundException('Узел не найден.');
+        }
+
+        $typeId = $this->acmsManifestPropertyBridge->stringProperty($ownerNode['properties'], 'acms-type');
+
+        try {
+            $indexDiskPath = $this->vaultSlotTocIndexBuilder->writeIndex($vault['slug'], $nodeDiskPath, $typeId);
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('vault_disk_node_show', [
+                'slug' => $slug,
+                'nodePath' => $nodeDiskPath !== '' ? $nodeDiskPath : '_',
+            ]);
+        }
+
+        $this->addFlash('success', 'Индекс оглавлений обновлён.');
+
+        return $this->redirectToRoute('vault_disk_file_view', [
+            'slug' => $slug,
+            'nodePath' => $indexDiskPath . '~view',
+        ]);
+    }
+
     #[Route('/{slug}/{nodePath}', name: 'vault_disk_slot_create', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'nodePath' => '.+~create-slot'], methods: ['POST'], priority: 4)]
     public function createStorageSlot(string $slug, string $nodePath, Request $request): Response
     {
@@ -544,6 +592,9 @@ class VaultDiskNodeController extends AbstractController
         if (str_ends_with($nodePath, '~view')) {
             throw $this->createNotFoundException('Узел не найден.');
         }
+        if (str_ends_with($nodePath, '~build-slot-index')) {
+            throw $this->createNotFoundException('Узел не найден.');
+        }
         $this->assertDiskPathAllowed($nodePath);
         $diskNode = $this->vaultNodeScanner->readDiskNode($vault['slug'], $nodePath);
         if ($diskNode === null) {
@@ -580,10 +631,12 @@ class VaultDiskNodeController extends AbstractController
         $view = $this->typeViewResolver->resolveDiskNodeView($typeId, $vault['slug']);
         $slotPartition = $this->partitionDiskNodeStorageSlots($vault['slug'], $nodePath, $typeId);
         $manifestBodyLabel = $this->typeSchemaRegistry->resolveManifestBodyLabel($typeId, $vault['slug']);
+        $slotIndexContext = $this->buildSlotIndexViewContext($vault['slug'], $nodePath, $typeId, $slotPartition);
 
         $context = array_merge(
             $this->vaultViewAssembler->buildViewContext($vault),
             $slotPartition,
+            $slotIndexContext,
             [
                 'disk_node' => $diskNode,
                 'disk_node_path' => $nodePath,
@@ -888,6 +941,58 @@ class VaultDiskNodeController extends AbstractController
 
         $diskPath = substr($nodePath, 0, -strlen($suffix));
         return trim(str_replace('\\', '/', $diskPath), '/');
+    }
+
+    private function stripBuildSlotIndexSuffix(string $nodePath): string
+    {
+        $suffix = '~build-slot-index';
+        if (!str_ends_with($nodePath, $suffix)) {
+            throw $this->createNotFoundException('Узел не найден.');
+        }
+
+        $diskPath = substr($nodePath, 0, -strlen($suffix));
+
+        return trim(str_replace('\\', '/', $diskPath), '/');
+    }
+
+    /**
+     * @param array{disk_node_storage_slots: list<array<string, mixed>>, disk_node_single_file_slots: list<array<string, mixed>>} $slotPartition
+     *
+     * @return array{disk_node_slot_index_enabled: bool, disk_node_slot_index_exists: bool, disk_node_slot_index_path: string, disk_node_slot_index_view_path: string, disk_node_slot_index_build_csrf_id: string}
+     */
+    private function buildSlotIndexViewContext(
+        string $vaultSlug,
+        string $nodeDiskPath,
+        string $typeId,
+        array $slotPartition
+    ): array {
+        $folderCount = count($slotPartition['disk_node_storage_slots']);
+        $singleCount = count($slotPartition['disk_node_single_file_slots']);
+        $enabled = false;
+        if ($folderCount > 0 || $singleCount > 0) {
+            $enabled = true;
+        }
+
+        $indexExists = false;
+        if ($enabled) {
+            $indexExists = $this->vaultSlotTocIndexBuilder->indexExists($vaultSlug, $nodeDiskPath);
+        }
+
+        $indexPath = VaultSlotTocIndexBuilder::INDEX_RELATIVE_PATH;
+        $indexViewPath = $indexPath;
+        if ($nodeDiskPath !== '') {
+            $indexViewPath = $nodeDiskPath . '/' . $indexPath;
+        }
+
+        $csrfId = 'disk_slot_index_build_' . md5($nodeDiskPath);
+
+        return [
+            'disk_node_slot_index_enabled' => $enabled,
+            'disk_node_slot_index_exists' => $indexExists,
+            'disk_node_slot_index_path' => $indexPath,
+            'disk_node_slot_index_view_path' => $indexViewPath,
+            'disk_node_slot_index_build_csrf_id' => $csrfId,
+        ];
     }
 
     private function stripActionSuffix(string $nodePath, string $suffix): string
