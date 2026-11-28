@@ -526,6 +526,94 @@ class UiMenuService
         return false;
     }
 
+    /**
+     * @return list<array{label: string, id: string, initial: string, active: bool}>
+     */
+    public function getInstanceItems(): array
+    {
+        $config = $this->loadConfig();
+        $instances = $config['instances'] ?? [];
+        if (!is_array($instances)) {
+            return [];
+        }
+
+        $defaultId = $instances['default_id'] ?? '';
+        if (!is_string($defaultId)) {
+            $defaultId = '';
+        }
+
+        $rawItems = $instances['items'] ?? [];
+        if (!is_array($rawItems)) {
+            return [];
+        }
+
+        $items = [];
+        foreach ($rawItems as $rawItem) {
+            if (!is_array($rawItem)) {
+                continue;
+            }
+
+            $label = $rawItem['label'] ?? '';
+            if (!is_string($label) || $label === '') {
+                continue;
+            }
+
+            $id = $rawItem['id'] ?? '';
+            if (!is_string($id) || $id === '') {
+                continue;
+            }
+
+            $initial = $rawItem['initial'] ?? '';
+            if (!is_string($initial) || $initial === '') {
+                $initial = mb_substr($label, 0, 1, 'UTF-8');
+            }
+
+            $active = false;
+            if ($defaultId !== '' && $id === $defaultId) {
+                $active = true;
+            }
+
+            $items[] = [
+                'label' => $label,
+                'id' => $id,
+                'initial' => $initial,
+                'active' => $active,
+            ];
+        }
+
+        return $items;
+    }
+
+    public function getActiveInstanceLabel(): string
+    {
+        foreach ($this->getInstanceItems() as $item) {
+            if ($item['active']) {
+                return $item['label'];
+            }
+        }
+
+        foreach ($this->getInstanceItems() as $item) {
+            return $item['label'];
+        }
+
+        return 'Инстансы';
+    }
+
+    public function getActiveInstanceInitial(): string
+    {
+        foreach ($this->getInstanceItems() as $item) {
+            if ($item['active']) {
+                return $item['initial'];
+            }
+        }
+
+        foreach ($this->getInstanceItems() as $item) {
+            return $item['initial'];
+        }
+
+        return '…';
+    }
+
     private function buildServicePublicUrl(string $subdomain): string
     {
         $host = $subdomain . '.' . $this->publicBaseDomain;

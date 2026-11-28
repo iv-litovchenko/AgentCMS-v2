@@ -1,22 +1,35 @@
-<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6 lg:flex-row lg:items-stretch">
-    <aside class="w-full shrink-0 lg:w-52" aria-label="Хранилище">
-        <div class="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
-            {% include 'vault/_vault_switcher.html.twig' with {
-                vault: vault,
-                vaults: vaults,
-                active_module_slug: active_module_slug|default(''),
-            } %}
-        </div>
-    </aside>
+<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
+    <div class="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row lg:items-stretch">
+        <aside class="w-full shrink-0 lg:w-52" aria-label="Хранилище">
+            <div class="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
+                {% include 'vault/_vault_switcher.html.twig' with {
+                    vault: vault,
+                    vaults: vaults,
+                    active_module_slug: active_module_slug|default(''),
+                } %}
+            </div>
+        </aside>
 
-    <div class="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
-        {% include 'vault/_breadcrumbs.html.twig' %}
-        <div class="flex min-h-0 flex-1 flex-col gap-4">
-            {% block vault_main %}{% endblock %}
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
+            {% include 'vault/_breadcrumbs.html.twig' %}
+            <div class="flex min-h-0 flex-1 flex-col gap-4">
+                {% block vault_main %}{% endblock %}
+            </div>
         </div>
-        <div class="flex min-h-11 shrink-0 flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm"
-             role="region"
-             aria-label="Нижняя панель">
-        </div>
+    </div>
+
+    <div class="flex min-h-11 shrink-0 flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm"
+         role="region"
+         aria-label="Нижняя панель">
+        <p class="text-[10px] font-medium uppercase tracking-wide text-zinc-400">Слои</p>
+        <p class="font-mono text-[11px] text-zinc-600" title="Порядок: бизнес-логика → шаблон → HTTP API → агенты">
+            <span class="text-zinc-800">Service</span>
+            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
+            <span class="text-zinc-800">Twig</span>
+            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
+            <span class="text-zinc-800">API</span>
+            <span class="px-1 text-zinc-400" aria-hidden="true">→</span>
+            <span class="text-zinc-800">MCP</span>
+        </p>
     </div>
 </div>

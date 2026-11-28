@@ -686,19 +686,7 @@ class VaultNodeScanner
             return null;
         }
 
-        $suffixParts = explode('/', $split['folder_suffix']);
-        if (count($suffixParts) !== 2) {
-            return null;
-        }
-        if ($suffixParts[0] !== VaultNodeStorage::DIR_NAME) {
-            return null;
-        }
-
-        $slotFolder = $suffixParts[1];
-        if ($slotFolder === '' || str_contains($slotFolder, '..')) {
-            return null;
-        }
-
+        $folderSuffix = $split['folder_suffix'];
         $ownerNode = $this->readDiskNode($vaultSlug, $split['node_disk_path']);
         if ($ownerNode === null) {
             return null;
@@ -707,11 +695,9 @@ class VaultNodeScanner
         $typeId = $this->acmsManifestPropertyBridge->stringProperty($ownerNode['properties'], 'acms-type');
         $slots = $this->typeSchemaRegistry->listStorageSlotsForNodeType($typeId, $vaultSlug);
         $slotMeta = null;
+        $slotFolder = '';
         foreach ($slots as $slot) {
             if (!isset($slot['folder']) || !is_string($slot['folder'])) {
-                continue;
-            }
-            if ($slot['folder'] !== $slotFolder) {
                 continue;
             }
             $isSingle = false;
@@ -719,13 +705,23 @@ class VaultNodeScanner
                 $isSingle = true;
             }
             if ($isSingle) {
-                return null;
+                continue;
             }
+
+            $slotRelative = '';
+            if (isset($slot['relative_path']) && is_string($slot['relative_path'])) {
+                $slotRelative = trim($slot['relative_path'], '/');
+            }
+            if ($slotRelative === '' || $slotRelative !== $folderSuffix) {
+                continue;
+            }
+
             $slotMeta = $slot;
+            $slotFolder = $slot['folder'];
             break;
         }
 
-        if ($slotMeta === null) {
+        if ($slotMeta === null || $slotFolder === '') {
             return null;
         }
 

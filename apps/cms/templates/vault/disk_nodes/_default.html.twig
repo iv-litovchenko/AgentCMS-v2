@@ -55,10 +55,8 @@
                         } %}
                     </span>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate font-mono text-[11px] text-zinc-800">{{ slot.display_path|default(slot.folder ~ '/') }}</p>
-                        {% if slot.name != slot.folder %}
-                            <p class="mt-0.5 truncate text-xs text-zinc-600">{{ slot.name }}</p>
-                        {% endif %}
+                        <h2 class="truncate text-sm font-medium text-zinc-900">{{ slot.name }}</h2>
+                        <p class="mt-0.5 truncate font-mono text-[11px] text-zinc-500">{{ slot.display_path|default(slot.folder ~ '/') }}</p>
                     </div>
                     <span class="shrink-0 tabular-nums text-xs font-medium text-zinc-700" title="Файлов в папке (рекурсивно)">{{ slot.entry_count|default(0) }}</span>
                 </a>

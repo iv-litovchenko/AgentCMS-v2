@@ -5,7 +5,7 @@ slot-category: files
 storage-driver: external
 description: |
   Активы — 0-storage/assets/ у темы (preview, вложения, materials), медиатеки, канала и коллекций database (вложения к записям).
-path: assets/
+path: 0-storage/assets/
 slot-order: 9
 allowed-content:
   - content/record

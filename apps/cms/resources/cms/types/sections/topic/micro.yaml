@@ -4,6 +4,7 @@ sort: 40
 extends: sections/topic/_base
 description: 'Только todo.md и state.md — служебная лёгкая тема без слотов памяти'
 storage-slots:
+  - sessions
   - todo
   - state
 kind-ui:

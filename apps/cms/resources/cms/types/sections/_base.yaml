@@ -6,6 +6,7 @@ extends: base/base
 description: 'Секция vault — manifest.section.md в папке зоны hub'
 allows-section-children: false
 storage-slots:
+  - sessions
   - todo
   - state
   - archive

@@ -11,5 +11,6 @@ view:
     template: vault/hubs/script_script.html.twig
 description: 'Скрипт — manifest и слоты (заготовка)'
 storage-slots:
+  - sessions
   - todo
   - state

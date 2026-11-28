@@ -44,6 +44,30 @@ apps:
       name: symfony_ai
       hide_apps_nav: true
 
+# Инстансы CMS (заготовка — переключение появится позже)
+instances:
+  default_id: my-agent
+  items:
+    - label: Мой агент
+      id: my-agent
+      initial: М
+    - label: МедЦентр
+      id: medcenter
+      initial: Ц
+  # Примеры для UI
+    - label: Папа
+      id: papa
+      initial: П
+    - label: Мама
+      id: mama
+      initial: М
+    - label: Дочка
+      id: dochka
+      initial: Д
+    - label: Сын
+      id: syn
+      initial: С
+
 # Сервисы на поддоменах: {subdomain}.{PUBLIC_BASE_DOMAIN}
 services:
   items:

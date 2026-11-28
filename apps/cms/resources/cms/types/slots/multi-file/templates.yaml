@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: files
 storage-driver: external
 description: 'Шаблоны записей и manifest'
-path: templates/
+path: 0-storage/templates/
 slot-order: 12
 allowed-content:
   - content/record

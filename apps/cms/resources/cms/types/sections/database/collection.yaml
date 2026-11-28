@@ -4,6 +4,7 @@ sort: 20
 hub: database
 extends: sections/database/_base
 storage-slots:
+  - sessions
   - data
   - assets
   - todo

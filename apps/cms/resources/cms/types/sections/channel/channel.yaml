@@ -8,6 +8,7 @@ tree-ui:
 description: |
   Карточка канала в awn-channels/{slug}/ — manifest.md и 0-storage/: inbox/ (ingress), task-queue/ (очередь задач), outbox/ (исходящие), files/ и assets/ (как у медиатеки). Triage сырого потока до тем и инфоблоков.
 storage-slots:
+  - sessions
   - inbox
   - task-queue
   - outbox

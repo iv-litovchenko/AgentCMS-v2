@@ -7,7 +7,7 @@
 Слои merge (снизу вверх, верх побеждает):
 
 1. `packages/*/resources/cms/types/` — пакеты
-2. `resources/cms/types/` — платформа (миграция из `notes/awn-system/types/`)
+2. `resources/cms/types/` — платформа (миграция из `_notes/awn-system/types/`)
 3. `vaults/{slug}/types/` — хранилище
 
 Повторная миграция: `php bin/migrate-types-from-notes.php` (обновляет дерево и `aliases.yaml`).

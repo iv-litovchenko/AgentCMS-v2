@@ -8,6 +8,7 @@ tree-ui:
   icon: file
   icon-class: text-cyan-700
 storage-slots:
+  - sessions
   - main-md
   - todo
   - state

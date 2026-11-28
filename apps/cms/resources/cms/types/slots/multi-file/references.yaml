@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: memory
 storage-driver: external
 description: 'Ссылки и источники'
-path: references/
+path: 0-storage/references/
 slot-order: 6
 allowed-content:
   - content/record

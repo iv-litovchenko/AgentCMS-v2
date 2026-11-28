@@ -4,6 +4,7 @@ sort: 20
 extends: sections/topic/_base
 description: 'main/, media/, assets/ и однофайловые слоты (main, main-csv, todo, state)'
 storage-slots:
+  - sessions
   - main
   - media
   - assets

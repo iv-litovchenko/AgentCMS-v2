@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: memory
 storage-driver: external
 description: 'Входящие заметки и черновики'
-path: inbox/
+path: 0-storage/inbox/
 slot-order: 4
 allowed-content:
   - content/record

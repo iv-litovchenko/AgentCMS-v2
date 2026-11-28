@@ -177,6 +177,8 @@ awn.slot: slots/_base
 awn.slot.artefacts: slots/multi-file/artefacts
 awn.slot.assets: slots/multi-file/assets
 awn.slot.base: slots/multi-file/base
+awn.slot.source: slots/multi-file/source
+awn.slot.sessions: slots/multi-file/sessions
 awn.slot.comments: slots/multi-file/system/comments
 awn.slot.data: slots/multi-file/data
 awn.slot.discussion: slots/multi-file/system/discussion

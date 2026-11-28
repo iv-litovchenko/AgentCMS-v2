@@ -6,8 +6,11 @@ tree-ui:
   icon: code
   icon-class: text-orange-600
 description: |
-  Карточка исходников в awn-repositories/{slug}/ — в индексе manifest.md и readme.md (регистр не важен); код клона по умолчанию не индексируется.
+  Карточка в acms-repositories/{slug}/ — manifest и readme в индексе; git clone — 0-source/; память CMS — 0-storage/ (flexible, todo, state). Subtree 0-source по умолчанию не в поиске.
 storage-slots:
+  - flexible
+  - source
+  - sessions
   - todo
   - state
 form:
@@ -17,7 +20,7 @@ form:
     edit-title: Репозиторий
     adopt-title: 'Подхватить репозиторий'
     hint: |
-      Папка в awn-repositories/{slug}/ с manifest.md. Код клонируйте отдельно — в поиск CMS не попадёт.
+      manifest.section.md; клон — 0-source/; заметки и файлы CMS — 0-storage/ (гибкий слот).
     bootstrap:
       slug:
         title: 'Папка (slug)'

@@ -8,6 +8,7 @@ extends: sections/_base
 description: 'manifest.section.md + подпапки медиатек, без собственных files/assets'
 allows-section-children: true
 storage-slots:
+  - sessions
   - todo
   - state
 kind-ui:

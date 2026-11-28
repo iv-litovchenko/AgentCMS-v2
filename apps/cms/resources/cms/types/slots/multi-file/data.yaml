@@ -5,7 +5,7 @@ slot-category: records
 storage-driver: external
 description: |
   Записи инфоблока database — 0-storage/data/ (md, csv, файлы по awn-collection-type).
-path: data/
+path: 0-storage/data/
 slot-order: 1
 allowed-content:
   - content/record

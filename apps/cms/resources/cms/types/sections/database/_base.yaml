@@ -7,6 +7,7 @@ tree-ui:
   icon-class: text-violet-500
 description: 'Инфоблок в acms-databases/'
 storage-slots:
+  - sessions
   - data
   - todo
   - state

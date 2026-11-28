@@ -3,9 +3,9 @@
 # Dev (код с диска): cp docker-compose.override.example.yml docker-compose.override.yml
 # CMS:     http://localhost:8080/
 # HTTPS:   https://localhost:8443/ (self-signed; mkcert: scripts/tls-dev-setup.sh + docker-compose.tls-dev.yml)
-# Prod:    docker-compose.prod.yml + deploy/certs/ — notes/tls-and-subdomains.md
+# Prod:    docker-compose.prod.yml + deploy/certs/ — _notes/tls-and-subdomains.md
 # QwenPaw: http://qwenpaw.localhost:8080/
-# Prod:    *.sitename.ru — см. notes/tls-and-subdomains.md
+# Prod:    *.sitename.ru — см. _notes/tls-and-subdomains.md
 # MCP stub: http://localhost:8080/mcp/
 # API stub: http://localhost:8080/api/
 

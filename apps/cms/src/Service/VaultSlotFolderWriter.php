@@ -188,7 +188,7 @@ class VaultSlotFolderWriter
     private function assertStorageFolder(string $folderDiskPath): void
     {
         if (!$this->isStorageFolderDiskPath($folderDiskPath)) {
-            throw new \InvalidArgumentException('Действие доступно только внутри слота (0-storage).');
+            throw new \InvalidArgumentException('Действие доступно только внутри слота (0-storage/ или node-mount).');
         }
     }
 

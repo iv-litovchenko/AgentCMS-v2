@@ -14,5 +14,6 @@ view:
 description: 'Область контента — папка-раздел в awn-container (не служебная секция корня)'
 allows-section-children: true
 storage-slots:
+  - sessions
   - todo
   - state

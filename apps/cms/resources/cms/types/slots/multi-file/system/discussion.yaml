@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: communication
 storage-driver: external
 description: 'Дискуссия по теме — discussion/ (сообщения awn.content.discussion)'
-path: discussion/
+path: 0-storage/discussion/
 slot-order: 93
 slot-tier: system
 allowed-content:

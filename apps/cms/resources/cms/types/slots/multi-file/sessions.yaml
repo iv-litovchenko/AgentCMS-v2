@@ -1,0 +1,15 @@
+name: Сессии
+status: active
+extends: slots/_base
+slot-category: memory
+storage-driver: external
+description: |
+  Журнал сессий агента — 0-sessions/ рядом с manifest и 0-storage/. Subtree по умолчанию не в поиске; manifest узла — в индексе.
+path: 0-sessions/
+slot-order: 100
+allowed-content:
+  - content/record
+  - content/category
+  - annotations/sidecar
+accept-files:
+  - '*'

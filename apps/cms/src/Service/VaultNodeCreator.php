@@ -31,7 +31,7 @@ class VaultNodeCreator
             throw new \InvalidArgumentException('Некорректный слот.');
         }
 
-        $allowed = false;
+        $slotRelativeDir = '';
         $slots = $this->typeSchemaRegistry->listStorageSlotsForNodeType($typeId, $vaultSlug);
         foreach ($slots as $slot) {
             if (!isset($slot['folder']) || !is_string($slot['folder'])) {
@@ -43,11 +43,13 @@ class VaultNodeCreator
             if (isset($slot['single_file']) && $slot['single_file'] === true) {
                 throw new \InvalidArgumentException('Слот не является папкой.');
             }
-            $allowed = true;
+            if (isset($slot['relative_path']) && is_string($slot['relative_path']) && $slot['relative_path'] !== '') {
+                $slotRelativeDir = trim($slot['relative_path'], '/');
+            }
             break;
         }
 
-        if (!$allowed) {
+        if ($slotRelativeDir === '') {
             throw new \InvalidArgumentException('Слот не поддерживается типом узла.');
         }
 
@@ -57,14 +59,11 @@ class VaultNodeCreator
         }
 
         $nodeDir = dirname($manifestPath);
-        $storageRoot = $nodeDir . '/' . VaultNodeStorage::DIR_NAME;
-        if (!is_dir($storageRoot)) {
-            if (!mkdir($storageRoot, 0775, true) && !is_dir($storageRoot)) {
-                throw new \RuntimeException('Не удалось создать 0-storage.');
-            }
+        $slotDir = VaultNodeStorage::resolveSubtreeAbsolutePath($nodeDir, $slotRelativeDir);
+        if ($slotDir === null) {
+            throw new \InvalidArgumentException('Некорректный путь слота.');
         }
 
-        $slotDir = $storageRoot . '/' . $slotFolder;
         if (!is_dir($slotDir)) {
             if (!mkdir($slotDir, 0775, true) && !is_dir($slotDir)) {
                 throw new \RuntimeException('Не удалось создать папку слота.');

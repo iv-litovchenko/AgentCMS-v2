@@ -5,7 +5,7 @@ slot-category: memory
 storage-driver: external
 description: |
   Исходящий поток канала (awn.hub.channel) — 0-storage/outbox/. Сообщения и материалы после обработки, готовые к отправке наружу.
-path: outbox/
+path: 0-storage/outbox/
 slot-order: 5
 allowed-content:
   - content/record

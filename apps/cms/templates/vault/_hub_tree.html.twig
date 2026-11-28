@@ -21,6 +21,7 @@
 
 <nav class="text-xs leading-snug" id="hub-tree-nav" aria-label="Дерево хранилища">
     <ul class="space-y-0.5" role="tree">
+        {% include 'vault/_query_registry_nav.html.twig' %}
         {% for group in hub_tree %}
             {% set onFamily = active_hub_family_page|default(false) and active_hub_family|default('') == group.family %}
             {% set zoneFolderOnly = group.zone_folder_only|default(false) %}

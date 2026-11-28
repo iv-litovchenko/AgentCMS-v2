@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: files
 storage-driver: external
 description: 'Медиа-файлы и sidecar'
-path: media/
+path: 0-storage/media/
 slot-order: 8
 allowed-content:
   - content/record

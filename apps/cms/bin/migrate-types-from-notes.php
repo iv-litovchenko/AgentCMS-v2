@@ -14,7 +14,7 @@ if (!is_file($autoload)) {
 }
 require $autoload;
 
-$sourceDir = $projectRoot . '/notes/awn-system/types';
+$sourceDir = $projectRoot . '/_notes/awn-system/types';
 $destDir = dirname(__DIR__) . '/resources/cms/types';
 
 if (!is_dir($sourceDir)) {

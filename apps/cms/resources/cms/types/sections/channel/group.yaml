@@ -8,6 +8,7 @@ extends: sections/_base
 description: 'manifest.section.md + подпапки каналов, без собственного ingress'
 allows-section-children: true
 storage-slots:
+  - sessions
   - todo
   - state
 kind-ui:

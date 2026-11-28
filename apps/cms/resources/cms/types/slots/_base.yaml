@@ -46,7 +46,7 @@ properties:
     default: external
   path:
     title: Путь
-    description: 'Подпапка узла, куда складывается контент слота (например inbox/)'
+    description: 'Полный путь от корня узла (manifest): 0-storage/media/, 0-storage/ (flexible), 0-source/, 0-sessions/; однофайловые — main.md рядом с manifest'
     required: true
   allowed-content:
     title: 'Разрешённый контент'

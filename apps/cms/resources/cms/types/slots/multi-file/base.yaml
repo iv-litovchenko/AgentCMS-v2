@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: files
 storage-driver: external
 description: 'Структурированные данные — строки и категории'
-path: base/
+path: 0-storage/base/
 slot-order: 13
 allowed-content:
   - content/record

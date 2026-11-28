@@ -4,7 +4,7 @@ extends: slots/_base
 slot-category: memory
 storage-driver: external
 description: 'Чекпоинты и очередь задач — многофайловая папка с записями и разделами'
-path: task-queue/
+path: 0-storage/task-queue/
 slot-order: 25
 allowed-content:
   - content/record
