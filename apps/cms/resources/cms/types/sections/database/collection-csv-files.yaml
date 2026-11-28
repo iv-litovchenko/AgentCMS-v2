@@ -1,0 +1,43 @@
+name: 'Коллекция (на базе CSV-файлов)'
+status: active
+sort: 22
+hub: database
+extends: sections/database/_base
+description: 'Отдельный .csv на запись в 0-storage/data/'
+storage-slots:
+  - data
+  - assets
+  - todo
+  - state
+  - archive
+  - sessions
+tree-ui:
+  icon: table
+  icon-class: text-emerald-600
+kind-ui:
+  for: collection-csv-files
+  label: 'Коллекция (на базе CSV-файлов)'
+  badge:
+    background: '#ecfdf5'
+    border: '#a7f3d0'
+    text: '#047857'
+fields:
+  awn-collection-type:
+    default: csv-files
+    locked: true
+  awn-record-hierarchy:
+    type: fields/boolean
+    title: '{A2!} Поддержка разделов'
+    description: 'Для md, csv-files и files; не для единой csv-таблицы main.csv'
+    placement: aside-body
+    group: infoblock
+    sort: 4
+    default: true
+  awn-record-file-types:
+    type: fields/string
+    title: '{A2!} Типы файлов'
+    description: 'Только для files: image/*,.pdf,.md'
+    placement: aside-body
+    group: infoblock
+    sort: 5
+    default: ''

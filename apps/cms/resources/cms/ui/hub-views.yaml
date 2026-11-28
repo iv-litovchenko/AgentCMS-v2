@@ -5,6 +5,11 @@ views:
   root/ws: vault/hubs/topic_ws.html.twig
   topic/topic: vault/hubs/topic_topic.html.twig
   channel/channel: vault/hubs/channel_channel.html.twig
+  database/collection-md: vault/hubs/database_collection.html.twig
+  database/collection-md-lite: vault/hubs/database_collection.html.twig
+  database/collection-csv-files: vault/hubs/database_collection.html.twig
+  database/collection-csv-main: vault/hubs/database_collection.html.twig
+  database/collection-stream: vault/hubs/database_stream.html.twig
   database/collection: vault/hubs/database_collection.html.twig
   database/stream: vault/hubs/database_stream.html.twig
   taxonomy/reference: vault/hubs/database_collection.html.twig

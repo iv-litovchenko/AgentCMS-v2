@@ -1,0 +1,27 @@
+name: 'Коллекция потоковых данных (любые однотипные данные XML, JSON и другие)'
+status: active
+sort: 24
+hub: database
+extends: sections/database/_base
+description: 'Поток однотипных записей (JSON, XML, …) в 0-storage/data/; очередь — task-queue'
+storage-slots:
+  - data
+  - task-queue
+  - todo
+  - state
+  - archive
+  - sessions
+tree-ui:
+  icon: queue
+  icon-class: text-sky-600
+kind-ui:
+  for: collection-stream
+  label: 'Коллекция потоковых данных (любые однотипные данные XML, JSON и другие)'
+  badge:
+    background: '#f0f9ff'
+    border: '#7dd3fc'
+    text: '#0369a1'
+fields:
+  awn-collection-type:
+    default: files
+    locked: true

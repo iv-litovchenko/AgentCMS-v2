@@ -1,27 +1,33 @@
-name: Коллекция
+name: 'Коллекция (на базе одного CSV-файла)'
 status: active
-sort: 20
+sort: 23
 hub: database
 extends: sections/database/_base
+description: 'Одна таблица main.csv в 0-storage/data/'
 storage-slots:
   - data
-  - assets
+  - main-csv
   - todo
   - state
   - archive
   - sessions
 tree-ui:
-  icon: database
-  icon-class: text-violet-600
-description: 'manifest + schema в корне; записи в 0-storage/data/, вложения в 0-storage/assets/'
+  icon: table
+  icon-class: text-teal-600
 kind-ui:
-  for: collection
-  label: Коллекция
+  for: collection-csv-main
+  label: 'Коллекция (на базе одного CSV-файла)'
   badge:
-    background: '#f5f3ff'
-    border: '#ddd6fe'
-    text: '#5b21b6'
+    background: '#f0fdfa'
+    border: '#5eead4'
+    text: '#0f766e'
 fields:
+  awn-collection-type:
+    default: csv
+    locked: true
+  awn-record-file:
+    default: main.csv
+    locked: true
   awn-record-hierarchy:
     type: fields/boolean
     title: '{A2!} Поддержка разделов'
@@ -30,6 +36,7 @@ fields:
     group: infoblock
     sort: 4
     default: false
+    locked: true
   awn-record-file-types:
     type: fields/string
     title: '{A2!} Типы файлов'
