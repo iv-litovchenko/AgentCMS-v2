@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Структурированные данные — строки и категории'
 path: 0-storage/base/
-slot-order: 13
 allowed-content:
   - content/record
   - content/category

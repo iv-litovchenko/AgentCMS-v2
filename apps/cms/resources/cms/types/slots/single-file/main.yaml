@@ -5,7 +5,6 @@ slot-category: single-file
 storage-driver: internal
 description: 'Однофайловая память топика — main.md рядом с manifest'
 path: main.md
-slot-order: 2
 allowed-content:
   - content/record
   - content/category

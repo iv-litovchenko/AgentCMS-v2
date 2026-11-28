@@ -6,7 +6,6 @@ storage-driver: external
 description: |
   Рабочая копия репозитория — 0-source/ рядом с manifest и 0-storage/ (git clone). Subtree по умолчанию не в поиске; manifest и readme — в индексе.
 path: 0-source/
-slot-order: 1
 allowed-content:
   - content/record
   - content/category

@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Архив секции — папка archive/'
 path: 0-storage/archive/
-slot-order: 99
 allowed-content:
   - content/record
   - content/category

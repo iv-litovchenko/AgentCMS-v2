@@ -5,7 +5,6 @@ slot-category: communication
 storage-driver: external
 description: 'Дискуссия по теме — discussion/ (сообщения awn.content.discussion)'
 path: 0-storage/discussion/
-slot-order: 93
 slot-tier: system
 allowed-content:
   - content/discussion

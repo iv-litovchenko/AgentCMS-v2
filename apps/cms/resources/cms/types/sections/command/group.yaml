@@ -8,9 +8,10 @@ tree-ui:
 description: 'Группа команд'
 allows-section-children: true
 storage-slots:
-  - sessions
   - todo
   - state
+  - archive
+  - sessions
 kind-ui:
   for: group
   label: Группа

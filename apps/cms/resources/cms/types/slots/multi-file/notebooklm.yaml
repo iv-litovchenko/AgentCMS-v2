@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Материалы для NotebookLM — любые файлы (PDF, аудио, markdown и др.)'
 path: 0-storage/notebooklm/
-slot-order: 14
 allowed-content:
   - content/record
   - content/category

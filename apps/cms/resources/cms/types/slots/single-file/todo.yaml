@@ -5,7 +5,6 @@ slot-category: single-file
 storage-driver: internal
 description: 'Список задач топика — todo.md'
 path: todo.md
-slot-order: 15
 allowed-content:
   - content/record
   - content/category

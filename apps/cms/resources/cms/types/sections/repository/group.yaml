@@ -8,9 +8,10 @@ extends: sections/_base
 description: 'manifest.section.md + подпапки репозиториев, без собственного клона'
 allows-section-children: true
 storage-slots:
-  - sessions
   - todo
   - state
+  - archive
+  - sessions
 kind-ui:
   for: group
   label: Группа

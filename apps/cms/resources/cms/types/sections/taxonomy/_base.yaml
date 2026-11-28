@@ -7,5 +7,5 @@ tree-ui:
   icon-class: text-emerald-600
 description: 'Справочник в acms-taxonomies/ — один файл main.csv'
 storage-slots:
-  - sessions
   - main-csv
+  - sessions

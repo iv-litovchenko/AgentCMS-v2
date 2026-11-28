@@ -698,7 +698,7 @@ class TypeSchemaRegistry
     /**
      * Каталоги 0-storage/ по storage-slots в YAML типа (создаются вручную в UI).
      *
-     * @return list<array{folder: string, name: string, category: string, icon: string, icon_class: string, single_file: bool, relative_path: string, display_path: string, accept_files: list<string>, accept_files_label: string, slot_order: int}>
+     * @return list<array{folder: string, name: string, category: string, icon: string, icon_class: string, single_file: bool, relative_path: string, display_path: string, accept_files: list<string>, accept_files_label: string}>
      */
     public function listStorageSlotsForNodeType(string $typeId, string $vaultSlug = ''): array
     {
@@ -741,10 +741,6 @@ class TypeSchemaRegistry
             $treeUi = $this->resolveStorageSlotTreeUi($folder, $slotDef);
             $diskPath = $this->resolveStorageSlotDiskPath($folder, $slotDef);
             $acceptFiles = $this->resolveSlotAcceptFiles($slotDef);
-            $slotOrder = 50;
-            if ($slotDef !== null && isset($slotDef['slot-order'])) {
-                $slotOrder = (int) $slotDef['slot-order'];
-            }
 
             $items[] = [
                 'folder' => $folder,
@@ -757,37 +753,8 @@ class TypeSchemaRegistry
                 'display_path' => $diskPath['display_path'],
                 'accept_files' => $acceptFiles,
                 'accept_files_label' => $this->formatSlotAcceptFilesLabel($acceptFiles),
-                'slot_order' => $slotOrder,
             ];
         }
-
-        usort($items, function (array $a, array $b): int {
-            $orderA = 50;
-            if (isset($a['slot_order'])) {
-                $orderA = (int) $a['slot_order'];
-            }
-            $orderB = 50;
-            if (isset($b['slot_order'])) {
-                $orderB = (int) $b['slot_order'];
-            }
-            if ($orderA === $orderB) {
-                $folderA = '';
-                if (isset($a['folder']) && is_string($a['folder'])) {
-                    $folderA = $a['folder'];
-                }
-                $folderB = '';
-                if (isset($b['folder']) && is_string($b['folder'])) {
-                    $folderB = $b['folder'];
-                }
-
-                return strcmp($folderA, $folderB);
-            }
-            if ($orderA < $orderB) {
-                return -1;
-            }
-
-            return 1;
-        });
 
         return $items;
     }

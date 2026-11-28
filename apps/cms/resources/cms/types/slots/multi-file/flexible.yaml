@@ -6,7 +6,6 @@ storage-driver: external
 description: |
   Режим темы (awn-slots-flexible): произвольная структура файлов и папок в корне 0-storage/ без типовых слотов main, inbox, media…
 path: 0-storage/
-slot-order: 0
 allowed-content:
   - content/record
   - content/category

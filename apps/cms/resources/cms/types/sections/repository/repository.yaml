@@ -10,9 +10,10 @@ description: |
 storage-slots:
   - flexible
   - source
-  - sessions
   - todo
   - state
+  - archive
+  - sessions
 form:
   panel-title: '{A2!} Репозиторий'
   create:

@@ -6,10 +6,10 @@ extends: base/base
 description: 'Секция vault — manifest.section.md в папке зоны hub'
 allows-section-children: false
 storage-slots:
-  - sessions
   - todo
   - state
   - archive
+  - sessions
 # view: экраны по типу — disk (экземпляр на диске), screen (карточка типа), family (секция на странице зоны)
 #   disk: { template, action? }  action — метод VaultDiskNodeController
 #   screen: { template, action? }

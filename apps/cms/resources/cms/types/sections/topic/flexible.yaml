@@ -4,9 +4,10 @@ sort: 30
 extends: sections/topic/_base
 description: 'Однофайловые слоты + flexible (произвольное дерево в 0-storage/)'
 storage-slots:
-  - sessions
   - flexible
   - main-md
   - main-csv
   - todo
   - state
+  - archive
+  - sessions

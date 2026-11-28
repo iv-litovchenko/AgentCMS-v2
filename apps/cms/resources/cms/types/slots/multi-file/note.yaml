@@ -5,7 +5,6 @@ slot-category: memory
 storage-driver: external
 description: 'Заметки топика'
 path: 0-storage/notes/
-slot-order: 5
 allowed-content:
   - content/record
   - content/category

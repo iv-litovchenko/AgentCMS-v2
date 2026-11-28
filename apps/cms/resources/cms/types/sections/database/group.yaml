@@ -9,9 +9,10 @@ extends: sections/database/_base
 description: 'manifest + подпапки-накопители, без собственных записей'
 allows-section-children: true
 storage-slots:
-  - sessions
   - todo
   - state
+  - archive
+  - sessions
 kind-ui:
   for: group
   label: Группа

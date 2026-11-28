@@ -110,6 +110,7 @@ awn.hub.channel.group: sections/channel/group
 awn.hub.database.collection: sections/database/collection
 awn.hub.database.group: sections/database/group
 awn.hub.database.single: sections/database/single
+awn.hub.database.stream: sections/database/stream
 awn.hub.media: sections/media/media
 awn.hub.media.group: sections/media/group
 awn.hub.repository: sections/repository/repository
@@ -140,6 +141,8 @@ acms.section.topic.single: sections/topic/micro
 hubs/channel/channel: sections/channel/channel
 hubs/root/root: sections/root/root
 hubs/database/collection: sections/database/collection
+hubs/database/stream: sections/database/stream
+acms.section.database.stream: sections/database/stream
 hubs/media/media: sections/media/media
 hubs/repository/repository: sections/repository/repository
 hubs/command/command: sections/command/command

@@ -4,9 +4,10 @@ sort: 40
 extends: sections/topic/_base
 description: 'Только todo.md и state.md — служебная лёгкая тема без слотов памяти'
 storage-slots:
-  - sessions
   - todo
   - state
+  - archive
+  - sessions
 kind-ui:
   label: Микро
   badge:

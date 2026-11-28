@@ -5,7 +5,6 @@ slot-category: memory
 storage-driver: external
 description: 'Многофайловая память топика — папка main/'
 path: 0-storage/main/
-slot-order: 1
 allowed-content:
   - content/record
   - content/category

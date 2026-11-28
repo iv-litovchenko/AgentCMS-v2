@@ -6,7 +6,6 @@ storage-driver: external
 description: |
   Записи инфоблока database — 0-storage/data/ (md, csv, файлы по awn-collection-type).
 path: 0-storage/data/
-slot-order: 1
 allowed-content:
   - content/record
   - content/category

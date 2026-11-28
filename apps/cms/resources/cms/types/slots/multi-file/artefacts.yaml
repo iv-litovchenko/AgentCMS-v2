@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Артефакты и экспорты'
 path: 0-storage/artefacts/
-slot-order: 7
 allowed-content:
   - content/record
   - content/category

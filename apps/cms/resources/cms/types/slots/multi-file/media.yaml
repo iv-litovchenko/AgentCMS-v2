@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Медиа-файлы и sidecar'
 path: 0-storage/media/
-slot-order: 8
 allowed-content:
   - content/record
   - content/category

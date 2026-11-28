@@ -65,10 +65,6 @@ properties:
       - single-file
       - records
       - communication
-  slot-order:
-    title: Порядок
-    type: integer
-    description: 'Сортировка внутри категории'
   slot-tier:
     title: Уровень
     description: 'system — служебный слот, управляется runtime'

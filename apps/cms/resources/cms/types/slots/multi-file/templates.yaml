@@ -5,7 +5,6 @@ slot-category: files
 storage-driver: external
 description: 'Шаблоны записей и manifest'
 path: 0-storage/templates/
-slot-order: 12
 allowed-content:
   - content/record
   - content/category

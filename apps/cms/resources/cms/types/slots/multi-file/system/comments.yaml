@@ -5,7 +5,6 @@ slot-category: communication
 storage-driver: external
 description: 'Комментарии к узлам — comments/'
 path: 0-storage/comments/
-slot-order: 94
 slot-tier: system
 allowed-content:
   - annotations/comment

@@ -5,7 +5,6 @@ sort: 10
 extends: sections/topic/_base
 description: 'Полный набор слотов памяти (как раньше sections/topic/topic)'
 storage-slots:
-  - sessions
   - main
   - main-md
   - main-csv
@@ -21,3 +20,4 @@ storage-slots:
   - todo
   - state
   - archive
+  - sessions

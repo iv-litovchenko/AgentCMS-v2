@@ -5,7 +5,6 @@ slot-category: single-file
 storage-driver: tabular
 description: 'Табличная память топика — main.csv'
 path: main.csv
-slot-order: 3
 allowed-content:
   - content/record-csv
   - content/record

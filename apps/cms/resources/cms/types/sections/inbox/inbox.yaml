@@ -8,10 +8,10 @@ tree-ui:
   icon-class: text-emerald-600
 description: 'Папка входящей свалки — manifest.section.md и слоты'
 storage-slots:
-  - sessions
   - inbox
   - files
   - assets
   - todo
   - state
   - archive
+  - sessions

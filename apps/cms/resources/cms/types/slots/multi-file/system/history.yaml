@@ -5,7 +5,6 @@ slot-category: records
 storage-driver: external
 description: 'Версии файлов и история правок — history/'
 path: 0-storage/history/
-slot-order: 91
 slot-tier: system
 allowed-content:
   - content/record
