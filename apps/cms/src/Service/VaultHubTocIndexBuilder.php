@@ -95,6 +95,16 @@ class VaultHubTocIndexBuilder
 
         $lines[] = '';
 
+        $family = $this->resolveHubFamilyForFolder($vaultSlug, $hubFolderDiskPath);
+        if ($family !== '') {
+            $hubGroup = $this->typeSchemaRegistry->findHubTreeGroupByFamily($family, $vaultSlug);
+            if ($hubGroup !== null) {
+                foreach ($this->buildHubTypesSectionLines($vaultSlug, $hubGroup) as $typeLine) {
+                    $lines[] = $typeLine;
+                }
+            }
+        }
+
         return implode("\n", $lines);
     }
 
@@ -181,7 +191,7 @@ class VaultHubTocIndexBuilder
             }
 
             $rows[] = [
-                'path' => $displayPath,
+                'path' => VaultTocIndexDisplayPath::withVaultPrefix($vaultSlug, $displayPath),
                 'name' => $name,
                 'type' => $typeLabel,
                 'description' => $description,
@@ -189,6 +199,82 @@ class VaultHubTocIndexBuilder
         }
 
         return $rows;
+    }
+
+    /**
+     * @param array<string, mixed> $hubGroup
+     *
+     * @return list<string>
+     */
+    private function buildHubTypesSectionLines(string $vaultSlug, array $hubGroup): array
+    {
+        $lines = [];
+        $lines[] = '## Типы разделов хаба';
+        $lines[] = '';
+
+        $typeItems = [];
+        if (isset($hubGroup['type_items']) && is_array($hubGroup['type_items'])) {
+            $typeItems = $hubGroup['type_items'];
+        }
+
+        if (count($typeItems) === 0) {
+            $lines[] = '_Нет зарегистрированных типов для этого хаба._';
+            $lines[] = '';
+
+            return $lines;
+        }
+
+        $lines[] = '| Тип | Название |';
+        $lines[] = '| --- | --- |';
+
+        $i = 0;
+        for ($i = 0; $i < count($typeItems); $i = $i + 1) {
+            $item = $typeItems[$i];
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $name = '';
+            if (isset($item['name']) && is_string($item['name'])) {
+                $name = trim($item['name']);
+            }
+
+            $typeId = '';
+            if (isset($item['id']) && is_string($item['id'])) {
+                $typeId = trim($item['id']);
+            }
+
+            $typeLabel = $typeId;
+            if ($typeId !== '') {
+                $typeLabel = $this->typeSchemaRegistry->publicTypeId($typeId);
+            }
+
+            $lines[] = '| '
+                . $this->escapeTableCell($typeLabel) . ' | '
+                . $this->escapeTableCell($name) . ' |';
+        }
+
+        $lines[] = '';
+
+        return $lines;
+    }
+
+    private function resolveHubFamilyForFolder(string $vaultSlug, string $hubFolderDiskPath): string
+    {
+        $hubFolder = trim(str_replace('\\', '/', $hubFolderDiskPath), '/');
+        foreach ($this->typeSchemaRegistry->listHubTreeGroups($vaultSlug) as $group) {
+            $folder = '';
+            if (isset($group['folder']) && is_string($group['folder'])) {
+                $folder = trim(str_replace('\\', '/', $group['folder']), '/');
+            }
+            if ($folder === $hubFolder) {
+                if (isset($group['family']) && is_string($group['family'])) {
+                    return trim($group['family']);
+                }
+            }
+        }
+
+        return '';
     }
 
     private function resolveIndexAbsolutePath(string $vaultSlug, string $hubFolderDiskPath): ?string

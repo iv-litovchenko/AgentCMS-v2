@@ -79,6 +79,7 @@ class VaultSlotTocIndexBuilder
         $lines = [];
         $lines[] = '# Индекс оглавлений содержимого слотов';
         $lines[] = '';
+
         $lines[] = '| Слот | Путь | Название | Описание | Размер файла | Кол-во строк |';
         $lines[] = '| --- | --- | --- | --- | --- | --- |';
 
@@ -100,7 +101,123 @@ class VaultSlotTocIndexBuilder
 
         $lines[] = '';
 
+        foreach ($this->buildContentTypesCatalogLines($vaultSlug, $typeId) as $catalogLine) {
+            $lines[] = $catalogLine;
+        }
+        foreach ($this->buildSlotsCatalogLines($vaultSlug, $typeId) as $catalogLine) {
+            $lines[] = $catalogLine;
+        }
+
         return implode("\n", $lines);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function buildSlotsCatalogLines(string $vaultSlug, string $typeId): array
+    {
+        $lines = [];
+        $lines[] = '## Список типов слотов';
+        $lines[] = '';
+
+        $slots = $this->typeSchemaRegistry->listStorageSlotsForNodeType($typeId, $vaultSlug);
+        if (count($slots) === 0) {
+            $lines[] = '_Нет слотов в типе узла._';
+            $lines[] = '';
+
+            return $lines;
+        }
+
+        $lines[] = '| Ключ | Название | Путь | Принимает |';
+        $lines[] = '| --- | --- | --- | --- |';
+
+        $i = 0;
+        for ($i = 0; $i < count($slots); $i = $i + 1) {
+            $slot = $slots[$i];
+            if (!is_array($slot)) {
+                continue;
+            }
+
+            $name = '';
+            if (isset($slot['name']) && is_string($slot['name'])) {
+                $name = trim($slot['name']);
+            }
+
+            $folder = '';
+            if (isset($slot['folder']) && is_string($slot['folder'])) {
+                $folder = trim($slot['folder']);
+            }
+
+            $path = '';
+            if (isset($slot['display_path']) && is_string($slot['display_path'])) {
+                $path = trim($slot['display_path']);
+            }
+            if ($path === '' && isset($slot['relative_path']) && is_string($slot['relative_path'])) {
+                $path = trim($slot['relative_path']);
+            }
+
+            $acceptLabel = '';
+            if (isset($slot['accept_files_label']) && is_string($slot['accept_files_label'])) {
+                $acceptLabel = trim($slot['accept_files_label']);
+            }
+
+            $lines[] = '| '
+                . $this->escapeTableCell($folder) . ' | '
+                . $this->escapeTableCell($name) . ' | '
+                . $this->escapeTableCell($path) . ' | '
+                . $this->escapeTableCell($acceptLabel) . ' |';
+        }
+
+        $lines[] = '';
+
+        return $lines;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function buildContentTypesCatalogLines(string $vaultSlug, string $typeId): array
+    {
+        $lines = [];
+        $lines[] = '## Список типов контента';
+        $lines[] = '';
+
+        $types = $this->typeSchemaRegistry->listAllowedContentTypesForNodeType($typeId, $vaultSlug);
+        if (count($types) === 0) {
+            $lines[] = '_Типы allowed-content не заданы в слотах._';
+            $lines[] = '';
+
+            return $lines;
+        }
+
+        $lines[] = '| Тип | Название |';
+        $lines[] = '| --- | --- |';
+
+        $i = 0;
+        for ($i = 0; $i < count($types); $i = $i + 1) {
+            $item = $types[$i];
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $name = '';
+            if (isset($item['name']) && is_string($item['name'])) {
+                $name = trim($item['name']);
+            }
+
+            $typeIdLabel = '';
+            if (isset($item['type_id']) && is_string($item['type_id'])) {
+                $typeIdLabel = trim($item['type_id']);
+            }
+
+            $lines[] = '| '
+                . $this->escapeTableCell($typeIdLabel) . ' | '
+                . $this->escapeTableCell($name) . ' |';
+        }
+
+        $lines[] = '';
+
+        return $lines;
     }
 
     /**
@@ -148,7 +265,7 @@ class VaultSlotTocIndexBuilder
                     continue;
                 }
                 $meta = $this->resolveFileMeta($absolute);
-                $rows[] = $this->buildRow($slotName, $relativePath, $absolute, $meta);
+                $rows[] = $this->buildRow($vaultSlug, $slotName, $relativePath, $absolute, $meta);
                 continue;
             }
 
@@ -189,7 +306,7 @@ class VaultSlotTocIndexBuilder
                 }
 
                 $meta = $this->resolveFileMeta($fileAbsolute);
-                $rows[] = $this->buildRow($slotName, $relToNode, $fileAbsolute, $meta);
+                $rows[] = $this->buildRow($vaultSlug, $slotName, $relToNode, $fileAbsolute, $meta);
             }
         }
 
@@ -205,7 +322,7 @@ class VaultSlotTocIndexBuilder
      *
      * @return array{slot: string, path: string, name: string, description: string, size: string, lines: string}
      */
-    private function buildRow(string $slotName, string $path, string $absoluteFile, array $meta): array
+    private function buildRow(string $vaultSlug, string $slotName, string $path, string $absoluteFile, array $meta): array
     {
         $sizeBytes = filesize($absoluteFile);
         $sizeLabel = '—';
@@ -221,7 +338,7 @@ class VaultSlotTocIndexBuilder
 
         return [
             'slot' => $slotName,
-            'path' => $path,
+            'path' => VaultTocIndexDisplayPath::withVaultPrefix($vaultSlug, $path),
             'name' => $meta['name'],
             'description' => $meta['description'],
             'size' => $sizeLabel,

@@ -1,0 +1,42 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}INDEX — каталог хранилищ — {{ cms_site_title }}{% endblock %}
+
+{% block main %}
+    <div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
+        {% for message in app.flashes('success') %}
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <section class="rounded-lg border border-zinc-200 bg-white shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 px-4 py-3">
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold tracking-tight text-zinc-900">{{ index_path|default('INDEX.md') }}</h1>
+                    <p class="mt-0.5 text-xs text-zinc-500">Каталог vaults/</p>
+                </div>
+                <div class="flex shrink-0 items-center gap-2">
+                    <a href="{{ path('vault_index') }}"
+                       class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50">
+                        К списку
+                    </a>
+                    <form method="post" action="{{ path('vault_build_vaults_toc_index') }}" class="shrink-0">
+                        <input type="hidden" name="_token" value="{{ csrf_token(vaults_toc_index_build_csrf_id) }}">
+                        <button type="submit"
+                                class="rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                            Пересобрать
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="px-4 py-3">
+                {% if index_body|default('')|trim != '' %}
+                    <pre class="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{{ index_body|trim }}</pre>
+                {% else %}
+                    <p class="text-sm text-zinc-500">Файл пустой.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

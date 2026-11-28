@@ -2,10 +2,28 @@
 <section class="w-full rounded-lg border border-zinc-200 bg-white shadow-sm" aria-labelledby="storages-heading">
     <div class="flex items-center justify-between border-b border-zinc-100 {{ is_compact ? 'px-3 py-2' : 'px-4 py-3' }}">
         <h2 id="storages-heading" class="{{ is_compact ? 'text-xs' : 'text-sm' }} font-semibold text-zinc-900">Хранилища</h2>
-        <a href="{{ path('vault_new') }}"
-           class="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
-            + Создать
-        </a>
+        <div class="flex shrink-0 items-center gap-1">
+            <form method="post" action="{{ path('vault_build_vaults_toc_index') }}" class="shrink-0">
+                <input type="hidden" name="_token" value="{{ csrf_token(vaults_toc_index_build_csrf_id|default('vaults_toc_index_build')) }}">
+                <button type="submit"
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900"
+                        title="Собрать INDEX каталога"
+                        aria-label="Собрать INDEX каталога">
+                    {% include 'vault/_hub_tree_icon.html.twig' with { icon: 'section', icon_class: 'text-zinc-600' } %}
+                </button>
+            </form>
+            {% if vaults_catalog_index_exists|default(false) %}
+                <a href="{{ path('vault_storages_catalog_index_view') }}"
+                   class="flex h-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 px-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+                   title="Открыть INDEX.md">
+                    INDEX
+                </a>
+            {% endif %}
+            <a href="{{ path('vault_new') }}"
+               class="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50">
+                + Создать
+            </a>
+        </div>
     </div>
     <ul class="divide-y divide-zinc-100">
         {% for storage in storages %}

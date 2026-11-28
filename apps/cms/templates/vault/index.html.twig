@@ -9,7 +9,17 @@
                 {{ message }}
             </div>
         {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
 
-        {% include 'vault/_storages_section.html.twig' with {storages: storages, is_compact: false} %}
+        {% include 'vault/_storages_section.html.twig' with {
+            storages: storages,
+            is_compact: false,
+            vaults_toc_index_build_csrf_id: vaults_toc_index_build_csrf_id|default('vaults_toc_index_build'),
+            vaults_catalog_index_exists: vaults_catalog_index_exists|default(false),
+        } %}
     </div>
 {% endblock %}

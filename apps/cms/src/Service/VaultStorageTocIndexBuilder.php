@@ -20,13 +20,16 @@ class VaultStorageTocIndexBuilder
 
     private AcmsManifestPropertyBridge $acmsManifestPropertyBridge;
 
+    private VaultTocIndexHubTypesSectionBuilder $hubTypesSectionBuilder;
+
     public function __construct(
         VaultService $vaultService,
         VaultNodeScanner $vaultNodeScanner,
         NodeDiskManifestRegistry $nodeDiskManifestRegistry,
         TypeSchemaRegistry $typeSchemaRegistry,
         VaultManifestReader $manifestReader,
-        AcmsManifestPropertyBridge $acmsManifestPropertyBridge
+        AcmsManifestPropertyBridge $acmsManifestPropertyBridge,
+        VaultTocIndexHubTypesSectionBuilder $hubTypesSectionBuilder
     ) {
         $this->vaultService = $vaultService;
         $this->vaultNodeScanner = $vaultNodeScanner;
@@ -34,6 +37,7 @@ class VaultStorageTocIndexBuilder
         $this->typeSchemaRegistry = $typeSchemaRegistry;
         $this->manifestReader = $manifestReader;
         $this->acmsManifestPropertyBridge = $acmsManifestPropertyBridge;
+        $this->hubTypesSectionBuilder = $hubTypesSectionBuilder;
     }
 
     /**
@@ -76,6 +80,10 @@ class VaultStorageTocIndexBuilder
         }
 
         $lines[] = '';
+
+        foreach ($this->hubTypesSectionBuilder->buildGroupedSectionLines($vaultSlug) as $sectionLine) {
+            $lines[] = $sectionLine;
+        }
 
         return implode("\n", $lines);
     }
@@ -161,7 +169,7 @@ class VaultStorageTocIndexBuilder
 
             $byPath[$relativeToVault] = [
                 'type' => $typeLabel,
-                'path' => $relativeToVault,
+                'path' => VaultTocIndexDisplayPath::withVaultPrefix($vaultSlug, $relativeToVault),
                 'name' => $meta['name'],
                 'description' => $meta['description'],
             ];
@@ -256,7 +264,7 @@ class VaultStorageTocIndexBuilder
 
         return [
             'type' => $typeLabel,
-            'path' => $displayPath,
+            'path' => VaultTocIndexDisplayPath::withVaultPrefix($vaultSlug, $displayPath),
             'name' => $name,
             'description' => $description,
         ];

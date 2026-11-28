@@ -8,6 +8,7 @@ use App\Service\TypeSchemaRegistry;
 use App\Service\TypeViewResolver;
 use App\Service\VaultBreadcrumbBuilder;
 use App\Service\VaultHubTocIndexBuilder;
+use App\Service\VaultsCatalogTocIndexBuilder;
 use App\Service\VaultStorageTocIndexBuilder;
 use App\Service\VaultViewAssembler;
 use App\Service\VaultModuleRegistry;
@@ -48,6 +49,8 @@ class VaultController extends AbstractController
 
     private VaultStorageTocIndexBuilder $vaultStorageTocIndexBuilder;
 
+    private VaultsCatalogTocIndexBuilder $vaultsCatalogTocIndexBuilder;
+
     public function __construct(
         VaultService $vaultService,
         TypeSchemaRegistry $typeSchemaRegistry,
@@ -60,7 +63,8 @@ class VaultController extends AbstractController
         TypeViewResolver $typeViewResolver,
         VaultBreadcrumbBuilder $vaultBreadcrumbBuilder,
         VaultHubTocIndexBuilder $vaultHubTocIndexBuilder,
-        VaultStorageTocIndexBuilder $vaultStorageTocIndexBuilder
+        VaultStorageTocIndexBuilder $vaultStorageTocIndexBuilder,
+        VaultsCatalogTocIndexBuilder $vaultsCatalogTocIndexBuilder
     ) {
         $this->vaultService = $vaultService;
         $this->typeSchemaRegistry = $typeSchemaRegistry;
@@ -74,6 +78,42 @@ class VaultController extends AbstractController
         $this->vaultBreadcrumbBuilder = $vaultBreadcrumbBuilder;
         $this->vaultHubTocIndexBuilder = $vaultHubTocIndexBuilder;
         $this->vaultStorageTocIndexBuilder = $vaultStorageTocIndexBuilder;
+        $this->vaultsCatalogTocIndexBuilder = $vaultsCatalogTocIndexBuilder;
+    }
+
+    #[Route('/storages/build-vaults-toc-index', name: 'vault_build_vaults_toc_index', methods: ['POST'], priority: 14)]
+    public function buildVaultsTocIndex(Request $request): Response
+    {
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid(VaultsCatalogTocIndexBuilder::CSRF_TOKEN_ID, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        try {
+            $this->vaultsCatalogTocIndexBuilder->writeIndex();
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('vault_index');
+        }
+
+        $this->addFlash('success', 'INDEX каталога обновлён.');
+
+        return $this->redirectToRoute('vault_storages_catalog_index_view');
+    }
+
+    #[Route('/storages/catalog-index~view', name: 'vault_storages_catalog_index_view', methods: ['GET'], priority: 14)]
+    public function viewVaultsCatalogIndex(): Response
+    {
+        if (!$this->vaultsCatalogTocIndexBuilder->indexExists()) {
+            throw $this->createNotFoundException('INDEX каталога ещё не собран.');
+        }
+
+        return $this->render('vault/storages_catalog_index_view.html.twig', [
+            'index_body' => $this->vaultsCatalogTocIndexBuilder->readIndexBody(),
+            'index_path' => VaultsCatalogTocIndexBuilder::INDEX_RELATIVE_PATH,
+            'vaults_toc_index_build_csrf_id' => VaultsCatalogTocIndexBuilder::CSRF_TOKEN_ID,
+        ]);
     }
 
     #[Route('/{slug}/build-vault-toc-index', name: 'vault_build_vault_toc_index', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 5)]
@@ -111,6 +151,8 @@ class VaultController extends AbstractController
     {
         return $this->render('vault/index.html.twig', [
             'storages' => $this->vaultService->listForDisplay(),
+            'vaults_toc_index_build_csrf_id' => VaultsCatalogTocIndexBuilder::CSRF_TOKEN_ID,
+            'vaults_catalog_index_exists' => $this->vaultsCatalogTocIndexBuilder->indexExists(),
         ]);
     }
 

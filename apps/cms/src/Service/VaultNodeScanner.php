@@ -266,6 +266,7 @@ class VaultNodeScanner
                 'tree_icon' => $treeUi['icon'],
                 'tree_icon_class' => $treeUi['icon_class'],
                 'allows_section_children' => $allowsChildren,
+                'hub_display_rank' => $this->typeSchemaRegistry->hubDiskItemDisplayRank($typeId, $vaultSlug),
             ];
         }
 
@@ -355,6 +356,7 @@ class VaultNodeScanner
                 'tree_icon' => $treeUi['icon'],
                 'tree_icon_class' => $treeUi['icon_class'],
                 'allows_section_children' => $allowsChildren,
+                'hub_display_rank' => $this->typeSchemaRegistry->hubDiskItemDisplayRank($typeId, $vaultSlug),
             ];
         }
 
@@ -362,16 +364,7 @@ class VaultNodeScanner
         $items = $this->filterItemsExcludedByNestedHubZones($items, $hubFolder, $groups);
 
         usort($items, function (array $a, array $b): int {
-            $pathA = '';
-            $pathB = '';
-            if (isset($a['manifest_vault_path']) && is_string($a['manifest_vault_path'])) {
-                $pathA = $a['manifest_vault_path'];
-            }
-            if (isset($b['manifest_vault_path']) && is_string($b['manifest_vault_path'])) {
-                $pathB = $b['manifest_vault_path'];
-            }
-
-            return strcmp($pathA, $pathB);
+            return $this->compareHubTreeDiskItems($a, $b);
         });
 
         return $items;
@@ -481,16 +474,17 @@ class VaultNodeScanner
      */
     public function compareHubTreeDiskItems(array $a, array $b): int
     {
-        $containerA = false;
-        if (isset($a['allows_section_children']) && $a['allows_section_children'] === true) {
-            $containerA = true;
+        $rankA = 100;
+        if (isset($a['hub_display_rank']) && is_int($a['hub_display_rank'])) {
+            $rankA = $a['hub_display_rank'];
         }
-        $containerB = false;
-        if (isset($b['allows_section_children']) && $b['allows_section_children'] === true) {
-            $containerB = true;
+        $rankB = 100;
+        if (isset($b['hub_display_rank']) && is_int($b['hub_display_rank'])) {
+            $rankB = $b['hub_display_rank'];
         }
-        if ($containerA !== $containerB) {
-            if ($containerA) {
+
+        if ($rankA !== $rankB) {
+            if ($rankA < $rankB) {
                 return -1;
             }
 

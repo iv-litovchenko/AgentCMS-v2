@@ -14,7 +14,12 @@
             {% include '@DemoBlock/block.html.twig' %}
         {% endif %}
 
-        {% include 'vault/_storages_section.html.twig' with {storages: storages, is_compact: is_compact} %}
+        {% include 'vault/_storages_section.html.twig' with {
+            storages: storages,
+            is_compact: is_compact,
+            vaults_toc_index_build_csrf_id: vaults_toc_index_build_csrf_id|default('vaults_toc_index_build'),
+            vaults_catalog_index_exists: vaults_catalog_index_exists|default(false),
+        } %}
 
         {% include 'home/_records_grid_stub.html.twig' with {is_compact: is_compact} %}
         {% include 'home/_in_focus_stub.html.twig' with {is_compact: is_compact} %}

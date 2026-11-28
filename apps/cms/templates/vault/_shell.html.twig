@@ -39,13 +39,17 @@
             <p class="mt-1 font-mono text-[10px] leading-snug" style="color:rgba(255,255,255,0.9);">resource_* — возможно объединим все эти методы</p>
             <ul class="mt-1 list-none font-mono text-[11px]" style="color:#fff;" aria-label="План MCP tools">
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> session_context_get</li>
-                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_index_read</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_indexmap_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_indexmap_rebuild</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vaults_list</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_read</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_create</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_update</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_exists</li>
-                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_index_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_indexmap_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> vault_indexmap_rebuild</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_indexmap_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_indexmap_rebuild</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> sections_list</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_read</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_create</li>
@@ -53,7 +57,8 @@
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_delete</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_move</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> section_exists</li>
-                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_index_read</li>
+                <li class="mt-1.5 pt-1.5" style="border-top:1px solid rgba(255,255,255,0.2);"><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_indexmap_read</li>
+                <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_indexmap_rebuild</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> contents_list</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_read</li>
                 <li><span style="color:rgba(255,255,255,0.75);">[ ]</span> content_create</li>
@@ -78,7 +83,8 @@ content_*   vault_slug, disk_path (файл в vault)
             + body | properties на write; upload/download — bytes, без YAML
 
 list        vault_slug, parent_disk_path ('' = корень vault)
-index_read  vault_slug, index_disk_path (INDEX.md | …/index.md | …)
+indexmap_read    vault_slug, index_disk_path (INDEX.md | …/index.md | …)
+indexmap_rebuild те же параметры — пересборка оглавления (vault | section | slot/hub)
 
 exists/read/update/delete/move/copy/rename
             vault_slug + disk_path — один каркас; kind: vault | section | content
@@ -88,7 +94,7 @@ exists/read/update/delete/move/copy/rename
   • resource_read / resource_write / resource_exists / resource_move — да для узла+файла
   • resource_create — нет: vault (новая папка vaults/), section (mkdir),
     content (файл + frontmatter | upload) — разные ветки
-  • vaults_list / vaults_index_read — вне vault_slug (каталог хранилищ)</pre>
+  • vaults_list / vaults_indexmap_read — вне vault_slug (каталог хранилищ)</pre>
             </div>
         </div>
     </div>

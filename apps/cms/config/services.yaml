@@ -1,5 +1,5 @@
 parameters:
-    app.version: '0.0.1'
+    # app.version — из composer.json (Kernel::resolveAppVersionFromComposer)
     app.cms_site_title: '%env(default:app_cms_site_title_default:CMS_SITE_TITLE)%'
     app_cms_site_title_default: 'Agent CMS'
     app.vaults_dir: '%env(default:app_vaults_dir_default:VAULTS_DIR)%'
@@ -57,6 +57,10 @@ services:
             $maintenanceModeFile: '%app.maintenance_mode_file%'
 
     App\Service\VaultService:
+        arguments:
+            $vaultsDir: '%app.vaults_dir%'
+
+    App\Service\VaultsCatalogTocIndexBuilder:
         arguments:
             $vaultsDir: '%app.vaults_dir%'
 

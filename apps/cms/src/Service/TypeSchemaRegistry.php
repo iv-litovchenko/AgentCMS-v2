@@ -586,6 +586,53 @@ class TypeSchemaRegistry
         return true;
     }
 
+    /**
+     * Порядок в дереве hub: сначала контейнеры (область → категория → группа), затем листовые разделы.
+     */
+    public function hubDiskItemDisplayRank(string $typeId, string $vaultSlug = ''): int
+    {
+        $typeId = trim($typeId);
+        if ($typeId === '') {
+            return 100;
+        }
+
+        $def = $this->resolveType($typeId, $vaultSlug);
+        $kindFor = '';
+        if (is_array($def)) {
+            $kindFor = $this->typeKindUiFor($def);
+        }
+
+        if ($kindFor === 'area') {
+            return 10;
+        }
+        if ($kindFor === 'category') {
+            return 20;
+        }
+        if ($kindFor === 'group') {
+            return 30;
+        }
+
+        if (str_ends_with($typeId, '/area')) {
+            return 10;
+        }
+        if (str_ends_with($typeId, '/category')) {
+            return 20;
+        }
+        if (str_ends_with($typeId, '/group')) {
+            return 30;
+        }
+
+        if ($typeId === 'content/category') {
+            return 20;
+        }
+
+        if ($this->sectionAllowsSectionChildren($typeId, $vaultSlug)) {
+            return 35;
+        }
+
+        return 100;
+    }
+
     public function sectionAllowsSectionChildren(string $typeId, string $vaultSlug = ''): bool
     {
         $typeId = trim($typeId);
@@ -765,6 +812,76 @@ class TypeSchemaRegistry
                 'accept_files_label' => $this->formatSlotAcceptFilesLabel($acceptFiles),
             ];
         }
+
+        return $items;
+    }
+
+    /**
+     * Уникальные allowed-content со всех слотов типа узла.
+     *
+     * @return list<array{type_id: string, name: string}>
+     */
+    public function listAllowedContentTypesForNodeType(string $typeId, string $vaultSlug = ''): array
+    {
+        if (trim($typeId) === '') {
+            return [];
+        }
+
+        $slots = $this->listStorageSlotsForNodeType($typeId, $vaultSlug);
+        $seen = [];
+        $items = [];
+
+        foreach ($slots as $slot) {
+            $folder = '';
+            if (isset($slot['folder']) && is_string($slot['folder'])) {
+                $folder = trim($slot['folder']);
+            }
+            if ($folder === '') {
+                continue;
+            }
+
+            $slotDef = $this->resolveStorageSlotTypeDefinition($folder, $vaultSlug);
+            if ($slotDef === null) {
+                continue;
+            }
+
+            $raw = $slotDef['allowed-content'] ?? null;
+            if (!is_array($raw)) {
+                continue;
+            }
+
+            foreach ($raw as $contentTypeId) {
+                if (!is_string($contentTypeId)) {
+                    continue;
+                }
+                $contentTypeId = trim($contentTypeId);
+                if ($contentTypeId === '') {
+                    continue;
+                }
+                if (isset($seen[$contentTypeId])) {
+                    continue;
+                }
+                $seen[$contentTypeId] = true;
+
+                $name = $contentTypeId;
+                $def = $this->resolveType($contentTypeId, $vaultSlug);
+                if (is_array($def) && isset($def['name']) && is_string($def['name'])) {
+                    $trimmedName = trim($def['name']);
+                    if ($trimmedName !== '') {
+                        $name = $trimmedName;
+                    }
+                }
+
+                $items[] = [
+                    'type_id' => $this->publicTypeId($contentTypeId),
+                    'name' => $name,
+                ];
+            }
+        }
+
+        usort($items, function (array $a, array $b): int {
+            return strcmp($a['type_id'], $b['type_id']);
+        });
 
         return $items;
     }
