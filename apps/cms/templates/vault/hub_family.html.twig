@@ -10,8 +10,11 @@
                 hub_family: hub_family,
                 hub_family_base: hub_family_base,
                 vault: vault,
+                hub_url_zone: hub_url_zone|default(hub_family),
                 hub_folder_entries: hub_folder_entries|default([]),
                 hub_zone_folder_only: hub_zone_folder_only|default(false),
+                hub_toc_index_enabled: hub_toc_index_enabled|default(false),
+                hub_toc_index_build_csrf_id: hub_toc_index_build_csrf_id|default(''),
                 root_creatable_files: root_creatable_files|default([]),
                 existing_root_files: existing_root_files|default({}),
             } %}

@@ -22,11 +22,25 @@ class NodeDiskManifestRegistry
         $this->typeSchemaRegistry = $typeSchemaRegistry;
     }
 
+    public function isManifestGlobFilename(string $filename): bool
+    {
+        $filename = trim($filename);
+        if ($filename === '') {
+            return false;
+        }
+
+        return str_starts_with(strtolower($filename), 'manifest.');
+    }
+
     public function isNodeManifestFilename(string $filename): bool
     {
         $filename = trim($filename);
         if ($filename === '') {
             return false;
+        }
+
+        if ($this->isManifestGlobFilename($filename)) {
+            return true;
         }
 
         foreach ($this->suffixes() as $suffix) {
@@ -40,7 +54,7 @@ class NodeDiskManifestRegistry
 
     public function diskPathForRelativeFile(string $relativeToVault, string $filename): string
     {
-        if ($filename === 'manifest.section.md') {
+        if ($filename === 'manifest.section.md' || strtolower($filename) === 'manifest.md') {
             $dir = dirname($relativeToVault);
             if ($dir === '.' || $dir === '') {
                 return '';

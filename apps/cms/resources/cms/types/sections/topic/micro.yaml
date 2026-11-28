@@ -6,7 +6,6 @@ description: 'Только todo.md и state.md — служебная лёгка
 storage-slots:
   - todo
   - state
-  - archive
   - sessions
 kind-ui:
   label: Микро

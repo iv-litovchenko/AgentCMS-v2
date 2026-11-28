@@ -9,7 +9,6 @@ storage-slots:
   - task-queue
   - todo
   - state
-  - archive
   - sessions
 tree-ui:
   icon: queue

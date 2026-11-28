@@ -1,0 +1,11 @@
+{% if hub_toc_index_enabled|default(false) %}
+<section class="rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+    <form method="post" action="{{ path('vault_hub_build_toc_index', {slug: vault.slug, zone: hub_url_zone|default(hub_family) ~ '~build-hub-toc-index'}) }}" class="w-full">
+        <input type="hidden" name="_token" value="{{ csrf_token(hub_toc_index_build_csrf_id) }}">
+        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-zinc-900 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-zinc-800">
+            {% include 'vault/_hub_tree_icon.html.twig' with { icon: 'section', icon_class: 'text-white' } %}
+            Индекс оглавлений содержимого хаба
+        </button>
+    </form>
+</section>
+{% endif %}

@@ -9,6 +9,15 @@
             input_class: 'text-xs text-zinc-900 placeholder:text-zinc-400',
         } %}
     </div>
+    <form method="post" action="{{ path('vault_build_vault_toc_index', {slug: vault.slug}) }}" class="shrink-0">
+        <input type="hidden" name="_token" value="{{ csrf_token(vault_toc_index_build_csrf_id|default('vault_toc_index_build')) }}">
+        <button type="submit"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900"
+                title="Собрать INDEX"
+                aria-label="Собрать INDEX">
+            {% include 'vault/_hub_tree_icon.html.twig' with { icon: 'section', icon_class: 'text-zinc-600' } %}
+        </button>
+    </form>
     <a href="{{ path('vault_module_show', {slug: vault.slug, module: 'create'}) }}"
        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900{% if active_module_slug|default('') == 'create' %} border-zinc-300 bg-zinc-100 text-zinc-900{% endif %}"
        title="Создать"

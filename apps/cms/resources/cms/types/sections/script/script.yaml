@@ -14,5 +14,4 @@ storage-slots:
   - source
   - todo
   - state
-  - archive
   - sessions

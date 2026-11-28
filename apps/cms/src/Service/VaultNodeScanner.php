@@ -250,6 +250,10 @@ class VaultNodeScanner
                 }
             }
 
+            if ($isVaultRoot && $typeId === 'sections/root/vault') {
+                continue;
+            }
+
             $treeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $vaultSlug);
             $allowsChildren = $this->typeSchemaRegistry->sectionAllowsSectionChildren($typeId, $vaultSlug);
 
@@ -273,11 +277,106 @@ class VaultNodeScanner
     }
 
     /**
-     * @param list<array<string, mixed>> $items
-     * @param string $hubFolder
+     * Файлы manifest.* в зоне hub рекурсивно, без вложенных зон hub.
      *
      * @return list<array<string, mixed>>
      */
+    public function listHubZoneDiskSections(string $vaultSlug, string $hubFolder): array
+    {
+        $hubFolder = trim(str_replace('\\', '/', $hubFolder), '/');
+        $base = $this->vaultService->getVaultDirectory($vaultSlug);
+        if ($base === null) {
+            return [];
+        }
+
+        $scanRoot = $base;
+        if ($hubFolder !== '' && $hubFolder !== '.') {
+            $scanRoot = $base . '/' . $hubFolder;
+        }
+
+        if (!is_dir($scanRoot)) {
+            return [];
+        }
+
+        $finder = new Finder();
+        $finder->files()->in($scanRoot)->sortByName();
+
+        $items = [];
+        foreach ($finder as $file) {
+            $filename = $file->getFilename();
+            if (!$this->nodeDiskManifestRegistry->isManifestGlobFilename($filename)) {
+                continue;
+            }
+            if (strtolower($filename) === 'index.md') {
+                continue;
+            }
+
+            $fullPath = $file->getRealPath();
+            if ($fullPath === false) {
+                continue;
+            }
+
+            $relativeToVault = $this->relativePath($base, $fullPath);
+            if ($relativeToVault === null) {
+                continue;
+            }
+
+            $diskPath = $this->nodeDiskManifestRegistry->diskPathForRelativeFile($relativeToVault, $filename);
+            $parsed = $this->manifestReader->parseFile($fullPath);
+            $name = $this->resolveInstanceName($parsed, $diskPath, $filename);
+
+            $typeId = '';
+            if (is_array($parsed) && isset($parsed['properties']) && is_array($parsed['properties'])) {
+                $rawTypeId = $this->acmsManifestPropertyBridge->stringProperty($parsed['properties'], 'acms-type');
+                if ($rawTypeId !== '') {
+                    $canonicalTypeId = $this->typeSchemaRegistry->normalizeTypeId($rawTypeId);
+                    if ($canonicalTypeId !== '') {
+                        $typeId = $canonicalTypeId;
+                    } else {
+                        $typeId = $rawTypeId;
+                    }
+                }
+            }
+
+            if ($typeId === 'sections/root/vault') {
+                continue;
+            }
+
+            $treeUi = $this->typeSchemaRegistry->resolveTreeUiForTypeId($typeId, $vaultSlug);
+            $allowsChildren = $this->typeSchemaRegistry->sectionAllowsSectionChildren($typeId, $vaultSlug);
+
+            $items[] = [
+                'disk_path' => $diskPath,
+                'hub_path' => $diskPath,
+                'manifest_vault_path' => $relativeToVault,
+                'name' => $name,
+                'manifest_file' => $filename,
+                'type_id' => $typeId,
+                'tree_icon' => $treeUi['icon'],
+                'tree_icon_class' => $treeUi['icon_class'],
+                'allows_section_children' => $allowsChildren,
+            ];
+        }
+
+        $groups = $this->typeSchemaRegistry->listHubTreeGroups($vaultSlug);
+        $items = $this->filterItemsExcludedByNestedHubZones($items, $hubFolder, $groups);
+
+        usort($items, function (array $a, array $b): int {
+            $pathA = '';
+            $pathB = '';
+            if (isset($a['manifest_vault_path']) && is_string($a['manifest_vault_path'])) {
+                $pathA = $a['manifest_vault_path'];
+            }
+            if (isset($b['manifest_vault_path']) && is_string($b['manifest_vault_path'])) {
+                $pathB = $b['manifest_vault_path'];
+            }
+
+            return strcmp($pathA, $pathB);
+        });
+
+        return $items;
+    }
+
     public function filterItemsToHubZoneRoots(array $items, string $hubFolder): array
     {
         $hubFolder = trim(str_replace('\\', '/', $hubFolder), '/');

@@ -65,11 +65,19 @@ class VaultSlotTocIndexBuilder
         return $diskPath;
     }
 
+    /**
+     * @return list<array{slot: string, path: string, name: string, description: string, size: string, lines: string}>
+     */
+    public function collectRowsForNode(string $vaultSlug, string $nodeDiskPath, string $typeId): array
+    {
+        return $this->collectRows($vaultSlug, $nodeDiskPath, $typeId);
+    }
+
     public function buildIndexMarkdown(string $vaultSlug, string $nodeDiskPath, string $typeId): string
     {
         $rows = $this->collectRows($vaultSlug, $nodeDiskPath, $typeId);
         $lines = [];
-        $lines[] = '# Индекс оглавлений слотов';
+        $lines[] = '# Индекс оглавлений содержимого слотов';
         $lines[] = '';
         $lines[] = '| Слот | Путь | Название | Описание | Размер файла | Кол-во строк |';
         $lines[] = '| --- | --- | --- | --- | --- | --- |';

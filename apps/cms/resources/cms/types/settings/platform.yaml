@@ -330,8 +330,8 @@ fields:
     sort: 25
   index-vault-map-enabled:
     type: fields/boolean
-    title: 'Карта (VAULT-MAP)'
-    description: 'Шаг 7 pipeline — собрать VAULT-MAP.md (реестр manifest.md) в корне vault'
+    title: 'INDEX'
+    description: 'Шаг 7 pipeline — собрать INDEX.md (реестр manifest) в корне vault'
     default: true
     group: indexing
     sort: 26

@@ -19,5 +19,4 @@ storage-slots:
   - task-queue
   - todo
   - state
-  - archive
   - sessions

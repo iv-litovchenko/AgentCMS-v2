@@ -10,7 +10,6 @@ storage-slots:
   - data
   - todo
   - state
-  - archive
   - sessions
 mixins:
   - mixins/indexing-container

@@ -58,6 +58,7 @@ class VaultViewAssembler
             'active_disk_node_path' => '',
             'sidebar_root_note_body' => $this->vaultService->readRootMarkdownBody($slug, 'NOTE.md'),
             'sidebar_root_todo_body' => $this->vaultService->readRootMarkdownBody($slug, 'TODO.md'),
+            'vault_toc_index_build_csrf_id' => 'vault_toc_index_build_' . md5($slug),
         ];
     }
 

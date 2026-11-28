@@ -12,7 +12,6 @@ storage-slots:
   - files
   - todo
   - state
-  - archive
   - sessions
 form:
   panel-title: '{A2!} Медиатека'

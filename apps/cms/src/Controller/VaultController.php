@@ -7,6 +7,8 @@ use App\Form\VaultFormType;
 use App\Service\TypeSchemaRegistry;
 use App\Service\TypeViewResolver;
 use App\Service\VaultBreadcrumbBuilder;
+use App\Service\VaultHubTocIndexBuilder;
+use App\Service\VaultStorageTocIndexBuilder;
 use App\Service\VaultViewAssembler;
 use App\Service\VaultModuleRegistry;
 use App\Service\VaultNodeCreator;
@@ -42,6 +44,10 @@ class VaultController extends AbstractController
 
     private VaultBreadcrumbBuilder $vaultBreadcrumbBuilder;
 
+    private VaultHubTocIndexBuilder $vaultHubTocIndexBuilder;
+
+    private VaultStorageTocIndexBuilder $vaultStorageTocIndexBuilder;
+
     public function __construct(
         VaultService $vaultService,
         TypeSchemaRegistry $typeSchemaRegistry,
@@ -52,7 +58,9 @@ class VaultController extends AbstractController
         NodeDiskManifestRegistry $nodeDiskManifestRegistry,
         VaultViewAssembler $vaultViewAssembler,
         TypeViewResolver $typeViewResolver,
-        VaultBreadcrumbBuilder $vaultBreadcrumbBuilder
+        VaultBreadcrumbBuilder $vaultBreadcrumbBuilder,
+        VaultHubTocIndexBuilder $vaultHubTocIndexBuilder,
+        VaultStorageTocIndexBuilder $vaultStorageTocIndexBuilder
     ) {
         $this->vaultService = $vaultService;
         $this->typeSchemaRegistry = $typeSchemaRegistry;
@@ -64,6 +72,38 @@ class VaultController extends AbstractController
         $this->vaultViewAssembler = $vaultViewAssembler;
         $this->typeViewResolver = $typeViewResolver;
         $this->vaultBreadcrumbBuilder = $vaultBreadcrumbBuilder;
+        $this->vaultHubTocIndexBuilder = $vaultHubTocIndexBuilder;
+        $this->vaultStorageTocIndexBuilder = $vaultStorageTocIndexBuilder;
+    }
+
+    #[Route('/{slug}/build-vault-toc-index', name: 'vault_build_vault_toc_index', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['POST'], priority: 5)]
+    public function buildVaultTocIndex(string $slug, Request $request): Response
+    {
+        $vault = $this->vaultService->findBySlug($slug);
+        if ($vault === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $csrfId = 'vault_toc_index_build_' . md5($slug);
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid($csrfId, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        try {
+            $indexDiskPath = $this->vaultStorageTocIndexBuilder->writeIndex($vault['slug']);
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectBack($request);
+        }
+
+        $this->addFlash('success', 'INDEX обновлён.');
+
+        return $this->redirectToRoute('vault_disk_file_view', [
+            'slug' => $slug,
+            'nodePath' => $indexDiskPath . '~view',
+        ]);
     }
 
     #[Route('/storages', name: 'vault_index', methods: ['GET'], priority: 15)]
@@ -312,6 +352,69 @@ class VaultController extends AbstractController
         ], Response::HTTP_MOVED_PERMANENTLY);
     }
 
+    #[Route('/{slug}/{zone}', name: 'vault_hub_build_toc_index', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'zone' => '.+~build-hub-toc-index'], methods: ['POST'], priority: 3)]
+    public function buildHubTocIndex(string $slug, Request $request): Response
+    {
+        $vault = $this->vaultService->findBySlug($slug);
+        if ($vault === null) {
+            throw $this->createNotFoundException('Хранилище не найдено.');
+        }
+
+        $zoneRaw = $this->resolveHubUrlSegmentFromRequest($request);
+        $zone = $this->stripBuildHubTocIndexSuffix($zoneRaw);
+        if ($zone === '') {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        $family = $this->typeSchemaRegistry->hubFamilyForUrlSegment($zone, $vault['slug']);
+        if ($family === null) {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        $family = trim($family);
+        $hubGroup = $this->typeSchemaRegistry->findHubTreeGroupByFamily($family, $vault['slug']);
+        if ($hubGroup === null) {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        $csrfId = 'hub_toc_index_build_' . md5($family);
+        $token = $request->request->getString('_token');
+        if (!$this->isCsrfTokenValid($csrfId, $token)) {
+            throw $this->createAccessDeniedException('Неверный CSRF-токен.');
+        }
+
+        $hubFolder = '';
+        if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
+            $hubFolder = trim($hubGroup['folder']);
+        }
+
+        $hubZoneFolderOnly = !$this->typeSchemaRegistry->hubAllowsSectionChildren($family, $vault['slug']);
+
+        try {
+            $indexDiskPath = $this->vaultHubTocIndexBuilder->writeIndex(
+                $vault['slug'],
+                $hubFolder,
+                $hubZoneFolderOnly
+            );
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            $canonicalZone = $this->typeSchemaRegistry->hubUrlSegmentForFamily($family, $vault['slug']);
+
+            return $this->redirectToRoute('vault_hub_family_show', [
+                'slug' => $slug,
+                'zone' => $canonicalZone,
+            ]);
+        }
+
+        $this->addFlash('success', 'Индекс оглавлений хаба обновлён.');
+
+        return $this->redirectToRoute('vault_disk_file_view', [
+            'slug' => $slug,
+            'nodePath' => $indexDiskPath . '~view',
+        ]);
+    }
+
     #[Route('/{slug}/{zone}', name: 'vault_hub_family_show', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'zone' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'], priority: 4)]
     public function hubFamilyShow(string $slug, Request $request): Response
     {
@@ -347,16 +450,6 @@ class VaultController extends AbstractController
 
         $hubTree = $this->vaultNodeScanner->attachDiskNodesToHubTree([$hubGroup], $vault['slug']);
         $hubGroup = $hubTree[0];
-
-        $hubFolderForList = '';
-        if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
-            $hubFolderForList = trim($hubGroup['folder']);
-        }
-        $familyRootItems = [];
-        if (isset($hubGroup['items']) && is_array($hubGroup['items'])) {
-            $familyRootItems = $this->vaultNodeScanner->filterItemsToHubZoneRoots($hubGroup['items'], $hubFolderForList);
-        }
-        $hubGroup['items'] = $familyRootItems;
 
         $hubFolderEntries = [];
         $hubZoneFolderOnly = !$this->typeSchemaRegistry->hubAllowsSectionChildren($family, $vault['slug']);
@@ -398,8 +491,15 @@ class VaultController extends AbstractController
 
         $vault['initials'] = $this->vaultService->initialsFromName($vault['name']);
 
+        $hubFolder = '';
+        if (isset($hubGroup['folder']) && is_string($hubGroup['folder'])) {
+            $hubFolder = trim($hubGroup['folder']);
+        }
+        $hubTocIndexContext = $this->buildHubTocIndexViewContext($vault['slug'], $family, $hubFolder);
+
         return $this->render('vault/hub_family.html.twig', array_merge(
             $this->vaultViewAssembler->buildViewContext($vault),
+            $hubTocIndexContext,
             [
                 'hub_group' => $hubGroup,
                 'hub_folder_entries' => $hubFolderEntries,
@@ -638,6 +738,38 @@ class VaultController extends AbstractController
         }
 
         return '';
+    }
+
+    private function stripBuildHubTocIndexSuffix(string $zone): string
+    {
+        $suffix = '~build-hub-toc-index';
+        if (!str_ends_with($zone, $suffix)) {
+            throw $this->createNotFoundException('Семья hub не найдена.');
+        }
+
+        return trim(substr($zone, 0, -strlen($suffix)));
+    }
+
+    /**
+     * @return array{hub_toc_index_enabled: bool, hub_toc_index_build_csrf_id: string}
+     */
+    private function buildHubTocIndexViewContext(string $vaultSlug, string $family, string $hubFolder): array
+    {
+        $enabled = false;
+        $hubFolder = trim(str_replace('\\', '/', $hubFolder), '/');
+        if ($hubFolder !== '' && $hubFolder !== '.') {
+            $absoluteDir = $this->vaultNodeScanner->resolveAbsoluteDiskPath($vaultSlug, $hubFolder);
+            if ($absoluteDir !== null && is_dir($absoluteDir)) {
+                $enabled = true;
+            }
+        }
+
+        $csrfId = 'hub_toc_index_build_' . md5($family);
+
+        return [
+            'hub_toc_index_enabled' => $enabled,
+            'hub_toc_index_build_csrf_id' => $csrfId,
+        ];
     }
 
     /**

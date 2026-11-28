@@ -1,7 +1,7 @@
-name: VAULT-MAP
+name: INDEX
 status: active
 hub: root
 extends: sections/root/_file
-manifest-pattern: VAULT-MAP.md
+manifest-pattern: INDEX.md
 create-preset: ''
 sort: 100

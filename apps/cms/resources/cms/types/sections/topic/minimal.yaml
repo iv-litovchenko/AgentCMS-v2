@@ -11,5 +11,4 @@ storage-slots:
   - main-csv
   - todo
   - state
-  - archive
   - sessions

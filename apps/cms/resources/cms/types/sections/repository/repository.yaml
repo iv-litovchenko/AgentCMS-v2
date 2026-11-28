@@ -12,7 +12,6 @@ storage-slots:
   - source
   - todo
   - state
-  - archive
   - sessions
 form:
   panel-title: '{A2!} Репозиторий'

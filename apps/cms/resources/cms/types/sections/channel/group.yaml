@@ -10,7 +10,6 @@ allows-section-children: true
 storage-slots:
   - todo
   - state
-  - archive
   - sessions
 kind-ui:
   for: group

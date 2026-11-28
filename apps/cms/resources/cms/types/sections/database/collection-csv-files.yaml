@@ -9,7 +9,6 @@ storage-slots:
   - assets
   - todo
   - state
-  - archive
   - sessions
 tree-ui:
   icon: table

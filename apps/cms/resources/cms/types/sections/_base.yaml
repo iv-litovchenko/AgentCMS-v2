@@ -8,7 +8,6 @@ allows-section-children: false
 storage-slots:
   - todo
   - state
-  - archive
   - sessions
 # view: экраны по типу — disk (экземпляр на диске), screen (карточка типа), family (секция на странице зоны)
 #   disk: { template, action? }  action — метод VaultDiskNodeController
